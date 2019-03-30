@@ -5,7 +5,6 @@
  * fix session dropup - pushes buttons over
  * figure out touch functionality for mobile
  * make into PWA eventually (for use offline) - just add a service worker to cache it?
- * clock scrambler not quite right
  */
 {
 let cube, inspectTime, mode, startdelay;
@@ -61,7 +60,8 @@ for (let i = 0; i < lessfaces.length*2; i++) {
 let allmoves4 = moves3.concat(moves4);
 let allmoves6 = moves6.concat(allmoves4);
 let pyrpmoves = ["l", "r", "b", "u"];
-let clocks = ["UR", "DR", "DL", "UL", "U", "R", "D", "L", "ALL", "y2", "U", "R", "D", "L", "ALL"];
+let clocks = ["ALL", "L", "D", "R", "U", "y2", "ALL", "L", "D", "R", "U", "UL", "DL", "DR", "UR"];
+let clocksl4 = ["UL", "DL", "DR", "UR"];
 
 let tscramble = [];
 let fscramble = [];
@@ -110,7 +110,6 @@ let timepopup = document.getElementById("timepopup");
 let shadow = document.getElementById("shadow");
 let shadows = document.getElementsByClassName("popup");
 let cancelbtn = document.getElementById("cancelbtn");
-let modtime = document.getElementsByClassName("modtime");
 let thetwo = document.getElementById("thetwo");
 let thednf = document.getElementById("thednf"); 
 let inmore = document.getElementById("inmore");
@@ -125,13 +124,11 @@ let seecube = document.getElementById("seecube");
 let best = document.getElementById("best");
 let worst = document.getElementById("worst");
 
-let tempidx;
 let finder, timepop, clicked, finderall;
 let morepop = false;
 
 //session elements
-let sesclicked, sespop;
-let sesoptpop, sesoptclicked;
+let sespop, sesoptpop; //popups open or closed
 let sessions = [{name: "Session 1", description: "Default session"}];
 let session = sessions[0].name;
 let sesnames = [];
@@ -201,16 +198,14 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
 
   //remove all the rows
   let numrows = document.getElementById("timetable").getElementsByTagName("tbody")[0].getElementsByTagName("tr").length;
-  for (let i = 0; i < numrows; i++) {
-    timebody.deleteRow(0);
-  }
+  for (let i = 0; i < numrows; i++) { timebody.deleteRow(0); }
   
   displaytimes.length = 0;
-    for (let i = 0; i < alltimes.length; i++) {
-      if (alltimes[i].session === session) {
-        displaytimes.push(alltimes[i]);
-      }
+  for (let i = 0; i < alltimes.length; i++) {
+    if (alltimes[i].session === session) {
+      displaytimes.push(alltimes[i]);
     }
+  }
   for (let i = 0; i < displaytimes.length; i++) {
       displaytimes[i].number = i+1;
 
@@ -238,7 +233,6 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
   clickTable();
 
   mode = gotem("mode", "light");
-  // if (mode === undefined) {mode = "light";}
   runmode(true);
 
   //setup - retrieve saved cube, inspection time, and delay time, also mark them in the dropdowns
@@ -251,9 +245,7 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
     }
   }
 
-  // cubeButton.textContent = cube;
   cube = gotem("cubesave", "3x3");
-  // if (cube === undefined) {cube = "3x3";}
   cubeButton.textContent = cube;
 
   for (let i = 0; i < cubeselect.length; i++) {
@@ -263,7 +255,6 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
   }
 
   inspectTime = gotem("inspectsave", 15000);
-  // if (inspectTime === undefined) {inspectTime = 15000;}
 
   if (inspectTime === 0) {
     inspectnone.style.backgroundColor = "rgb(140, 140, 140)";
@@ -294,7 +285,6 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
 
   //sessions
   sesdrop.innerHTML = "";
-
   for(let i = 0; i < sessions.length; i++) {
     let sesnode = document.createElement("p");
     let sesnodename = document.createTextNode(sessions[i].name);
@@ -305,6 +295,7 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
   
   sesslc.textContent = session;
 
+  //timetable in or out
   timein = gotem("timein", false);
   timicon();
   if (timein) {
@@ -316,9 +307,7 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
 draw();
 
 //get just the session names
-for (let i = 0; i < sessions.length; i++) {
-  sesnames.push(sessions[i].name);
-}
+for (let i = 0; i < sessions.length; i++) { sesnames.push(sessions[i].name); }
 
 function clickTable() { //set up row clicks on the time table, and key shortcuts for +2, dnf, and delete
 
@@ -344,7 +333,6 @@ function clickTable() { //set up row clicks on the time table, and key shortcuts
       }
       finderall = alsoAll();
       tempallidx = alltimes.indexOf(finderall);
-      tempidx = displaytimes.indexOf(finder);
       allthistime = alltimes[tempallidx];
 
       changeallplus = allthistime.plustwo;
@@ -381,7 +369,7 @@ function clickTable() { //set up row clicks on the time table, and key shortcuts
       seecube.textContent = "Cube: " + allthistime.cube;
       if (allthistime.comment !== undefined) {comment.value = allthistime.comment;}
 
-      document.getElementById("inmore").addEventListener("click", function() {
+      inmore.addEventListener("click", () => {
         if (!morepop) {
           morepopup.style.display = "block";
           morepop = true;
@@ -398,7 +386,7 @@ function clickTable() { //set up row clicks on the time table, and key shortcuts
 }
 
 //close modals on click outside
-document.addEventListener("click", function(evt) {
+document.addEventListener("click", (evt) => {
   if(evt.target.closest(".popup")) return;
   if ((timepop || sespop || sesoptpop) && !clicked) {
     closeAll();
@@ -458,7 +446,7 @@ DropDown(delayButton, delayDrop);
 DropDown(sesslc, sesdrop); //actually drops up
 
 //switch inspection times
-inspectnone.addEventListener("click", function (evt) {
+inspectnone.addEventListener("click", (evt) => {
   evt.preventDefault();
   inspectTime = 0;
   localStorage.setItem("inspectsave", JSON.stringify(inspectTime));
@@ -466,7 +454,7 @@ inspectnone.addEventListener("click", function (evt) {
   inspect15.style.backgroundColor = "initial";
 }, false);
 
-inspect15.addEventListener("click", function (evt) {
+inspect15.addEventListener("click", (evt) => {
   evt.preventDefault();
   inspectTime = 15000;
   localStorage.setItem("inspectsave", JSON.stringify(inspectTime));
@@ -504,7 +492,7 @@ function makeDate() {
 }
 
 //switch between cubes
-document.addEventListener("click", function(evt) { //actually switch between cubes, and save it
+document.addEventListener("click", (evt) => { //actually switch between cubes, and save it
   if (!evt.target.matches(".cubeselect")) return;
   evt.preventDefault();
   // set all to light gray
@@ -521,6 +509,19 @@ document.addEventListener("click", function(evt) { //actually switch between cub
     scramble();
   }
 }, false);
+
+document.addEventListener("click", (evt) => { //switch delay times
+  if (!evt.target.matches(".delaytime")) return;
+  evt.preventDefault();
+  let dlytime = document.querySelectorAll(".delaytime");
+  for (let i = 0; i < dlytime.length; i++) {
+    dlytime[i].style.backgroundColor = "initial";
+  }
+  evt.target.style.backgroundColor = "rgb(140, 140, 140)";
+  let getvalue = evt.target.textContent.slice(0, -1)*1000;
+  startdelay = getvalue;
+  localStorage.setItem("delaysave", JSON.stringify(startdelay));
+});
 
 
 //It's just a random move scrambler.
@@ -560,12 +561,8 @@ function addfour(moveset, chancemod, apostrophe) { //turn 0-4 corners at the end
     let pointyn = Math.round(Math.random()+chancemod);
     if (pointyn === 1) {
       let pointdir = Math.round(Math.random());
-      if (pointdir === 1 || !apostrophe) {
-        tscramble.unshift(moveset[i]);
-      }
-      else {
-        tscramble.unshift(moveset[i] + "'");
-      }
+      if (pointdir === 1 || !apostrophe) { tscramble.unshift(moveset[i]); }
+      else { tscramble.unshift(moveset[i] + "'"); }
     }
     else {}
   }
@@ -639,8 +636,7 @@ function scramble() {
     }
   }
   else if (cube === "Clock") {
-    tscramble.length = 0;
-    addfour(clocks, 0, false);
+    addfour(clocksl4, 0, false);
     checkclo();
   }
 
@@ -787,49 +783,6 @@ function go() { //run stopwatch & stuff
   inspecting = false;
   waiting = false;
 };
- 
-function fin() { //finish timing, reset stopwatch, log result, calculate averages
-  inspecting = false;
-  started = false;
-
-  clearInterval(intstart);
-  clearInterval(inspectstart);
-  
-  insptime.style.display = "none";
-  time.style.display = "initial";
-  onlytime.style.display = "none";      
-
-  let solvedate = makeDate();
-  let timeNumber = alltimes.length+1;
-  alltimes.push({number: timeNumber, cube: cube, session: session, time: counter, scramble: fscramble, date: solvedate, comment: "", favg: "", tavg: "", dnf: dnf, plustwo: plustwo});
-
-  dnf = 0;
-  plustwo = 0;
-  counter = 0;
-
-  scramble();
-
-  localStorage.setItem("all", JSON.stringify(alltimes));
-
-  draw();
-
-  inspectsave = localStorage.getItem("inspectsave");
-  inspectTime = JSON.parse(inspectsave);
-}
-
-
-document.addEventListener("click", function(evt) { //switch delay times
-  if (!evt.target.matches(".delaytime")) return;
-  evt.preventDefault();
-  let dlytime = document.querySelectorAll(".delaytime");
-  for (let i = 0; i < dlytime.length; i++) {
-    dlytime[i].style.backgroundColor = "initial";
-  }
-  evt.target.style.backgroundColor = "rgb(140, 140, 140)";
-  let getvalue = evt.target.textContent.slice(0, -1)*1000;
-  startdelay = getvalue;
-  localStorage.setItem("delaysave", JSON.stringify(startdelay));
-});
 
 function ptimeout() { //add the holding delay, and colors
   outime = new Date();
@@ -864,16 +817,43 @@ function otimeout() { //setInterval for ptimeout
   timeou = new Date();
   oto = setInterval(ptimeout, 10);
 }
+ 
+function fin() { //finish timing, reset stopwatch, log result, calculate averages
+  inspecting = false;
+  started = false;
+
+  clearInterval(intstart);
+  clearInterval(inspectstart);
+  
+  insptime.style.display = "none";
+  time.style.display = "initial";
+  onlytime.style.display = "none";      
+
+  let solvedate = makeDate();
+  let timeNumber = alltimes.length+1;
+  alltimes.push({number: timeNumber, cube: cube, session: session, time: counter, scramble: fscramble, date: solvedate, comment: "", favg: "", tavg: "", dnf: dnf, plustwo: plustwo});
+
+  dnf = 0;
+  plustwo = 0;
+  counter = 0;
+
+  scramble();
+
+  localStorage.setItem("all", JSON.stringify(alltimes));
+
+  draw();
+
+  inspectsave = localStorage.getItem("inspectsave");
+  inspectTime = JSON.parse(inspectsave);
+}
+
 
 function down() {
   if (!timepop && !sespop && !sesoptpop) {
     if (!onstart && !started) {      //only on start, if not started
       if (!inspectTime) { otimeout(); }
-
       else if (inspectTime) {
-        if (mode === "light") { time.style.color = "#00FF00"; }
-        else if (mode === "dark") { time.style.color = "#FF00FF"; }
-
+        mode === "light" ? time.style.color = "#00FF00" : time.style.color = "#FF00FF";
         if (inspecting) { otimeout(); }
       }
       onstart = true;
@@ -889,14 +869,8 @@ function down() {
   
 function up () {
   time.style.color = "#000000";
+  mode === "light" ? insptime.style.color = "red" : insptime.style.color = "cyan";
   if (!timepop && !sespop && !sesoptpop) {
-    if (mode === "light") {
-      insptime.style.color = "#FF0000";
-    }
-    else if (mode === "dark") {
-      insptime.style.color = "#00FFFF";
-    }
-
     if (!inspectTime && !started && !waiting) {//if the delay hasn't run out yet
       clearInterval(oto);//reset the hold delay
       countime = 0;
@@ -932,36 +906,27 @@ function up () {
   }
 }
 
-window.addEventListener("keydown", function (evt) {
+window.addEventListener("keydown", (evt) => {
   let key = evt.keyCode;
-  if (key === 32) {
-    down();
-  }
-  if (key === 27) {
-    closeAll();
-  }
+  if (key === 32) { down(); }
+  if (key === 27) { closeAll(); }
 }, false);
-window.addEventListener("keyup", function (evt) {
-  if (evt.keyCode === 32) {
-    up();
-  }
+window.addEventListener("keyup", (evt) => {
+  if (evt.keyCode === 32) { up(); }
 }, false);
 
-touch.addEventListener("touchstart", function (evt) {
+touch.addEventListener("touchstart", (evt) => {
   evt.preventDefault();
-//   if (!evt.target.matches("#touch")) {return;}
   down();
 }, false);
 
-time.addEventListener("touchstart", function(evt) {
+time.addEventListener("touchstart", (evt) => {
   evt.preventDefault();
-//   if (!evt.target.matches("#time")) {return;}
   down();
 }, false);
   
-onlytime.addEventListener("touchstart", function(evt) {
+onlytime.addEventListener("touchstart", (evt) => {
   evt.preventDefault();
-//   if (!evt.target.matches("#onlytime")) {return;}
   down();
 }, false);
   
@@ -970,7 +935,7 @@ touch.addEventListener("touchend", up, false);
 onlytime.addEventListener("touchend", up, false);
 
 //dark/light mode
-lighticon.addEventListener("click", function() {runmode(false)}, false); //switch modes with the button
+lighticon.addEventListener("click", () => {runmode(false)}, false); //switch modes with the button
 
 function darkmode() {
   document.body.style.backgroundColor = "black";
@@ -978,6 +943,7 @@ function darkmode() {
   cancelbtn.style.backgroundColor = "rgb(220, 220, 220)";
   sescreate.style.backgroundColor = "rgb(220, 220, 220)";
   timealert.style.color = "cyan";
+  insptime.style.color = "cyan";
 
   for (let i = 0; i < shadows.length; i++) {
     shadows[i].style.backgroundColor = "rgb(210, 210, 210)";
@@ -991,7 +957,10 @@ function lightmode() {
   document.body.style.backgroundColor = "white";
   shadow.style.backgroundColor = "rgba(255, 255, 255, .8)";
   cancelbtn.style.backgroundColor = "rgb(140, 140, 140)";
+  sescreate.style.backgroundColor = "rgb(140, 140, 140)";
   timealert.style.color = "red";
+  insptime.style.color = "red";
+
 
   for (let i = 0; i < shadows.length; i++) {
     shadows[i].style.backgroundColor = "rgb(180, 180, 180)";
@@ -1064,7 +1033,7 @@ function closeAll() {
 cancelbtn.addEventListener("click", closeAll, false);
 
 //todo - add more keyboard shortcuts and undo function
-document.addEventListener("click", function(evt) { //+2, DNF, and delete for individual times
+document.addEventListener("click", (evt) => { //+2, DNF, and delete for individual times
   if (!evt.target.matches(".modtime")) return;
   evt.preventDefault();
   let selection = evt.target.textContent;
@@ -1108,7 +1077,7 @@ document.addEventListener("click", function(evt) { //+2, DNF, and delete for ind
 }, false);
 
 //set "more" always open or closed, and save 
-checkmore.addEventListener("click", function() {
+checkmore.addEventListener("click", () => {
   morechecked = checkmore.checked;
   localStorage.setItem("moretoggle", JSON.stringify(morechecked));
   alwaysmore = morechecked;
@@ -1117,7 +1086,7 @@ checkmore.addEventListener("click", function() {
 
 
 //open the new session popup with title and description fields
-newses.addEventListener("click", function() {
+newses.addEventListener("click", () => {
   sespopup.style.display = "inline-block";
   shadow.style.display = "initial";
   sesname.focus();
@@ -1125,13 +1094,13 @@ newses.addEventListener("click", function() {
 }, false);
 
 //close the new session popup
-sescancel.addEventListener("click", function() {
+sescancel.addEventListener("click", () => {
   sespopup.style.display = "none";
   shadow.style.display = "none";
 }, false);
 
 //create new session
-sescreate.addEventListener("click", function() {
+sescreate.addEventListener("click", () => {
   if (sesname.value !== "") {
     let lastses = sessions.length;
     sessions.push({name: sesname.value, description: sescrip.value});
@@ -1152,7 +1121,7 @@ sescreate.addEventListener("click", function() {
 }, false);
 
 //delete current session
-deleteses.addEventListener("click", function() {
+deleteses.addEventListener("click", () => {
   let deletesessionconf = confirm("Delete this session?");
   if (deletesessionconf) {
     for (let i = 0; i < alltimes.length; i++) {
@@ -1192,7 +1161,7 @@ deleteses.addEventListener("click", function() {
 }, false);
 
 //delete all sessions
-deleteallses.addEventListener("click", function() {
+deleteallses.addEventListener("click", () => {
   let deleteallconf = confirm("Delete all sessions?");
   if (deleteallconf) {
     sessions.length = 0;
@@ -1209,7 +1178,7 @@ deleteallses.addEventListener("click", function() {
 }, false);
 
 //clear all sessions
-clearallses.addEventListener("click", function() {
+clearallses.addEventListener("click", () => {
   let firm = confirm("Do you want to clear all times?");
   if (firm) {
     localStorage.removeItem("all");
@@ -1221,7 +1190,7 @@ clearallses.addEventListener("click", function() {
 }, false);
 
 //clear current session
-clearses.addEventListener("click", function() {
+clearses.addEventListener("click", () => {
   let clearsessionconf = confirm("Clear this session?");
   if (clearsessionconf) {
     let sesremoves = [];
@@ -1241,7 +1210,7 @@ clearses.addEventListener("click", function() {
 
 
 //open the session options popup
-sesopt.addEventListener("click", function() {
+sesopt.addEventListener("click", () => {
   sesoptpopup.style.display = "inline-block";
   shadow.style.display = "initial";
   changesesname.value = session;
@@ -1256,13 +1225,13 @@ sesopt.addEventListener("click", function() {
 }, false);
 
 //close the session options popup
-closeses.addEventListener("click", function() {
+closeses.addEventListener("click", () => {
   closeAll();
   sesoptpop = false;
 }, false);
 
 //save edits to session - I think working now
-saveses.addEventListener("click", function() {
+saveses.addEventListener("click", () => {
   for (let i = 0; i < alltimes.length; i++) {
     if (alltimes[i].session === session) {
       alltimes[i].session = changesesname.value;
@@ -1289,7 +1258,7 @@ saveses.addEventListener("click", function() {
 }, false);
 
 //switch sessions
-document.addEventListener("click", function(evt){
+document.addEventListener("click", (evt) => {
   if (!evt.target.matches(".sesselect")) return;
   evt.preventDefault();
   let currses = evt.target.textContent;
@@ -1302,7 +1271,7 @@ document.addEventListener("click", function(evt){
 timetable.addEventListener("transitionend", timicon, false);
 
 //slide in the timetable & session buttons
-inicon.addEventListener("click", function() {
+inicon.addEventListener("click", () => {
   timetable.style.transform = "translateX(-40vw)";
   sessionsdiv.style.transform = "translateX(-100vw)";
   timein = true;
@@ -1310,7 +1279,7 @@ inicon.addEventListener("click", function() {
 }, false);
 
 //slide out the timetable & session buttons
-outicon.addEventListener("click", function() {
+outicon.addEventListener("click", () => {
   timetable.style.transform = "translateX(0)"
   sessionsdiv.style.transform = "translateX(0)"
   timein = false;
