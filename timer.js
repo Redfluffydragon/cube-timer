@@ -3,8 +3,9 @@
  * add export all button (csv)
  * add undo function for deleting things
  * fix session dropup - pushes buttons over
- * figure out better touch functionality for mobile
+ * figure out touch functionality for mobile
  * make into PWA eventually (for use offline) - just add a service worker to cache it?
+ * clock scrambler not quite right
  */
 {
 let cube, inspectTime, mode, startdelay;
@@ -526,7 +527,7 @@ document.addEventListener("click", function(evt) { //actually switch between cub
 function checknxn(moveset) { //for nxnxn cubes
   let random = Math.round(Math.random()*(moveset.length-1)); //zero-indexed
   tempmove = moveset[random];
-  pmove = tscramble[0];
+  pmove = tscramble[tscramble.length-1];
   let twochart = tempmove.substring(0, 2);
   let twocharp;
   let charonet = tempmove.charAt(0);
@@ -535,22 +536,21 @@ function checknxn(moveset) { //for nxnxn cubes
   if (pmove !== undefined) {twocharp = pmove.substring(0, 2);}
   if (twochart === twocharp || charonep === charonet) {return;}
   else {
-    tscramble.unshift(tempmove);
+    tscramble.push(tempmove);
     return tempmove;
   }
 }
 
 function checkpyr1() { // turn the big corners for the majority of the scramble
-  let len = tscramble.length-1;
   let random = Math.round(Math.random()*7);
   tempmove = pyrsmoves[random];
-  pmove = tscramble[len];
+  pmove = tscramble[0];
   let charonet = tempmove.charAt(0);
   let charonep;
   if (pmove !== undefined) {charonep = pmove.charAt(0);}
   if (charonet === charonep) {return;}
   else {
-    tscramble.push(tempmove);
+    tscramble.unshift(tempmove);
     return tempmove;
   }
 }
@@ -571,28 +571,23 @@ function addfour(moveset, chancemod, apostrophe) { //turn 0-4 corners at the end
   }
 }
 
+function checkpyrall() {
+  addfour(pyrpmoves, .1, true);
+  while (tscramble.length < 10) {
+    checkpyr1();
+  }
+}
+
 function checkmeg() {
   for (let i = 0; i < 4; i++) {
-    let uRightLeft = Math.round(Math.random());
-    if (uRightLeft === 0) {
-      tscramble.push("U'\n");
-    }
-    else {tscramble.push("U\n")}
     for (let j = 0; j < 10; j++) {
       let plusmin = Math.round(Math.random());
-      if (j%2 === 1) {
-        if (plusmin === 0) {
-          tscramble.push("R--");
-        }
-        else {tscramble.push("R++")}
-      }
-      else {
-        if (plusmin === 0) {
-          tscramble.push("D--");
-        }
-        else {tscramble.push("D++")}
-      }
+      let rPush = () => {plusmin ? tscramble.push("R++") : tscramble.push("R--")}
+      let dPush = () => {plusmin ? tscramble.push("D++") : tscramble.push("D--")}
+      j%2 ? dPush() : rPush()
     }
+    let uRightLeft = Math.round(Math.random());
+    uRightLeft ? tscramble.push("U\n") : tscramble.push("U'\n")
   }
 }
 
@@ -601,11 +596,11 @@ function checksqu() {//probably bullshit. I don't know what moves aren't allowed
   let tworand = Math.round((Math.random()*11)-5);
   let firstnum, secondnum;
   if (tscramble.length !== 0) {
-    firstnum = tscramble[0].charAt(1);
-    secondnum = tscramble[0].charAt(3);
+    firstnum = tscramble[tscramble.length-1].charAt(1);
+    secondnum = tscramble[tscramble.length-1].charAt(3);
   }
   if ((onerand === firstnum && tworand === secondnum) || (onerand === 0 && tworand === 0)) {return;} //there are probably other exclusions (0,0)?
-  else {tscramble.unshift("(" + onerand + "," + tworand + ")")}
+  else {tscramble.push("(" + onerand + "," + tworand + ")")}
 }
 
 function checkclo() {
@@ -613,86 +608,43 @@ function checkclo() {
     let clockrand = Math.round((Math.random()*11)-5);
     let clockstring = JSON.stringify(clockrand);
     let rvrsclock;
-    if (clockstring.length > 1) {
-      rvrsclock = clockstring.charAt(1)+clockstring.charAt(0);
-    }
-    else {
-      rvrsclock = clockstring.charAt(0)+"+"
-    }
-    if (clocks[i] !== "y2") {
-      tscramble.unshift(clocks[i]+rvrsclock);
-    }
-    else {tscramble.unshift(clocks[i]);}
+    if (clockstring.length > 1) { rvrsclock = clockstring.charAt(1)+clockstring.charAt(0); }
+    else { rvrsclock = clockstring.charAt(0)+"+"; }
+    if (clocks[i] !== "y2") { tscramble.unshift(clocks[i]+rvrsclock); }
+    else { tscramble.unshift(clocks[i]); }
   }
 }
 
+let slen;
+const scramblers = {
+  "2x2": function() {slen = 10; checknxn(moves3);},
+  "3x3": function() {slen = 20; checknxn(moves3);},
+  "4x4": function() {slen = 45; checknxn(allmoves4);},
+  "5x5": function() {slen = 60; checknxn(allmoves4);},
+  "6x6": function() {slen = 70; checknxn(allmoves6);},
+  "7x7": function() {slen = 65; checknxn(allmoves6);},
+  "Megaminx": function() {slen = 44; checkmeg();},
+  "Pyraminx": function() {slen = 10; checkpyrall();},
+  "Skewb": function() {slen = 10; checkpyr1();},
+  "Square-1": function() {slen = 15; checksqu();},
+}
+
 function scramble() {
-  let slength = 20;
   tscramble.length = 0;
   fscramble.length = 0;
   if (cube !== "Clock") {
-    while (tscramble.length < slength) {
-      switch (cube) {
-        case "2x2":
-        slength = 10;
-        checknxn(moves3);
-        break;
-        case "3x3":
-        slength = 20;
-        checknxn(moves3);
-        break;
-        case "4x4":
-        slength = 45;
-        checknxn(allmoves4);
-        break;
-        case "5x5":
-        slength = 60;
-        checknxn(allmoves4);
-        break;
-        case "6x6":
-        slength = 70;
-        checknxn(allmoves6);
-        break;
-        case "7x7":
-        slength = 65;
-        checknxn(allmoves6);
-        break;
-        case "Megaminx":
-        slength = 44;
-        checkmeg();
-        break;
-        case "Pyraminx":
-        slength = 10;
-        addfour(pyrpmoves, .1, true);
-        while (tscramble.length < slength) {
-          checkpyr1();
-        }
-        break;
-        case "Skewb":
-        slength = 10;
-        checkpyr1();
-        break;
-        case "Square-1":
-        slength = 15;
-        checksqu();
-        break;
-        default:
-        slength = 0;
-        break;
-      }
+    scramblers[cube]();
+    while (tscramble.length < slen) {
+      scramblers[cube]();
     }
   }
   else if (cube === "Clock") {
     tscramble.length = 0;
-    checkclo();
     addfour(clocks, 0, false);
+    checkclo();
   }
-  for (i = 0; i < slength; i++) {
-    if (tscramble[i] !== undefined) {
-      fscramble = tscramble.join(" ");
-    }
-  }
-  
+
+  fscramble = tscramble.join(" ");
   scrambletxt.textContent = fscramble;
   localStorage.setItem("scramble", JSON.stringify(fscramble));
 }
@@ -778,18 +730,16 @@ function inspection() {
   clearInterval(intstart);
   itimer = new Date();
   icounter = Math.trunc((itimer-istart)/1000);
-  displayctdn = countdown[icounter]
+  displayctdn = countdown[icounter];
   insptime.textContent = displayctdn;
   if (displayctdn === "DNF") {
     timealert.style.display = "none";
     dnf = 1;
+    plustwo = 0;
   }
   if (displayctdn === undefined) {
     time.textContent = "0.00";
     fin();
-    
-    plustwo = 0;
-    counter = 0;
   }
   if (displayctdn === "+2") {
     plustwo = 1;
@@ -855,6 +805,7 @@ function fin() { //finish timing, reset stopwatch, log result, calculate average
 
   dnf = 0;
   plustwo = 0;
+  counter = 0;
 
   scramble();
 
