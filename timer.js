@@ -868,9 +868,9 @@ function otimeout() { //setInterval for ptimeout
 function down() {
   if (!timepop && !sespop && !sesoptpop) {
     if (!onstart && !started) {      //only on start, if not started
-      if (inspectTime === 0) { otimeout(); }
+      if (!inspectTime) { otimeout(); }
 
-      else if (inspectTime !== 0) {
+      else if (inspectTime) {
         if (mode === "light") { time.style.color = "#00FF00"; }
         else if (mode === "dark") { time.style.color = "#FF00FF"; }
 
@@ -897,19 +897,19 @@ function up () {
       insptime.style.color = "#00FFFF";
     }
 
-    if (inspectTime === 0 && !started && !waiting) {//if the delay hasn't run out yet
+    if (!inspectTime && !started && !waiting) {//if the delay hasn't run out yet
       clearInterval(oto);//reset the hold delay
       countime = 0;
       onstart = false;
     }
-    if(inspectTime !== 0 && !started && !waiting && inspecting && pause) {
+    if(inspectTime && !started && !waiting && inspecting && pause) {
       clearInterval(oto);
       countime = 0;
       onstart = false;
       started = false;
     }
 
-    if (!keydown && inspectTime !== 0 && !inspecting && !started && !waiting && !pause) {
+    if (!keydown && inspectTime && !inspecting && !started && !waiting && !pause) {
       onlytime.style.display = "initial";
       runinspect();
       if (inspecting) {
@@ -925,7 +925,7 @@ function up () {
     else if (keydown) {
       keydown = false;
     }
-    if (inspectTime !== 0) {
+    if (inspectTime) {
       onstart = false;
       countime = 0;
     }
@@ -949,26 +949,25 @@ window.addEventListener("keyup", function (evt) {
 
 touch.addEventListener("touchstart", function (evt) {
   evt.preventDefault();
-  if (!evt.target.matches("#touch")) {return;}
+//   if (!evt.target.matches("#touch")) {return;}
   down();
 }, false);
 
 time.addEventListener("touchstart", function(evt) {
   evt.preventDefault();
-  if (!evt.target.matches("#time")) {return;}
+//   if (!evt.target.matches("#time")) {return;}
   down();
 }, false);
   
 onlytime.addEventListener("touchstart", function(evt) {
   evt.preventDefault();
-  if (!evt.target.matches("#onlytime")) {return;}
+//   if (!evt.target.matches("#onlytime")) {return;}
   down();
 }, false);
-
-window.addEventListener("touchend", function () {
-  up();
-}, false);
-
+  
+time.addEventListener("touchend", up, false);
+touch.addEventListener("touchend", up, false);
+onlytime.addEventListener("touchend", up, false);
 
 //dark/light mode
 lighticon.addEventListener("click", function() {runmode(false)}, false); //switch modes with the button
@@ -1317,4 +1316,5 @@ outicon.addEventListener("click", function() {
   timein = false;
   localStorage.setItem("timein", JSON.stringify(timein)); 
 }, false);
+
 }
