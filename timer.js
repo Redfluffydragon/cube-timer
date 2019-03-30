@@ -8,8 +8,9 @@
  * 
  * add undo function for deleting things
  * fix session dropup - pushes buttons over
+ * make modal function for close on click outside
  * 
- * figure out better touch functionality?
+ * figure out better touch functionality for mobile
  * 
  * make into PWA eventually (for use offline)
  * just add a service worker to cache it?
@@ -888,7 +889,7 @@ function fin() { //finish timing, reset stopwatch, log result, calculate average
 
   let solvedate = makeDate();
   let timeNumber = alltimes.length+1;
-  alltimes.push({"number": timeNumber, "cube": cube, "session": session, "time": counter, "scramble": fscramble, "date": solvedate, "comment": "", "favg": "", "tavg": "", "dnf": dnf, "plustwo": plustwo});
+  alltimes.push({number: timeNumber, cube: cube, session: session, time: counter, scramble: fscramble, date: solvedate, comment: "", favg: "", tavg: "", dnf: dnf, plustwo: plustwo});
 
   dnf = 0;
   plustwo = 0;
