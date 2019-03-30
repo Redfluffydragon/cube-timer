@@ -1,0 +1,561 @@
+body {
+  overflow-y: auto;
+}
+
+#centerac {
+  margin: 0 auto;
+  width: 30vw;
+}
+
+#time {
+  font-size: calc(700% + 8vmax);
+  text-align: left;
+  position: absolute;
+  top: 8vh;
+  font-family: 'Times New Roman', Times, serif;
+  z-index: 3;
+}
+
+#onlytime {
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  z-index: 2;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: none;
+  transition: opacity .8s;
+}
+
+#insptime {
+  font-size: calc(700% + 8vmax);
+  text-align: center;
+  position: absolute;
+  top: 8vh;
+  padding-left: 5vw;
+  display: none;
+  font-family: 'Times New Roman', Times, serif;
+  color: #FF0000;
+  z-index: 2;
+}
+
+#timealert {
+  float: right;
+  font-size: calc(14px + 6vmax);
+  position: absolute;
+  right: 8vw;
+  bottom: 18vh;
+  color: red;
+  z-index: 2;
+  display: none;
+}
+
+#scramblediv {
+  text-align: center;
+  width: 52vw;
+  margin: auto;
+  font-size: calc(16px + 1vmax);
+  font-family: monospace;
+  justify-content: center;
+  display: table;
+  vertical-align: bottom;
+}
+
+#scrambletxt {
+  position: absolute;
+  text-align: bottom;
+  width: 52vw;
+  top: 6vh;
+  display: table-cell;
+  vertical-align: bottom;
+}
+
+.rdropdown {
+  float: right;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+}
+
+.rdropcontent {
+  display: none;
+  position: absolute;
+  background-color: rgb(180, 180, 180);
+  z-index: 1;
+  margin-left: 4px;
+}
+
+.rdropcontent a {
+  font-size: calc(12px + .7vw);
+  color: black;
+  padding: .5vw 1vw .8vw;
+  display: block;
+  text-decoration: none;
+}
+
+#cubeDrop {right: 8px;}
+
+.rdropbtn {
+  border: none;
+  font-size: calc(12px + .7vw);
+  padding: 5px 12px 5px 12px;
+  background-color: rgb(215, 215, 215);
+  font-family: Arial, Helvetica, sans-serif;
+  margin-left: 4px;
+  margin-bottom: 4px;
+  position: relative;
+  z-index: 1;
+}
+
+.rdropbtn:hover {
+  cursor: pointer;
+}
+
+.rdropcontent a:hover {
+  background-color: rgb(150, 150, 150);
+}
+
+#timetable {
+  display: block;
+  font-size: calc(11px + .7vw);
+  text-align: left;
+  color: black;
+  padding: 5px 21px 4px 22px;
+  text-decoration: none;
+  position: absolute;
+  left: -15px;
+  top: 0;
+  overflow: hidden;
+  text-align: center;
+  transition: transform .8s;
+}
+
+.times {
+  padding: 5px auto;
+  min-width: 6vw;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.avgofive {
+  min-width: 6vw;
+  padding: 5px auto;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.avgotwelve {
+  min-width: 6vw;
+  padding: 5px auto;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.number {
+  min-width: 2vw;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+#ttsize {
+  width: 25vw;
+}
+
+#blank {
+  width: 2.1vw;
+  background-color: rgb(215, 215, 215);
+}
+
+#timetable tbody {
+  overflow-y: auto;
+  display: block;
+  height: 86vh;
+  overflow: -moz-scrollbars-none;
+  -ms-overflow-style: none;
+}
+
+#timetable tbody::-webkit-scrollbar { width: 0 !important }
+
+.idAll:nth-child(odd) {background-color: #f2f2f2;}
+
+.idAll:hover {
+  cursor: pointer;
+  background-color: #AAAAAA;
+}
+
+.header {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: rgb(215, 215, 215);
+  padding: 5px 3px;
+  text-align: center;
+  width: 5.8vw;
+  font-size: calc(9px + .8vw);
+}
+
+#inoutcell {
+  padding: 0;
+}
+
+#inicon {
+  display: block;
+}
+
+#inicon:hover {
+  cursor: pointer;
+}
+
+#outicon {
+  display: none;
+  position: absolute;
+  left: 3px;
+}
+
+#outicon:hover {
+  cursor: pointer;
+}
+
+#sessions {
+  position: absolute;
+  display: fixed;
+  left: .6vw;
+  transition: transform .8s;
+  /* top: 90vh; */ /* for firefox?? what the heck */
+  bottom: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#sessions button {
+  margin: 0;
+  padding: 0;
+  /* position: absolute; */
+  top: 90vh;
+}
+
+.sesedit {
+  display: inline-block;
+  font-size: calc(8px + .7vw);
+  background-color: rgb(215, 215, 215);
+  font-family: Arial, Helvetica, sans-serif;
+  padding: 5px;
+  padding-right: 12px;
+  padding-left: 12px;
+  text-align: center;
+}
+
+.sesedit:hover {
+  cursor: pointer;
+}
+
+.dropup {
+  display: inline-block;
+}
+
+.dropupcontent {
+  display: none;
+  background-color: rgb(180, 180, 180);
+  position: relative;
+  top: calc(5px + 1vh);
+  /* bottom: calc(31px + 1.5vw); */
+}
+
+#sesdrop p {
+  font-size: calc(7px + .7vw);
+  color: black;
+  padding: .5vw 1vw .8vw;
+  display: block;
+  text-decoration: none;
+  margin: 0;
+}
+
+#sesdrop p:hover {
+  cursor: pointer;
+  background-color: rgb(150, 150, 150);
+}
+
+
+#sespopup button{
+  display: inline-block;
+  margin-bottom: 4px;
+}
+
+#sescrip {
+  vertical-align: top;
+  margin: 4px;
+  width: 21vw;
+  width: 20vw;
+  height: 7vh;
+  resize: none;
+}
+
+#sesname {
+  vertical-align: top;
+  margin: 4px;
+  width: 20.1vw;
+}
+
+#sespopup li {
+  text-align: right;
+}
+
+#sescontcenter {
+  vertical-align: bottom;
+  width: 34vw;
+  margin: auto;
+}
+
+#sescreate {
+  margin-left: 2vw;
+  padding-right: 7px;
+  padding-left: 7px;
+}
+
+#sescancel {
+  margin-right: 2vw;
+  background-color: transparent;
+}
+
+#changesesname {
+  font-size: calc(14px + .7vw);
+  border-radius: 5px;
+  background-color: transparent;
+  border: 1px dotted black;
+  text-align: center;
+}
+
+#sesoptpopup {
+  justify-content: center;
+  text-align: center;
+}
+
+#optbuttons {
+  justify-content: center;
+  width: 100%;
+}
+
+.deletebtn {
+  background-color: #FF000060;
+}
+
+.clearbtn {
+  background-color: #FF990060;
+}
+
+#sesoptbuttons table{
+  float: right;
+}
+
+#sesoptpopup button{
+  display: inline-block;
+  margin: 4px auto;
+  width: 17vw;
+}
+
+#sesoptpopup label {
+  margin-left: 4px;
+}
+
+#seesescrip {
+  vertical-align: top;
+  margin: 4px;
+  min-width: 96%;
+  max-width: 96%;
+  resize: none;
+  height: 10vh;
+}
+
+#optbuttons {
+  display: block;
+  margin: 0 4px ;
+}
+
+#optbuttons tr td {
+  margin: 0;
+  row-gap: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  border-spacing: 0;
+}
+
+#centercube {
+  justify-content: center;
+  text-align: center;
+  width: 7vw;
+  margin: 0 auto;
+  clear: both;
+  display: none;
+}
+
+button {
+  background-color: rgb(140, 140, 140);
+  border: none;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: calc(12px + .7vw);
+  padding: 5px;
+}
+
+button:hover {
+  cursor: pointer;
+}
+
+#clearbtn {
+  position: absolute;
+  bottom: 2%;
+  right: 3%;
+  font-size: calc(17px + .7vw);
+  background-color: rgb(215, 215, 215);
+  font-family: Arial, Helvetica, sans-serif;
+  padding: 5px;
+  padding-right: 12px;
+  padding-left: 12px;
+  text-align: center;
+}
+
+#clearbtn:hover {
+  cursor: pointer;
+}
+
+#settings {
+  float: right;
+  width: 85vw;
+  height: 20vh;
+}
+
+#shadow {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(200, 200, 200, .8);
+  bottom: 0;
+  left: 0;
+  z-index: 5;
+  display: none;
+}
+
+#touch {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  bottom: 0;
+  left: 0;
+}
+
+#centerpop {
+  position: relative;
+  text-align: center;
+  z-index: 6;
+}
+
+.popup {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: none;
+  background-color: rgb(180, 180, 180);
+  margin: 0 auto;
+  text-align: center;
+  justify-content: center;
+  font-size: calc(12px + .7vw);
+  box-shadow: 5px 5px 5px gray;
+  z-index: 7;
+}
+
+
+#timepopup a {
+  font-size: calc(12px + .7vw);
+  color: black;
+  padding: .5vw 1vw .8vw;
+  text-decoration: none;
+  margin-bottom: .8vw;
+}
+
+#timepopup h3 {
+  margin: 9px;
+  margin-top: 12px;
+}
+
+#timepopup button {
+  background-color: rgb(160, 160, 160);
+  display: block;
+  margin-top: 3vh;
+}
+
+#morepopup {
+  width: 39vw;
+  font-size: calc(9px + .7vw);
+}
+
+#comment {
+  width: 37vw;
+  height: 12vh;
+  resize: none;
+  vertical-align: top;
+  margin-bottom: 4px;
+}
+
+#seescramble {
+  position: relative;
+  top: 2vh;
+  padding-left: .5vh;
+  padding-right: .5vh;
+}
+
+#seedate {
+  padding-left: .5vh;
+  padding-right: .5vh;
+}
+
+#cancelbtn {
+  padding: 5px;
+  margin: 4px auto;
+  display: block;
+}
+
+#inmore {
+  font-size: calc(6px + .8vw);
+  position: relative;
+}
+
+#inmore:hover {
+  cursor: pointer;
+}
+
+#iconsize {
+  width: calc(27px + 1vw);
+  height: calc(27px + 1vw);
+  float: right;
+}
+
+#lighticon:hover {
+  cursor: pointer;
+}
+
+#lighticon {
+  float: left;
+  border-radius: 50%;
+  position: relative;
+  bottom: .5vh;
+}
+
+.topstats {
+  float: right;
+  padding-right: 2vw;
+  position: relative;
+  bottom: 3vh;
+  font-size: calc(12px + .7vw);
+}
+
+
+@media screen and (max-width: 1000px) { 
+  #scrambletxt {width: 54vw; top: 15vh; left: 30vw; font-size: calc(6px + 1.6vmax);}
+  #settings{width: 70vw;}
+  #sescontcenter{width: 30vw;}
+  #cancelbtn{right: 50vw;}
+  #sesoptpopup button {width: 25vw;}
+  #timetable tbody {height: 83vh;}
+}
+
+@media screen and (max-width: 600px) { /*if viewport width is less than 480 px*/
+  #centerac {width: 40vw;}
+  #time {top: 7vh;}
+  #insptime {top: 7vh;}
+  #scrambletxt {width: 64vw; top: 12vh;}
+  #settings{width: 60vw;}
+  #settingslist{padding-left: 2vw;}
+  #sesoptpopup button {width: 29vw;}
+  #timetable tbody {height: 84vh;}
+}

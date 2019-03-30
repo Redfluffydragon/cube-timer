@@ -1,0 +1,27 @@
+{
+  "name": "Cube Timer",
+  "description": "A not-award winning app unknown to all. The developer is just hoping it works.",
+  "version": "1.0",
+  "manifest_version": 2,
+
+  "browser_action": {
+    "background": {
+      "scripts": ["background.js"],
+      "persistent": false
+    },
+    "default_icon": {
+      "16": "icon64.png",
+      "24": "icon64.png",
+      "32": "icon64.png"
+    },
+    "default_title":"Cube Timer"
+  },
+  
+  "permissions": [
+    "storage"
+  ],
+
+  "icons": {
+    "16": "icon64.png", "64": "icon64.png"
+  }
+}

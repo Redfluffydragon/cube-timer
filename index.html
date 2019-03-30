@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Cube Timer</title>
+    <link rel="icon" href="heptagoncube2.png" type="image/png">
+    <link rel="stylesheet" href="timer.css"> 
+  </head>
+
+  <body>
+    <div id="scramblediv">
+      <p id="scrambletxt" title="Just a random move scrambler."></p>
+    </div>
+  
+    <div id="onlytime"></div>
+
+    <p id="timealert">8s</p> 
+
+    <div id="centerac">
+      <p id="time">0.00</p>
+      <p id="insptime">15</p>
+    </div>
+    
+    <div id="touch"></div>
+
+    <img src="outicon.png" id="outicon" style="height: calc(22px + .7vw);">
+    <div id="ttsize">
+      <table id="timetable">
+        <thead>
+          <tr>
+            <td id="blank">#</td>
+            <td class="header">Time</td>
+            <td class="header">Ao5</td>
+            <td class="header">Ao12</td>
+            <td id="inoutcell">
+              <img src="inicon.png" id="inicon" style="height: calc(22px + .7vw);">
+            </td>
+          </tr>
+        </thead>
+        <tbody id="timebody">
+        </tbody>
+      </table>
+    </div>
+
+    <div id="settings">
+      <div class="rdropdown">
+        <button class="rdropbtn" id="cubeButton" title="Switch cube">Cube</button>
+        <div class="rdropcontent" id="cubeDrop">
+          <a href="#" class="cubeselect">2x2</a>
+          <a href="#" class="cubeselect">3x3</a>
+          <a href="#" class="cubeselect">4x4</a>
+          <a href="#" class="cubeselect">5x5</a>
+          <a href="#" class="cubeselect">6x6</a>
+          <a href="#" class="cubeselect">7x7</a>
+          <a href="#" class="cubeselect">Megaminx</a>
+          <a href="#" class="cubeselect">Pyraminx</a>
+          <a href="#" class="cubeselect">Skewb</a>
+          <a href="#" class="cubeselect">Square-1</a>
+          <a href="#" class="cubeselect">Clock</a>
+        </div>
+      </div>
+      
+      <div class="rdropdown">
+        <button class="rdropbtn" id="inspectButton">Inspection time</button>
+        <div class="rdropcontent" id="inspectDrop">
+          <a href="#" id="inspectnone">None</a>
+          <a href="#" id="inspect15">15s (WCA)</a>
+        </div>
+      </div>
+
+      <div class="rdropdown">
+        <button class= "rdropbtn" id="delayButton" title="how long you have to hold the spacebar to start">Delay time</button>
+        <div class="rdropcontent" id="delayDrop">
+          <a href="#" class="delaytime">0s</a>
+          <a href="#" class="delaytime">0.3s</a>
+          <a href="#" class="delaytime">0.55s</a>
+          <a href="#" class="delaytime">1s</a>
+        </div>
+      </div>
+
+      <div id="iconsize">
+        <img src="lightmode.png" id="lighticon" alt="light/dark mode icon" title="light/dark mode" style="width: 100%; height: 100%;">
+      </div>
+
+      <h4 id="worst" class="topstats">Worst: --</h4>
+      <h4 id="best" class="topstats">Best: --</h4>
+    </div>
+    
+    <div id="shadow"></div>
+    
+    <div id="centerpop">
+      <div id="timepopup" class="popup">
+        <h3 id="timedit">Edit time </h3>
+        <a href="#" class="modtime" id="thetwo">+2</a>
+        <a href="#" class="modtime" id="thednf">DNF</a>
+        <a href="#" class="modtime">Delete</a>
+        <button id="cancelbtn">Close</button>
+      </div>
+      <div id="morepopup" class="popup">
+        <p id="seescramble"></p>
+        <p id="seedate"></p>
+        <p id="seecube"></p>
+        <label>Comments: </label>
+        <textarea id="comment" resize></textarea>
+        <input id="checkmore"type="checkbox"><label>Always show more</label>
+      </div>
+
+      <div id="sespopup" class="popup">
+        <h3>New Session</h3>
+          <ul style="list-style-type: none">
+            <li><label>Name: </label><input id="sesname"class="sesinput"></li>
+            <li><label>Description: <textarea id="sescrip" class="sesinput"></textarea></label></li>
+          </ul>
+        <button id="sescancel">Cancel</button>
+        <button id="sescreate">Create</button>
+      </div>
+
+      <div id="sesoptpopup" class="popup">
+        <h3><input id="changesesname"value="Session 1"></input></h3>
+        <textarea id="seesescrip" class="sesinput"></textarea>
+        <div id="optbuttons">
+          <table>
+            <tr>
+              <td class="leftcol"><button class="deletebtn" id="deleteallses">Delete all sessions</button></td>
+              <td class="rightcol"><button class="clearbtn" id="clearallses">Clear all sessions</button></td>
+            </tr>
+            <tr>
+              <td class="leftcol"><button class="deletebtn" id="deleteses">Delete session</button></td>
+              <td class="rightcol"><button class="clearbtn" id="clearses">Clear session</button></td>
+            </tr>
+            <tr>
+              <td class="leftcol"><button id="closeses">Close</button></td>
+              <td class="rightcol"><button id="saveses">Save</button></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="sessions">
+      <div class="dropup">
+          <div id="sesdrop" class="dropupcontent">
+            <!-- sessions appended here -->
+          </div>
+        <p id="sesslc" class="sesedit dropupbtn" title="current session">Session 1 </p>
+      </div>
+      <p id="newses" class="sesedit" title="create a new session">New</p>
+      <p id="sesopt"class="sesedit" title="session options">Options</p>
+    </div>
+
+    <script src="timer.js"></script>
+  </body>
+</html>
