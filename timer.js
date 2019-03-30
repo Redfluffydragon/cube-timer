@@ -85,7 +85,7 @@ let delayButton = document.getElementById("delayButton");
 let delayDrop = document.getElementById("delayDrop");
 
 //other elements
-let timein = false;//time table in or out
+let timein; //time table in or out
 let timicon = () => {timein ? outicon.style.display = "initial": outicon.style.display = "none"};
 
 let timebody = document.getElementById("timetable").getElementsByTagName("tbody")[0];
