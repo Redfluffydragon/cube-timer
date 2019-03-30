@@ -1053,6 +1053,7 @@ onlytime.addEventListener("touchstart", function(evt) {
   
 time.addEventListener("touchend", up, false);
 touch.addEventListener("touchend", up, false);
+onlytime.addEventListener("touchend", up, false);
 
 // window.addEventListener("touchend", touchup, false);
 // function touchup() {
