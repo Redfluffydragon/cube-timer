@@ -5,6 +5,7 @@
  * fix session dropup - pushes buttons over
  * figure out touch functionality for mobile
  * make into PWA eventually (for use offline) - just add a service worker to cache it?
+ * add voice for 8s and 12s
  */
 {
 let cube, inspectTime, mode, startdelay;
@@ -112,10 +113,8 @@ let shadows = document.getElementsByClassName("popup");
 let cancelbtn = document.getElementById("cancelbtn");
 let thetwo = document.getElementById("thetwo");
 let thednf = document.getElementById("thednf"); 
-let inmore = document.getElementById("inmore");
 let comment = document.getElementById("comment");
 let checkmore = document.getElementById("checkmore");
-
 let morepopup = document.getElementById("morepopup");
 let seescramble = document.getElementById("seescramble");
 let seedate = document.getElementById("seedate");
@@ -175,15 +174,12 @@ function createTable() {
 function gotem(item, defalt) {
   let vari;
   let getthething = localStorage.getItem(item);
-  if (getthething !== null) {
-    vari = JSON.parse(getthething);
-  }
-  if (vari === undefined) {vari = defalt;}
+  if (getthething !== null) { vari = JSON.parse(getthething); }
+  if (vari === undefined) { vari = defalt; }
   return vari;
 }
 
 function draw() { //on startup/reload. Also to redraw table after modifying a time
-
   alltimes.length = 0;
   cells0.length = 0;
   cells1.length = 0;
@@ -261,8 +257,8 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
     inspect15.style.backgroundColor = "initial";
   }
   else {
-    inspectnone.style.backgroundColor = "initial";
     inspect15.style.backgroundColor = "rgb(140, 140, 140)";
+    inspectnone.style.backgroundColor = "initial";
   }
 
   fscramble.length = 0;
@@ -274,9 +270,7 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
     fscramble = JSON.parse(rtvscramble);
     scrambletxt.textContent = fscramble;
   }
-  else {
-    scramble();
-  }
+  else { scramble(); }
 
   //check for always show more
   morechecked = gotem("moretoggle", false);
@@ -309,7 +303,7 @@ draw();
 //get just the session names
 for (let i = 0; i < sessions.length; i++) { sesnames.push(sessions[i].name); }
 
-function clickTable() { //set up row clicks on the time table, and key shortcuts for +2, dnf, and delete
+function clickTable() { //set up row clicks on the time table 
 
   function findTime(timeselect) {
     for(let i = 0; i < displaytimes.length; i++) {
@@ -369,7 +363,7 @@ function clickTable() { //set up row clicks on the time table, and key shortcuts
       seecube.textContent = "Cube: " + allthistime.cube;
       if (allthistime.comment !== undefined) {comment.value = allthistime.comment;}
 
-      inmore.addEventListener("click", () => {
+      document.getElementById("inmore").addEventListener("click", () => {
         if (!morepop) {
           morepopup.style.display = "block";
           morepop = true;
@@ -524,7 +518,7 @@ document.addEventListener("click", (evt) => { //switch delay times
 });
 
 
-//It's just a random move scrambler.
+//Just a random move scrambler.
 function checknxn(moveset) { //for nxnxn cubes
   let random = Math.round(Math.random()*(moveset.length-1)); //zero-indexed
   tempmove = moveset[random];
@@ -556,7 +550,7 @@ function checkpyr1() { // turn the big corners for the majority of the scramble
   }
 }
 
-function addfour(moveset, chancemod, apostrophe) { //turn 0-4 corners at the end - also for clock pegs I think...
+function addfour(moveset, chancemod, apostrophe) { //turn 0-4 corners at the end - also for clock - pegs I think...
   for (let i = 0; i < 4; i++) {
     let pointyn = Math.round(Math.random()+chancemod);
     if (pointyn === 1) {
@@ -919,12 +913,10 @@ touch.addEventListener("touchstart", (evt) => {
   evt.preventDefault();
   down();
 }, false);
-
 time.addEventListener("touchstart", (evt) => {
   evt.preventDefault();
   down();
 }, false);
-  
 onlytime.addEventListener("touchstart", (evt) => {
   evt.preventDefault();
   down();
@@ -1081,7 +1073,6 @@ checkmore.addEventListener("click", () => {
   morechecked = checkmore.checked;
   localStorage.setItem("moretoggle", JSON.stringify(morechecked));
   alwaysmore = morechecked;
-  closeAll();
 }, false);
 
 
