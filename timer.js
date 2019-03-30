@@ -15,7 +15,7 @@
  * make into PWA eventually (for use offline)
  * just add a service worker to cache it?
  */
-// localStorage.clear();
+
 {//everything
 
 let cube, inspectTime, mode;
@@ -29,8 +29,8 @@ let inspecting = false;
 let startdelay = 300;
 
 let alltimes = []; //everything is stored here
-let justTimes = [];//just the times from the current session - for display
-let displaytimes = [];
+let justTimes = [];//just the times - for best/worst
+let displaytimes = []; //just the times from current session - for display
 
 
 let rows = [];
@@ -417,7 +417,6 @@ function clickTable() { //set up row clicks on the time table, and key shortcuts
 //close modals on click outside
 document.addEventListener("click", function(evt) {
   if(evt.target.closest(".popup")) return;
-  //closepop.classList.add("hide");
   if (timepop && !clicked) {
     closeAll();
     timepop = false;
@@ -427,8 +426,7 @@ document.addEventListener("click", function(evt) {
     clicked = false;
   }
   if (sespop && !sesclicked) {
-    sespopup.style.display = "none";
-    shadow.style.display = "none";
+    closeAll();
     sespop = false;
   }
   else if (sesclicked) {
@@ -436,8 +434,7 @@ document.addEventListener("click", function(evt) {
     sesclicked = false;
   }
   if (sesoptpop && !sesoptclicked) {
-    sesoptpopup.style.display = "none";
-    shadow.style.display = "none";
+    closeAll();
     sesoptpop = false;
   }
   else if (sesoptclicked) {
@@ -1125,7 +1122,6 @@ function runmode(start) { // switch modes, and open in saved mode
       style.appendChild(document.createTextNode(css));
   }
   head.appendChild(style);
-  console.log(mode);
 }
 
 //close everything
