@@ -986,14 +986,14 @@ function up () {
       countime = 0;
       onstart = false;
     }
-    if(inspectTime !== 0 && !started && !waiting && inspecting && pause) {
+    if(inspectTime && !started && !waiting && inspecting && pause) {
       clearInterval(oto);
       countime = 0;
       onstart = false;
       started = false;
     }
 
-    if (!keydown && inspectTime && !inspecting && !started && waiting && !pause) {
+    if (!keydown && inspectTime && !inspecting && !started && !waiting && !pause) {
       onlytime.style.display = "initial";
       runinspect();
       if (inspecting) {
@@ -1035,26 +1035,29 @@ function checkKeyUp(evt) {
 
 touch.addEventListener("touchstart", function (evt) {
   evt.preventDefault();
-  if (!evt.target.matches("#touch")) {return;}
+//   if (!evt.target.matches("#touch")) {return;}
   down();
 }, false);
 
 time.addEventListener("touchstart", function(evt) {
   evt.preventDefault();
-  if (!evt.target.matches("#time")) {return;}
+//   if (!evt.target.matches("#time")) {return;}
   down();
 }, false);
   
 onlytime.addEventListener("touchstart", function(evt) {
   evt.preventDefault();
-  if (!evt.target.matches("#onlytime")) {return;}
+//   if (!evt.target.matches("#onlytime")) {return;}
   down();
 }, false);
+  
+time.addEventListener("touchend", up, false);
+touch.addEventListener("touchend", up, false);
 
-window.addEventListener("touchend", touchup, false);
-function touchup() {
-  up();
-}
+// window.addEventListener("touchend", touchup, false);
+// function touchup() {
+//   up();
+// }
 
 
 //dark/light mode
