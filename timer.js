@@ -1,37 +1,23 @@
-/**
- * something's going on with the inspection time again.
- * if inspection time is auto-zero, the second time it'll switch to 15s.
- *
- * todo:
+/**todo:
  * add option to export session in sessions options (csv)
  * add export all button (csv)
- * 
  * add undo function for deleting things
  * fix session dropup - pushes buttons over
- * make modal function for close on click outside
- * 
  * figure out better touch functionality for mobile
- * 
- * make into PWA eventually (for use offline)
- * just add a service worker to cache it?
+ * make into PWA eventually (for use offline) - just add a service worker to cache it?
  */
+{
+let cube, inspectTime, mode, startdelay;
+let css;
 
-{//everything
-
-let cube, inspectTime, mode;
-
-let timer = 0;
-let counter = 0;
-let start = new Date();
+//for stopwatch
+let timer, counter, start, intstart;
 let started = false; //started or stopped
-let intstart;
 let inspecting = false;
-let startdelay = 300;
 
-let alltimes = []; //everything is stored here
+let alltimes = [];
 let justTimes = [];//just the times - for best/worst
 let displaytimes = []; //just the times from current session - for display
-
 
 let rows = [];
 let cells0 = [];
@@ -41,25 +27,16 @@ let cells3 = [];
 let fiveavg = [];
 let twelavg = [];
 
-let timeou = new Date();
-let outime;
-let countime;
-let oto;
-let pause;
-let waiting;
-
 let keydown = false;
 let onstart = false;
 
-let itimer, icounter, inspectstart;
-let istart = new Date();
+//for inspection time countdown
+let timeou = new Date();
+let outime, countime, oto, pause, waiting;
+let itimer, icounter, inspectstart, istart, displayctdn;
 let countdown = [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, "+2", "+2", "DNF"];
 let dnf = 0;
-let displayctdn;
 let plustwo = 0;
-
-//for light/dark mode
-let css;
 
 //scramble generator variables
 let faces = ["F", "U", "L", "R", "D", "B"];
@@ -337,6 +314,11 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
 
 draw();
 
+//get just the session names
+for (let i = 0; i < sessions.length; i++) {
+  sesnames.push(sessions[i].name);
+}
+
 function clickTable() { //set up row clicks on the time table, and key shortcuts for +2, dnf, and delete
 
   function findTime(timeselect) {
@@ -417,29 +399,14 @@ function clickTable() { //set up row clicks on the time table, and key shortcuts
 //close modals on click outside
 document.addEventListener("click", function(evt) {
   if(evt.target.closest(".popup")) return;
-  if (timepop && !clicked) {
+  if ((timepop || sespop || sesoptpop) && !clicked) {
     closeAll();
-    timepop = false;
   }
   else if (clicked) {
     timepop = true;
-    clicked = false;
-  }
-  if (sespop && !sesclicked) {
-    closeAll();
-    sespop = false;
-  }
-  else if (sesclicked) {
     sespop = true;
-    sesclicked = false;
-  }
-  if (sesoptpop && !sesoptclicked) {
-    closeAll();
-    sesoptpop = false;
-  }
-  else if (sesoptclicked) {
-    sesoptclicked = false;
     sesoptpop = true;
+    clicked = false;
   }
 }, false);
 
@@ -490,23 +457,21 @@ DropDown(delayButton, delayDrop);
 DropDown(sesslc, sesdrop); //actually drops up
 
 //switch inspection times
-inspectnone.addEventListener("click", noInspect, false);
-function noInspect (evt) {
+inspectnone.addEventListener("click", function (evt) {
   evt.preventDefault();
   inspectTime = 0;
   localStorage.setItem("inspectsave", JSON.stringify(inspectTime));
   inspectnone.style.backgroundColor = "rgb(140, 140, 140)";
   inspect15.style.backgroundColor = "initial";
-}
+}, false);
 
-inspect15.addEventListener("click", wcaInspect, false);
-function wcaInspect (evt) {
+inspect15.addEventListener("click", function (evt) {
   evt.preventDefault();
   inspectTime = 15000;
   localStorage.setItem("inspectsave", JSON.stringify(inspectTime));
   inspect15.style.backgroundColor = "rgb(140, 140, 140)";
   inspectnone.style.backgroundColor = "initial";
-}
+}, false);
 
 function makeDate() {
   let thedate = new Date();
@@ -1016,8 +981,7 @@ function up () {
   }
 }
 
-window.addEventListener("keydown", checkKeyDown, false);//keydown to stop
-function checkKeyDown(evt) {
+window.addEventListener("keydown", function (evt) {
   let key = evt.keyCode;
   if (key === 32) {
     down();
@@ -1025,13 +989,12 @@ function checkKeyDown(evt) {
   if (key === 27) {
     closeAll();
   }
-}
-window.addEventListener("keyup", checkKeyUp, false);//keyup to start
-function checkKeyUp(evt) {
+}, false);
+window.addEventListener("keyup", function (evt) {
   if (evt.keyCode === 32) {
     up();
   }
-}
+}, false);
 
 touch.addEventListener("touchstart", function (evt) {
   evt.preventDefault();
@@ -1051,10 +1014,9 @@ onlytime.addEventListener("touchstart", function(evt) {
   down();
 }, false);
 
-window.addEventListener("touchend", touchup, false);
-function touchup() {
+window.addEventListener("touchend", function () {
   up();
-}
+}, false);
 
 
 //dark/light mode
@@ -1143,9 +1105,9 @@ function closeAll() {
   localStorage.setItem("all", JSON.stringify(alltimes));
   
   timepop = false;
-  clicked = false;
-  sesoptpop = false;
   sespop = false;
+  sesoptpop = false;
+  clicked = false;
 }
 
 //close the time editing popup
@@ -1209,7 +1171,7 @@ newses.addEventListener("click", function() {
   sespopup.style.display = "inline-block";
   shadow.style.display = "initial";
   sesname.focus();
-  sesclicked = true;
+  clicked = true;
 }, false);
 
 //close the new session popup
@@ -1340,7 +1302,7 @@ sesopt.addEventListener("click", function() {
     }
   }
   seesescrip.value = tempcrip;
-  sesoptclicked = true;
+  clicked = true;
 }, false);
 
 //close the session options popup
@@ -1376,11 +1338,6 @@ saveses.addEventListener("click", function() {
   draw();
 }, false);
 
-//get just the session names
-for (let i = 0; i < sessions.length; i++) {
-  sesnames.push(sessions[i].name);
-}
-
 //switch sessions
 document.addEventListener("click", function(evt){
   if (!evt.target.matches(".sesselect")) return;
@@ -1409,5 +1366,4 @@ outicon.addEventListener("click", function() {
   timein = false;
   localStorage.setItem("timein", JSON.stringify(timein)); 
 }, false);
-
 }
