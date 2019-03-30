@@ -1149,9 +1149,7 @@ function closeAll() {
 }
 
 //close the time editing popup
-cancelbtn.addEventListener("click", function() {
-  closeAll();
-}, false);
+cancelbtn.addEventListener("click", closeAll, false);
 
 //todo - add more keyboard shortcuts and undo function
 document.addEventListener("click", function(evt) { //+2, DNF, and delete for individual times
