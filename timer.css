@@ -92,7 +92,7 @@ body {
   text-decoration: none;
 }
 
-#cubeDrop {right: 8px;}
+#cubeDrop {right: 0;}
 
 .rdropbtn {
   border: none;
@@ -216,16 +216,9 @@ body {
   left: .6vw;
   transition: transform .8s;
   /* top: 90vh; */ /* for firefox?? what the heck */
-  bottom: 0;
+  bottom: 7px;
   margin: 0;
   padding: 0;
-}
-
-#sessions button {
-  margin: 0;
-  padding: 0;
-  /* position: absolute; */
-  top: 90vh;
 }
 
 .sesedit {
@@ -251,8 +244,7 @@ body {
   display: none;
   background-color: rgb(180, 180, 180);
   position: relative;
-  top: calc(5px + 1vh);
-  /* bottom: calc(31px + 1.5vw); */
+  bottom: 4px;
 }
 
 #sesdrop p {
@@ -414,8 +406,7 @@ button:hover {
 #settings {
   position: absolute;
   right: 8px;
-  /* float: right; */
-  width: 85vw;
+  width: 70vw;
   height: 20vh;
 }
 
@@ -477,8 +468,11 @@ button:hover {
 }
 
 #morepopup {
-  /* width: 39vw; */
   font-size: calc(9px + .7vw);
+}
+
+#alwsmore {
+  display: block;
 }
 
 #comment {
@@ -541,6 +535,10 @@ button:hover {
   font-size: calc(12px + .7vw);
 }
 
+@media screen and (min-width: 600px) {
+  #morepopup {width: 40vw;}
+}
+
 @media screen and (max-width: 1100px) {
   #scrambletxt {width: 54vw; top: 15vh; left: 30vw; font-size: calc(6px + 1.6vmax);}
 }
@@ -571,6 +569,8 @@ button:hover {
   #sesoptpopup button {width: 29vw;}
   #timetable tbody {height: 84vh;}
 }
+
+@media screen and (max-width: 600px) { #comment {width: 90vw;} }
 
 @media screen and (max-width: 545px) {
   #time {top: 11vh;}
