@@ -3,7 +3,7 @@
  * add export all button (csv)
  * add undo function for deleting things
  * fix session dropup - pushes buttons over
- * figure out touch functionality for mobile
+ * figure out touch functionality for mobile - script isn't working
  * make into PWA eventually (for use offline) - just add a service worker to cache it?
  * add voice for 8s and 12s
  */
