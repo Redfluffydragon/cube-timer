@@ -1,7 +1,7 @@
 /**todo:
  * add option to export session in sessions options (csv)
  * add export all button (csv)
- * add undo function for deleting things
+ * add undo function for deleting things - sessionStorage()
  * fix session dropup - pushes buttons over
  * figure out touch functionality for mobile - script isn't working
  * make into PWA eventually (for use offline) - just add a service worker to cache it?
