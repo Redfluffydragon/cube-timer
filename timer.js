@@ -68,6 +68,21 @@ let tscramble = [];
 let fscramble = [];
 let tempmove, pmove;
 
+let slen;
+const scramblers = {
+  "2x2": function() {slen = 10; checknxn(moves3);},
+  "3x3": function() {slen = 20; checknxn(moves3);},
+  "4x4": function() {slen = 45; checknxn(allmoves4);},
+  "5x5": function() {slen = 60; checknxn(allmoves4);},
+  "6x6": function() {slen = 70; checknxn(allmoves6);},
+  "7x7": function() {slen = 65; checknxn(allmoves6);},
+  "Megaminx": function() {slen = 44; checkmeg();},
+  "Pyraminx": function() {slen = 10; checkpyrall();},
+  "Skewb": function() {slen = 10; checkpyr1();},
+  "Square-1": function() {slen = 15; checksqu();},
+}
+
+
 let alwaysmore = true;
 let morechecked = false;
 
@@ -609,20 +624,6 @@ function checkclo() {
     if (clocks[i] !== "y2") { tscramble.unshift(clocks[i]+rvrsclock); }
     else { tscramble.unshift(clocks[i]); }
   }
-}
-
-let slen;
-const scramblers = {
-  "2x2": function() {slen = 10; checknxn(moves3);},
-  "3x3": function() {slen = 20; checknxn(moves3);},
-  "4x4": function() {slen = 45; checknxn(allmoves4);},
-  "5x5": function() {slen = 60; checknxn(allmoves4);},
-  "6x6": function() {slen = 70; checknxn(allmoves6);},
-  "7x7": function() {slen = 65; checknxn(allmoves6);},
-  "Megaminx": function() {slen = 44; checkmeg();},
-  "Pyraminx": function() {slen = 10; checkpyrall();},
-  "Skewb": function() {slen = 10; checkpyr1();},
-  "Square-1": function() {slen = 15; checksqu();},
 }
 
 function scramble() {
