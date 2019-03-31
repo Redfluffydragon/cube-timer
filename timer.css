@@ -412,7 +412,9 @@ button:hover {
 }
 
 #settings {
-  float: right;
+  position: absolute;
+  right: 8px;
+  /* float: right; */
   width: 85vw;
   height: 20vh;
 }
@@ -573,4 +575,11 @@ button:hover {
 @media screen and (max-width: 545px) {
   #time {top: 11vh;}
   #insptime {top: 11vh;}
+}
+
+@media screen and (max-width: 375px) {
+  /* #settings{font-size: 5vw;} */
+  /* #sessions button{font-size: 20vw;} */
+  #time {top: 20vh;}
+  /* #settings {right: calc(-10px + -50vw);} */
 }

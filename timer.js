@@ -179,6 +179,11 @@ function gotem(item, defalt) {
   return vari;
 }
 
+function isMobileDevice() {
+  return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
+};
+console.log(isMobileDevice());
+
 function draw() { //on startup/reload. Also to redraw table after modifying a time
   alltimes.length = 0;
   cells0.length = 0;
