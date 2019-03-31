@@ -212,11 +212,10 @@ body {
 
 #sessions {
   position: absolute;
-  display: fixed;
+  display: inline-block;
   left: .6vw;
   transition: transform .8s;
-  /* top: 90vh; */ /* for firefox?? what the heck */
-  bottom: 7px;
+  top: calc(96vh - 9px);
   margin: 0;
   padding: 0;
 }
