@@ -80,7 +80,7 @@ body {
   display: none;
   position: absolute;
   background-color: rgb(180, 180, 180);
-  z-index: 1;
+  z-index: 2;
   margin-left: 4px;
 }
 
@@ -477,7 +477,7 @@ button:hover {
 }
 
 #morepopup {
-  width: 39vw;
+  /* width: 39vw; */
   font-size: calc(9px + .7vw);
 }
 
@@ -578,8 +578,9 @@ button:hover {
 }
 
 @media screen and (max-width: 375px) {
-  /* #settings{font-size: 5vw;} */
-  /* #sessions button{font-size: 20vw;} */
-  #time {top: 20vh;}
-  /* #settings {right: calc(-10px + -50vw);} */
+  #scrambletxt {top: 15vh; left: 37vw; width: 58vw;}
+  #time {top: 34vh;}
+  #insptime{top: 34vh;}
+  #timetable tbody {height: 55vh;}
+  #centerac {width: 74vw;}
 }
