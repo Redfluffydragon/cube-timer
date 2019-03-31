@@ -577,7 +577,7 @@ button:hover {
   #insptime {top: 11vh;}
 }
 
-@media screen and (max-width: 375px) {
+@media screen and (max-width: 420px) {
   #scrambletxt {top: 15vh; left: 37vw; width: 58vw;}
   #time {top: 34vh;}
   #insptime{top: 34vh;}
