@@ -582,11 +582,12 @@ button:hover {
   #time {top: 11vh;}
   #insptime {top: 11vh;}
 }
-
+/* for mobile, I think */
 @media screen and (max-width: 420px) {
   #scrambletxt {top: 15vh; left: 37vw; width: 58vw;}
-  #time {top: 34vh;}
-  #insptime{top: 34vh;}
+  #time {top: 28vh; }
+  #insptime{top: 28vh;}
   #timetable tbody {height: 55vh;}
   #centerac {width: 74vw;}
+  body {height: 80vh;}
 }
