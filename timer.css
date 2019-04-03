@@ -1,5 +1,11 @@
+/*
+  * fix session dropup - pushes buttons over
+*/
 body {
-  overflow-y: auto;
+  height: 95vh;
+  top: 0;
+  left: 0;
+ 
 }
 
 #centerac {
@@ -20,8 +26,9 @@ body {
   width: 100%;
   height: 100%;
   background-color: white;
-  z-index: 2;
+  z-index: 3;
   position: absolute;
+  top: 0;
   bottom: 0;
   right: 0;
   display: none;
@@ -37,7 +44,7 @@ body {
   display: none;
   font-family: 'Times New Roman', Times, serif;
   color: #FF0000;
-  z-index: 2;
+  z-index: 3;
 }
 
 #timealert {
@@ -55,7 +62,7 @@ body {
   text-align: center;
   width: 52vw;
   margin: auto;
-  font-size: calc(16px + 1vmax);
+  font-size: calc(16px + .7vmax);
   font-family: monospace;
   justify-content: center;
   display: table;
@@ -213,9 +220,9 @@ body {
 #sessions {
   position: absolute;
   display: inline-block;
-  left: .6vw;
+  left: 1vh;
   transition: transform .8s;
-  top: calc(96vh - 9px);
+  bottom: .6vh;
   margin: 0;
   padding: 0;
 }
@@ -467,6 +474,7 @@ button:hover {
 }
 
 #morepopup {
+  margin-top: 9px;
   font-size: calc(9px + .7vw);
 }
 
@@ -482,16 +490,9 @@ button:hover {
   margin-bottom: 4px;
 }
 
-#seescramble {
-  position: relative;
-  top: 2vh;
-  padding-left: .5vh;
-  padding-right: .5vh;
-}
-
-#seedate {
-  padding-left: .5vh;
-  padding-right: .5vh;
+#seethings td {
+  vertical-align: top;
+  text-align: left;
 }
 
 #cancelbtn {
@@ -532,6 +533,12 @@ button:hover {
   position: relative;
   bottom: 3vh;
   font-size: calc(12px + .7vw);
+}
+
+#clearall {
+  position: absolute;
+  bottom: 7px;
+  right: 7px;
 }
 
 @media screen and (min-width: 600px) {
