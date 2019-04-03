@@ -1,11 +1,7 @@
-/*
-  * fix session dropup - pushes buttons over
-*/
 body {
   height: 95vh;
   top: 0;
   left: 0;
- 
 }
 
 #centerac {
@@ -54,7 +50,7 @@ body {
   right: 8vw;
   bottom: 18vh;
   color: red;
-  z-index: 2;
+  z-index: 3;
   display: none;
 }
 
@@ -584,6 +580,7 @@ button:hover {
 }
 /* for mobile, I think */
 @media screen and (max-width: 420px) {
+  /* body {scroll: none;} */
   #scrambletxt {top: 15vh; left: 37vw; width: 58vw;}
   #time {top: 28vh; }
   #insptime{top: 28vh;}
