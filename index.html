@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <script src="timer.js" type="text/javascript" async></script>
     <meta charset="utf-8"/>
     <title>Cube Timer</title>
     <link rel="icon" href="heptagoncube2.png" type="image/png">
@@ -24,7 +25,7 @@
     
     <div id="touch"></div>
 
-    <img src="outicon.png" id="outicon" style="height: calc(22px + .7vw);">
+    <img src="outicon.png" id="outicon" style="height: calc(24px + .7vw);">
     <div id="ttsize">
       <table id="timetable">
         <thead>
@@ -34,7 +35,7 @@
             <td class="header">Ao5</td>
             <td class="header">Ao12</td>
             <td id="inoutcell">
-              <img src="inicon.png" id="inicon" style="height: calc(22px + .7vw);">
+              <img src="inicon.png" id="inicon" style="height: calc(24px + .7vw);">
             </td>
           </tr>
         </thead>
@@ -83,8 +84,8 @@
         <img src="lightmode.png" id="lighticon" alt="light/dark mode icon" title="light/dark mode" style="width: 100%; height: 100%;">
       </div>
 
-      <h4 id="worst" class="topstats">Worst: --</h4>
-      <h4 id="best" class="topstats">Best: --</h4>
+      <h4 id="worse" class="topstats">Worst: <span id="worst">--</span></h4>
+      <h4 id="better" class="topstats">Best: <span id="best">--</span></h4>
     </div>
     
     <div id="shadow"></div>
@@ -98,9 +99,20 @@
         <button id="cancelbtn">Close</button>
       </div>
       <div id="morepopup" class="popup">
-        <p id="seescramble"></p>
-        <p id="seedate"></p>
-        <p id="seecube"></p>
+        <table id="seethings">
+          <tr>
+            <td><strong>Scramble: </strong></td>
+            <td id="seescramble"></td>
+          </tr>
+        <tr>
+          <td><strong>Date: </strong></td>
+          <td id="seedate"></td>
+        </tr>
+        <tr>
+          <td><strong>Cube: </strong></td>
+          <td id="seecube"></td>
+        </tr>
+        </table>
         <label>Comments: </label>
         <textarea id="comment" resize></textarea>
         <label id="alwsmore"><input id="checkmore"type="checkbox">Always show more</label>
@@ -148,7 +160,6 @@
       <button id="newses" class="sesedit" title="create a new session">New</button>
       <button id="sesopt"class="sesedit" title="session options">Options</button>
     </div>
-
-    <script src="timer.js" type="text/javascript" async></script>
+    <button id="clearall">Clear</button>
   </body>
 </html>
