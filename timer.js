@@ -362,8 +362,8 @@ function bestworst() {
   for (i in alltimes) { justTimes.push(alltimes[i].time); }
   let worstTime = Math.max(...justTimes);
   let bestTime = Math.min(...justTimes);
-  best.textContent = JSON.stringify(bestTime) !== null ? bestTime : "--";
-  worst.textContent = JSON.stringify(worstTime) !== null ? worstTime : "--";
+  best.textContent = !isNaN(JSON.stringify(bestTime)) ? bestTime : "--";
+  worst.textContent = !isNaN(JSON.stringify(worstTime)) ? worstTime : "--";
 }
 
 function DropDown (button, content) { //toggle dropdowns 
