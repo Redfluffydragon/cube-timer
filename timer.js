@@ -650,7 +650,7 @@ function fin() { //finish timing, save result
   clearInterval(inspectstart);
   
   onlytime.style.display = "none";      
-
+  timealert.style.display = "none";
   alltimes.push({number: "", cube: cube, session: session, time: counter, scramble: fscramble, date: makeDate(), comment: "", dnf: dnf, plustwo: plustwo});
   localStorage.setItem("all", JSON.stringify(alltimes));
 
@@ -695,7 +695,7 @@ function up () {
   }
 }
 
-function touchdown() {
+function touchdown(evt) {
   evt.preventDefault();
   down();
 }
