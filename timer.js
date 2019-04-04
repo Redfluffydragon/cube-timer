@@ -1,6 +1,4 @@
 /**todo:
- * add option to export session in sessions options (csv)
- * add export all button (csv)
  * figure out mobile - script isn't working
  * make into PWA eventually (for use offline) - just add a service worker to cache it?
  * add voice for 8s and 12s
@@ -26,6 +24,7 @@ let inspecting = false;
 let alltimes = [];
 let justTimes = [];//just the times - for best/worst
 let displaytimes = []; //just the times from current session - for display
+let timeKeys = ["number", "time", "cube", "session", "scramble", "date", "comment", "dnf", "plustwo"];
 
 let cells0 = [];
 let cells1 = [];
@@ -50,8 +49,8 @@ let inspectstart;
 let istart;
 let displayctdn;
 let countdown = [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, "+2", "+2", "DNF"];
-let dnf = 0;
-let plustwo = 0;
+let dnf = false;
+let plustwo = false;
 
 //scramble generator variables
 let faces = ["F", "U", "L", "R", "D", "B"];
@@ -175,9 +174,11 @@ let sesopt = document.getElementById("sesopt");
 let sesoptpopup = document.getElementById("sesoptpopup");
 let sesselect = document.getElementsByClassName("sesselect");
 let deleteallses = document.getElementById("deleteallses");
+let exportallses = document.getElementById("exportallses");
 let clearallses = document.getElementById("clearallses");
 let closeses = document.getElementById("closeses");
 let saveses = document.getElementById("saveses");
+let exportses = document.getElementById("exportses");
 let changesesname = document.getElementById("changesesname");
 let seesescrip = document.getElementById("seesescrip");
 let sessionsdiv = document.getElementById("sessions");
@@ -575,8 +576,8 @@ function inspection() {
   insptime.textContent = displayctdn;
   if (displayctdn === "DNF") {
     timealert.style.display = "none";
-    dnf = 1;
-    plustwo = 0;
+    dnf = true;
+    plustwo = false;
   }
   if (displayctdn === undefined) {
     time.textContent = "0.00";
@@ -651,11 +652,11 @@ function fin() { //finish timing, save result
   
   onlytime.style.display = "none";      
   timealert.style.display = "none";
-  alltimes.push({number: "", cube: cube, session: session, time: counter, scramble: fscramble, date: makeDate(), comment: "", dnf: dnf, plustwo: plustwo});
+  alltimes.push({number: "", time: counter, cube: cube, session: session, scramble: fscramble, date: makeDate(), comment: "", dnf: dnf, plustwo: plustwo});
   localStorage.setItem("all", JSON.stringify(alltimes));
 
-  dnf = 0;
-  plustwo = 0;
+  dnf = false;
+  plustwo = false;
 
   scramble();
   draw();
@@ -733,8 +734,8 @@ window.addEventListener("keydown", (evt) => {
     draw();
   }
   if (key === 13 && sespop) {newSession();}
-  if (key === 50 && timepop) { allthistime.plustwo = changeallplus ? 0 : 1; closeNdraw();}
-  if (key === 68 && timepop) { allthistime.dnf = changealldnf ? 0 : 1; closeNdraw();}
+  if (key === 50 && timepop) { allthistime.plustwo = changeallplus ? false : true; closeNdraw();}
+  if (key === 68 && timepop) { allthistime.dnf = changealldnf ? false : true; closeNdraw();}
 }, false);
 
 window.addEventListener("keyup", (evt) => {
@@ -832,8 +833,8 @@ document.addEventListener("click", (evt) => { //+2, DNF, and delete for individu
   evt.preventDefault();
   let selection = evt.target.textContent;
 
-  if (selection === "+2") { allthistime.plustwo = changeallplus ? 0 : 1; }
-  if (selection === "DNF") {allthistime.dnf = changealldnf ? 0 : 1; }
+  if (selection === "+2") { allthistime.plustwo = changeallplus ? false : true; }
+  if (selection === "DNF") {allthistime.dnf = changealldnf ? false : true; }
   if (selection === "Delete") {
       let conf = confirm("Remove this time?")
       if(conf){
@@ -903,6 +904,53 @@ function justAll() {
   time.textContent = "0.00";
 }
 
+function createArray(array, arrayKeys) { //create array of arrays from array of objects 
+  let returnarray = [];
+  let columnNames = [];
+  for (i in arrayKeys) {
+    let titleCase = arrayKeys[i].charAt(0).toUpperCase() + arrayKeys[i].slice(1);
+    columnNames.push(titleCase);
+  }
+  returnarray.push(columnNames);
+  for (i in array) {
+    let temparray = [];
+    for (j in arrayKeys) {
+      temparray.push('"'+array[i][arrayKeys[j]].toString()+'"');
+    }
+    returnarray.push(temparray);
+  }
+  return returnarray;
+}
+
+function createCsv(array, arrayKeys, name) {
+  let makeIntoArray = createArray(array, arrayKeys);
+  let csvFile = "data:text/csv;charset=utf-8,";
+  for (i in makeIntoArray) {
+    csvFile += makeIntoArray[i] + "\n";
+  }
+  let encoded = encodeURI(csvFile);
+  let linkDownload = document.createElement("a");
+  linkDownload.setAttribute("href", encoded);
+  linkDownload.setAttribute("download", name+".csv");
+  document.body.appendChild(linkDownload);
+  linkDownload.click();
+  document.body.removeChild(linkDownload);
+  closeAll();
+};
+
+deleteallses.addEventListener("click", () => {
+  let deleteallconf = confirm("Delete all sessions?");
+  if (deleteallconf) {
+    justAll();
+    sesremoved = sessions;
+    sessionStorage.setItem("sesremoved", JSON.stringify(sesremoved));
+    localStorage.removeItem("sessions");
+    localStorage.removeItem("currses");
+    sesslc.textContent = session;  
+    closeNdraw();
+  }
+}, false);
+
 deleteses.addEventListener("click", () => {
   let deletesessionconf = confirm("Delete this session?");
   if (deletesessionconf) {
@@ -932,19 +980,6 @@ deleteses.addEventListener("click", () => {
   }
 }, false);
 
-deleteallses.addEventListener("click", () => {
-  let deleteallconf = confirm("Delete all sessions?");
-  if (deleteallconf) {
-    justAll();
-    sesremoved = sessions;
-    sessionStorage.setItem("sesremoved", JSON.stringify(sesremoved));
-    localStorage.removeItem("sessions");
-    localStorage.removeItem("currses");
-    sesslc.textContent = session;  
-    closeNdraw();
-  }
-}, false);
-
 clearallses.addEventListener("click", () => {
   let firm = confirm("Do you want to clear all times?");
   if (firm) {
@@ -959,6 +994,14 @@ clearses.addEventListener("click", () => {
     justAsession();
     closeNdraw();
   }
+}, false);
+
+exportallses.addEventListener("click", () => {
+  createCsv(alltimes, timeKeys, "timer")
+}, false);
+
+exportses.addEventListener("click", () => {
+  createCsv(displaytimes, timeKeys, session);
 }, false);
 
 sesopt.addEventListener("click", () => {

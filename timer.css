@@ -331,6 +331,14 @@ body {
   background-color: #FF990060;
 }
 
+.exportbtn {
+  background-color: rgba(0, 100, 255, 0.376);
+}
+
+.csv {
+  font-size: calc(8px + .7vw);
+}
+
 #sesoptbuttons table{
   float: right;
 }
