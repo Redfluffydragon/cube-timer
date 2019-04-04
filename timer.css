@@ -57,7 +57,7 @@ body {
   right: 8vw;
   bottom: 18vh;
   color: red;
-  z-index: 3;
+  z-index: 4;
   display: none;
 }
 
@@ -178,6 +178,7 @@ body {
   height: 86vh;
   overflow: -moz-scrollbars-none;
   -ms-overflow-style: none;
+  
 }
 
 #timetable tbody::-webkit-scrollbar { width: 0 !important }

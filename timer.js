@@ -51,6 +51,10 @@ let displayctdn;
 let countdown = [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, "+2", "+2", "DNF"];
 let dnf = false;
 let plustwo = false;
+let eightSecSound = new Audio("eight.mp3");
+let twelveSecSound = new Audio("twelve.mp3");
+let played8 = false;
+let played12 = false;
 
 //scramble generator variables
 let faces = ["F", "U", "L", "R", "D", "B"];
@@ -512,7 +516,7 @@ function checkmeg() {
   }
 }
 
-function checksqu() {//probably doesn't work. I don't know what moves aren't allowed on a squan.
+function checksqu() {//probably doesn't work. I don't know what moves aren't allowed for squan.
   let onerand = Math.round((Math.random()*11)-5);
   let tworand = Math.round((Math.random()*11)-5);
   let firstnum, secondnum;
@@ -590,9 +594,17 @@ function inspection() {
   if (displayctdn === 7) {
     timealert.style.display = "initial";
     timealert.textContent = "8s!";
+    if (!played8) {
+      eightSecSound.play();
+      played8 = true;
+    }
   }
   if (displayctdn === 3) {
     timealert.textContent = "12s!";
+    if (!played12) {
+      twelveSecSound.play();
+      played12 = true;
+    }
   }
 }
 
@@ -615,7 +627,7 @@ function go() { //run stopwatch & stuff
   onlytime.style.display = "initial";
   insptime.style.display = "none";
   time.style.display = "initial";
-  timealert.display = "none";
+  timealert.style.display = "none";
   clearInterval(inspectstart);
   clearInterval(oto);
   pause = false;
@@ -650,6 +662,8 @@ function otimeout() { //setInterval for ptimeout
  
 function fin() { //finish timing, save result
   started = false;
+  played8 = false;
+  played12 = false;
   clearInterval(intstart);
   clearInterval(inspectstart);
   
@@ -1075,9 +1089,12 @@ outicon.addEventListener("click", timesInOut, false);
 timetable.addEventListener("transitionend", timicon, false);
 
 document.getElementById("clearall").addEventListener("click", () => {
-  localStorage.clear();
-  sessionStorage.clear();
-  console.log("cleared");
+  let clearall = confirm("Clear everything?")
+  if (clearall) {
+    localStorage.clear();
+    sessionStorage.clear();
+    console.log("cleared");
+  }
 }, false);
 
 
