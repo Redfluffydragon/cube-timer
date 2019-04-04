@@ -367,8 +367,9 @@ function bestworst() {
   worst.textContent = !isNaN(JSON.stringify(worstTime)) ? worstTime : "--";
 }
 
+let dropdown;
 function DropDown (button, content) { //toggle dropdowns 
-  let dropdown = false;
+  dropdown = false;
   document.addEventListener("click", (evt) => {
     let targetElement = evt.target;
     do {
@@ -697,8 +698,10 @@ function up () {
 }
 
 function touchdown(evt) {
-  evt.preventDefault();
-  down();
+  if (!dropdown) {
+    evt.preventDefault();
+    down();
+  }
 }
 
 window.addEventListener("keydown", (evt) => {
