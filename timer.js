@@ -347,7 +347,7 @@ function clickTable() { //set up row clicks on the time table
 }
 
 //close modals on click outside
-document.addEventListener("click touchstart", (evt) => { 
+document.addEventListener("click", (evt) => { 
   if(evt.target.closest(".popup")) return;
   if ((timepop || sespop || sesoptpop) && !clicked) { closeAll(); }
   else if (clicked) {
