@@ -302,9 +302,9 @@ function closeNdraw() {
 
 function clickTable() { //set up row clicks on the time table 
   let rowID = document.getElementById("timebody").getElementsByTagName('tr');
-
+  let clickTouch = isMobile ? "touchstart" : "click";
   for (i = 0; i < rowID.length; i++) {
-    rowID[i].onclick = function() {
+    rowID[i].addEventListener(clickTouch, function() {
       let rvrsrow = displaytimes.length - this.rowIndex+1; //reverse the row index
       let findem;
       for(let i = 0; i < displaytimes.length; i++) {
@@ -343,13 +343,15 @@ function clickTable() { //set up row clicks on the time table
         morepop = morepop ? false : true;
       }, false);
       clicked = true;
-    }
+    }, false);
   }
 }
 
 //close modals on click outside
-document.addEventListener("click", (evt) => { 
+let clickTouch = isMobile ? "touchstart" : "click";
+document.addEventListener(clickTouch, (evt) => {
   if(evt.target.closest(".popup")) return;
+  console.log("out");
   if ((timepop || sespop || sesoptpop) && !clicked) { closeAll(); }
   else if (clicked) {
     timepop = true;
@@ -698,10 +700,8 @@ function up () {
 }
 
 function touchdown(evt) {
-  // if (!dropdown) {
     evt.preventDefault();
     down();
-  // }
 }
 
 window.addEventListener("keydown", (evt) => {
@@ -747,11 +747,12 @@ window.addEventListener("keyup", (evt) => {
 }, false);
 
 touch.addEventListener("touchstart", touchdown, false);
+centerac.addEventListener("touchstart", touchdown, false);
 time.addEventListener("touchstart", touchdown, false);
 onlytime.addEventListener("touchstart", touchdown, false);
 
-time.addEventListener("touchend", up, false);
 touch.addEventListener("touchend", up, false);
+centerac.addEventListener("touchend", up, false);
 onlytime.addEventListener("touchend", up, false);
 
 //dark/light mode
