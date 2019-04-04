@@ -1,5 +1,4 @@
 /**todo:
- * figure out mobile - script isn't working at all
  * make into PWA (for use offline) - just add a service worker to cache it?
  * add voice for 8s and 12s
  * add averages to csv files?
@@ -348,7 +347,7 @@ function clickTable() { //set up row clicks on the time table
 }
 
 //close modals on click outside
-document.addEventListener("click", (evt) => { 
+document.addEventListener("click touchstart", (evt) => { 
   if(evt.target.closest(".popup")) return;
   if ((timepop || sespop || sesoptpop) && !clicked) { closeAll(); }
   else if (clicked) {
