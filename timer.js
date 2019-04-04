@@ -1057,7 +1057,7 @@ document.addEventListener("click", (evt) => {
 }, false);
 
 function timesInOut() {
-  timetable.style.transform = timein ? "translateX(0)" : "translateX(-40vw)";
+  timetable.style.transform = timein ? "translateX(0)" : "translateX(-50vw)";
   sessionsdiv.style.transform = timein ? "translateX(0)" : "translateX(-100vw)";
   timein = timein ? false : true;
   localStorage.setItem("timein", JSON.stringify(timein)); 

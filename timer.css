@@ -588,10 +588,10 @@ button:hover {
 }
 /* for mobile, I think */
 @media screen and (max-width: 420px) {
-  /* body {scroll: none;} */
-  #scrambletxt {top: 15vh; left: 37vw; width: 58vw;}
-  #time {top: 28vh; }
-  #insptime{top: 28vh;}
+  #scrambletxt {top: 20vh; left: 37vw; width: 58vw;}
+  #settings {height: 20vh;}
+  #time {top: 25vh; }
+  #insptime{top: 25vh;}
   #timetable tbody {height: 55vh;}
   #centerac {width: 74vw;}
   body {height: 80vh;}
