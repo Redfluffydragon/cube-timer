@@ -22,7 +22,7 @@ let started = false;
 let inspecting = false;
 
 let alltimes = [];
-let justTimes = [];//just the times - for best/worst
+let justTimes = []; //just the times - for best/worst
 let displaytimes = []; //just the times from current session - for display
 let timeKeys = ["number", "time", "cube", "session", "scramble", "date", "comment", "dnf", "plustwo"];
 
@@ -85,7 +85,7 @@ let slen;
 
 let scrambletxt = document.getElementById("scrambletxt");
 
-const scramblers = { //object with all the scrambles in it
+const scramblers = { //object with all the scrambler functions in it
   "2x2": () => {slen = 10; checknxn(moves3);},
   "3x3": () => {slen = 20; checknxn(moves3);},
   "4x4": () => {slen = 45; checknxn(allmoves4);},
@@ -183,6 +183,7 @@ let changesesname = document.getElementById("changesesname");
 let seesescrip = document.getElementById("seesescrip");
 let sessionsdiv = document.getElementById("sessions");
 
+let isMobile = (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
 
 function createTable() {
   let columnClass = ["number", "times", "avgofive", "avgotwelve"];
@@ -757,7 +758,9 @@ onlytime.addEventListener("touchend", up, false);
 lighticon.addEventListener("click", () => {runmode(false)}, false);
 
 function darkmode() {
-  document.body.style.backgroundColor = "black";
+  if (!isMobile) {
+    document.body.style.backgroundColor = "black";
+  }
   shadow.style.backgroundColor = "rgba(255, 255, 255, .8)";
   cancelbtn.style.backgroundColor = "#DCDCDC";
   sescreate.style.backgroundColor = "#DCDCDC";
@@ -773,7 +776,9 @@ function darkmode() {
 }
 
 function lightmode() {
-  document.body.style.backgroundColor = "white";
+  if (!isMobile) {
+    document.body.style.backgroundColor = "white";
+  }  
   shadow.style.backgroundColor = "rgba(255, 255, 255, .8)";
   cancelbtn.style.backgroundColor = "#8C8C8C";
   sescreate.style.backgroundColor = "#8C8C8C";

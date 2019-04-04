@@ -359,8 +359,7 @@ body {
 #seesescrip {
   vertical-align: top;
   margin: 4px;
-  min-width: 96%;
-  max-width: 96%;
+  width: 96%;
   resize: none;
   height: 10vh;
 }
@@ -388,7 +387,7 @@ body {
 }
 
 button {
-  background-color: rgb(140, 140, 140);
+  background-color: rgb(215, 215, 215);
   border: none;
   font-family: Arial, Helvetica, sans-serif;
   font-size: calc(12px + .7vw);
@@ -590,7 +589,9 @@ button:hover {
 }
 
 @media screen and (max-width: 420px) {
-
+  #sesname {width: 48vw;}
+  #sescrip {width: 48vw;}
+  #seesescrip {width: 58vw;}
   #scrambletxt {top: 20vh; left: 37vw; width: 58vw;}
   #settings {height: 20vh;}
   #time {top: 52vh; height: 0;}
