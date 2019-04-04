@@ -10,7 +10,6 @@
   </head>
 
   <body >
-    <script> document.addEventListener("click", () => {alert("This is a script")}, false);</script>
     <div id="scramblediv">
       <p id="scrambletxt" title="Just a random move scrambler."></p>
     </div>
@@ -166,6 +165,7 @@
       <button id="sesopt"class="sesedit" title="session options">Options</button>
     </div>
     <button id="clearall">Clear</button>
+    <script> window.addEventListener("click", (e) => {alert(e.target)}, false);</script>
     <script src="timer.js" type="text/javascript" async></script>
   </body>
 </html>
