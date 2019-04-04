@@ -1,7 +1,8 @@
 /**todo:
- * figure out mobile - script isn't working
- * make into PWA eventually (for use offline) - just add a service worker to cache it?
+ * figure out mobile - script isn't working at all
+ * make into PWA (for use offline) - just add a service worker to cache it?
  * add voice for 8s and 12s
+ * add averages to csv files?
  */
 {
 let cube;
