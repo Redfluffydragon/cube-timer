@@ -13,9 +13,10 @@ body {
   font-size: calc(700% + 8vmax);
   text-align: left;
   position: absolute;
-  top: 8vh;
+  top: 48vh;
   font-family: 'Times New Roman', Times, serif;
   z-index: 3;
+  margin: 0;
 }
 
 #onlytime {
@@ -35,12 +36,13 @@ body {
   font-size: calc(700% + 8vmax);
   text-align: center;
   position: absolute;
-  top: 8vh;
+  top: 48vh;
   padding-left: 5vw;
   display: none;
   font-family: 'Times New Roman', Times, serif;
   color: #FF0000;
   z-index: 3;
+  margin: 0;
 }
 
 #timealert {
@@ -72,6 +74,7 @@ body {
   top: 6vh;
   display: table-cell;
   vertical-align: bottom;
+  z-index: 3;
 }
 
 .rdropdown {
@@ -83,7 +86,7 @@ body {
   display: none;
   position: absolute;
   background-color: rgb(180, 180, 180);
-  z-index: 2;
+  z-index: 3;
   margin-left: 4px;
 }
 
@@ -559,20 +562,19 @@ button:hover {
   #cancelbtn{right: 50vw;}
   #sesoptpopup button {width: 25vw;}
   #timetable tbody {height: 83vh;}
-  #time {top: 9vh;}
-  #insptime {top: 9vh;}
+  #time {top: 49vh;}
+  #insptime {top: 49vh;}
 }
 
 @media screen and (max-width: 750px) {
   #settings {width: 50vw;}
-  #time {top: 12vh;}
-  #insptime {top: 12vh;}
+  #time {top: 57vh;}
+  #insptime {top: 57vh;}
 }
 
 @media screen and (max-width: 650px) { /*if viewport width is less than 480 px*/
   #centerac {width: 40vw;}
-  #time {top: 7vh;}
-  #insptime {top: 7vh;}
+  #insptime {top: 57vh;}
   #scrambletxt {width: 64vw; top: 12vh;}
   #settings{width: 60vw;}
   #settingslist{padding-left: 2vw;}
@@ -583,16 +585,17 @@ button:hover {
 @media screen and (max-width: 600px) { #comment {width: 90vw;} }
 
 @media screen and (max-width: 545px) {
-  #time {top: 11vh;}
-  #insptime {top: 11vh;}
+  #time {top: 61vh;}
+  #insptime {top: 61vh;}
 }
-/* for mobile, I think */
+
 @media screen and (max-width: 420px) {
   #scrambletxt {top: 20vh; left: 37vw; width: 58vw;}
   #settings {height: 20vh;}
-  #time {top: 25vh; height: 0;}
-  #insptime{top: 25vh;}
-  #timetable tbody {height: 55vh;}
+  #time {top: 52vh; height: 0;}
+  #insptime{top: 52vh; height: 0;}
+  #timetable tbody {height: 50vh;}
+  #centerac {height: 0;}
   #centerac {width: 74vw;}
   body {height: 80vh;}
 }

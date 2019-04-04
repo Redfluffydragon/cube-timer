@@ -367,20 +367,19 @@ function bestworst() {
   worst.textContent = !isNaN(JSON.stringify(worstTime)) ? worstTime : "--";
 }
 
-let dropdown;
 function DropDown (button, content) { //toggle dropdowns 
-  dropdown = false;
+  let dropdown = false;
   document.addEventListener("click", (evt) => {
-    let targetElement = evt.target;
+    let target = evt.target;
     do {
-      if (targetElement === button) {
+      if (target === button) {
         content.style.display = dropdown ? "none" : "block";
         dropdown = dropdown ? false : true;
         return;
       }
-      targetElement = targetElement.parentNode;
-    } while (targetElement);
-
+      target = target.parentNode;
+    } 
+    while (target);
     content.style.display = "none";
     dropdown = false;
     button.blur();
@@ -698,10 +697,10 @@ function up () {
 }
 
 function touchdown(evt) {
-  if (!dropdown) {
+  // if (!dropdown) {
     evt.preventDefault();
     down();
-  }
+  // }
 }
 
 window.addEventListener("keydown", (evt) => {
