@@ -4,7 +4,7 @@
  * add voice for 8s and 12s
  * add averages to csv files?
  */
-{
+
 let cube;
 let inspectTime;
 let mode;
@@ -1073,4 +1073,4 @@ document.getElementById("clearall").addEventListener("click", () => {
   console.log("cleared");
 }, false);
 
-}
+
