@@ -757,7 +757,6 @@ lighticon.addEventListener("click", () => {runmode(false)}, false);
 
 function darkmode() {
   document.body.style.backgroundColor = "black";
-  touch.style.backgroundColor = "black";
   shadow.style.backgroundColor = "rgba(255, 255, 255, .8)";
   cancelbtn.style.backgroundColor = "#DCDCDC";
   sescreate.style.backgroundColor = "#DCDCDC";
@@ -774,7 +773,6 @@ function darkmode() {
 
 function lightmode() {
   document.body.style.backgroundColor = "white";
-  touch.style.backgroundColor = "white";
   shadow.style.backgroundColor = "rgba(255, 255, 255, .8)";
   cancelbtn.style.backgroundColor = "#8C8C8C";
   sescreate.style.backgroundColor = "#8C8C8C";
