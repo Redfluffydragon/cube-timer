@@ -1,6 +1,5 @@
 /**todo:
  * make into PWA (for use offline) - just add a service worker to cache it?
- * add voice for 8s and 12s
  * add averages to csv files?
  */
 
