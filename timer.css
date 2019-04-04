@@ -590,7 +590,7 @@ button:hover {
 @media screen and (max-width: 420px) {
   #scrambletxt {top: 20vh; left: 37vw; width: 58vw;}
   #settings {height: 20vh;}
-  #time {top: 25vh; }
+  #time {top: 25vh; height: 0;}
   #insptime{top: 25vh;}
   #timetable tbody {height: 55vh;}
   #centerac {width: 74vw;}
