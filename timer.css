@@ -15,7 +15,7 @@ body {
   position: absolute;
   top: 48vh;
   font-family: 'Times New Roman', Times, serif;
-  z-index: 3;
+  z-index: 4;
   margin: 0;
 }
 
@@ -23,7 +23,7 @@ body {
   width: 100%;
   height: 100%;
   background-color: white;
-  z-index: 3;
+  z-index: 4;
   position: absolute;
   top: 0;
   bottom: 0;
@@ -41,7 +41,7 @@ body {
   display: none;
   font-family: 'Times New Roman', Times, serif;
   color: #FF0000;
-  z-index: 3;
+  z-index: 4;
   margin: 0;
 }
 
@@ -590,6 +590,7 @@ button:hover {
 }
 
 @media screen and (max-width: 420px) {
+
   #scrambletxt {top: 20vh; left: 37vw; width: 58vw;}
   #settings {height: 20vh;}
   #time {top: 52vh; height: 0;}
