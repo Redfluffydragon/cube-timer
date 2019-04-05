@@ -350,7 +350,7 @@ function clickTable() { //set up row clicks on the time table
         morepopup.style.display = morepop ? "none" : "block";
         morepop = morepop ? false : true;
       }, false);
-      clicked = true;
+      timepop = true;
     }
     }, false);
     rowID[i].addEventListener("touchmove", () => {touchMoved = true;}, false);
@@ -359,16 +359,10 @@ function clickTable() { //set up row clicks on the time table
 }
 
 //close modals on click outside
-let clickTouch = isMobile ? "touchstart" : "click";
+let clickTouch = isMobile ? "touchstart" : "mousedown";
 document.addEventListener(clickTouch, (evt) => {
   if(evt.target.closest(".popup")) return;
-  if ((timepop || sespop || sesoptpop) && !clicked) { closeAll(); }
-  else if (clicked) {
-    timepop = true;
-    sespop = true;
-    sesoptpop = true;
-    clicked = false;
-  }
+  if (timepop || sespop || sesoptpop) { closeAll(); }
 }, false);
 
 function bestworst() {
@@ -575,22 +569,12 @@ function average(startpoint, leng) {
   let minindex = avgAll.indexOf(Math.min(...avgAll));
   avgAll.splice(minindex, 1);
 
-  let minindex2;
-  if (minindex === 0) {
-    minindex2 = avgAll.indexOf(Math.min(...avgAll));
-  }
-  if (minindex2 === 0) {
-    return "DNF";
-  }
-  
   if (avgAll.length !== 0) {
     sum = avgAll.reduce((previous, current) => current += previous);
   }
 
   let avg = Math.trunc((sum/avgAll.length)*100)/100;
-  if (sum !== undefined && isNaN(avg)) { return "DNF"; }
-  else if (isNaN(avg)) { return ""; }
-  else { return avg; }
+  return isNaN(avg) ? "" : avg;
 }
 
 //display inspection countdown, as well as 8s, 12s, +2, and DNF by timeout
@@ -773,8 +757,8 @@ window.addEventListener("keydown", (evt) => {
     draw();
   }
   if (key === 13 && sespop) {newSession();}
-  // if (key === 50 && timepop) { allthistime.plustwo = changeallplus ? false : true; closeNdraw();}
-  // if (key === 68 && timepop) { allthistime.dnf = changealldnf ? false : true; closeNdraw();}
+  if (key === 50 && timepop && !morepop) { allthistime.plustwo = changeallplus ? false : true; closeNdraw();}
+  if (key === 68 && timepop && !morepop) { allthistime.dnf = changealldnf ? false : true; closeNdraw();}
 }, false);
 
 window.addEventListener("keyup", (evt) => {
@@ -929,7 +913,7 @@ newses.addEventListener("click", () => {
   sespopup.style.display = "inline-block";
   shadow.style.display = "initial";
   sesname.focus();
-  clicked = true;
+  sespop = true;
 }, false);
 
 //close the new session popup
@@ -1084,7 +1068,7 @@ sesopt.addEventListener("click", () => {
     }
   }
   seesescrip.value = tempcrip;
-  clicked = true;
+  sesoptpop = true;
 }, false);
 
 //close the session options popup

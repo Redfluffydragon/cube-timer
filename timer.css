@@ -111,8 +111,8 @@ body {
   padding: 5px 12px 5px 12px;
   background-color: rgb(215, 215, 215);
   font-family: Arial, Helvetica, sans-serif;
-  margin-left: 4px;
-  margin-bottom: 4px;
+  margin-left: .3vmax;
+  margin-bottom: .3vmax;
   position: relative;
   z-index: 1;
 }
@@ -178,7 +178,8 @@ body {
   height: 86vh;
   overflow: -moz-scrollbars-none;
   -ms-overflow-style: none;
-  
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
 }
 
 #timetable tbody::-webkit-scrollbar { width: 0 !important }
