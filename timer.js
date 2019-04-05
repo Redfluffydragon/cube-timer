@@ -8,7 +8,7 @@ let inspectTime;
 let mode;
 let startdelay;
 let timein;
-let saveWidth;
+let setWidth;
 let ctrl;
 let removed = [];
 let sesremoved = [];
@@ -293,7 +293,7 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
 
   //timetable in or out
   timein = gotem("timein", false);
-  saveWidth = gotem("setWidth", "60vw");
+  setWidth = gotem("setWidth", "60vw");
 
   timicon();
   if (timein) {
@@ -304,7 +304,7 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
   else if (!timein) {
     timetable.style.transform = "translateX(0)";
     sessionsdiv.style.transform = "translateX(0)";
-    settings.style.width = saveWidth;
+    settings.style.width = setWidth;
   }
 }
 draw();
@@ -1123,12 +1123,12 @@ document.addEventListener("click", (evt) => {
 function timesInOut() {
   timetable.style.transform = timein ? "translateX(0)" : "translateX(-50vw)";
   sessionsdiv.style.transform = timein ? "translateX(0)" : "translateX(-100vw)";
-  if (!timein) { saveWidth = settings.style.width; }
+  if (!timein) { setWidth = settings.style.width; }
   if (timein) { outicon.style.display = "none"; }
-  settings.style.width = timein ? saveWidth : "90vw";
+  settings.style.width = timein ? setWidth : "90vw";
   timein = timein ? false : true;
   localStorage.setItem("timein", JSON.stringify(timein));
-  localStorage.setItem("setWidth", JSON.stringify(saveWidth)); 
+  localStorage.setItem("setWidth", JSON.stringify(setWidth)); 
 }
 
 inicon.addEventListener("click", timesInOut, false);
