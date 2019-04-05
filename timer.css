@@ -558,11 +558,15 @@ button:hover {
 }
 
 .topstats {
-  float: right;
   padding-right: 2vw;
   position: relative;
   bottom: 3vh;
   font-size: calc(12px + .7vw);
+  display: inline-block;
+}
+
+#bestworst {
+  float: right;
 }
 
 #clearall {
