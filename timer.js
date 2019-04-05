@@ -305,7 +305,7 @@ function closeNdraw() {
 
 function clickTable() { //set up row clicks on the time table 
   let rowID = document.getElementById("timebody").getElementsByTagName('tr');
-  let clickTouch = isMobile ? "touchstart" : "click";
+  let clickTouch = isMobile ? "touchend" : "click";
   for (i = 0; i < rowID.length; i++) {
     rowID[i].addEventListener(clickTouch, function() {
       let rvrsrow = displaytimes.length - this.rowIndex+1; //reverse the row index
@@ -1094,6 +1094,7 @@ document.getElementById("clearall").addEventListener("click", () => {
     sessionStorage.clear();
     console.log("cleared");
   }
+  draw();
 }, false);
 
 
