@@ -626,6 +626,6 @@ button:hover {
   #settings {height: 20vh;}
   #insptime{padding-left: 9vw;}
   #timetable tbody {height: 50vh;}
-  #centerac {height: 0; width: 74vw;}
+  #centerac {height: 0; width: 74vw; bottom: 4vh;}
   body {height: 80vh;}
 }
