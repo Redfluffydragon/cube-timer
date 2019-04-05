@@ -12,6 +12,7 @@ body {
 #centerac {
   margin: 0 auto;
   width: 30vw;
+  position: relative;
 }
 
 #time {
@@ -22,6 +23,7 @@ body {
   font-family: 'Times New Roman', Times, serif;
   z-index: 1;
   margin: 0;
+  height: 0;
 }
 
 #onlytime {
@@ -620,12 +622,10 @@ button:hover {
   #sesname {width: 48vw;}
   #sescrip {width: 48vw;}
   #seesescrip {width: 58vw;}
-  #scrambletxt {top: 20vh; left: 37vw; width: 58vw; max-height: 37vh; overflow: scroll; -webkit-overflow-scrolling: touch;}
+  #scrambletxt {top: 15vh; left: 37vw; width: 58vw; max-height: 37vh; overflow: scroll; -webkit-overflow-scrolling: touch;}
   #settings {height: 20vh;}
-  #time {top: 57vh; bottom: 45vh; height: 0;}
-  #insptime{top: 57vh; bottom: 45vh; height: 0; padding-left: 9vw;}
+  #insptime{padding-left: 9vw;}
   #timetable tbody {height: 50vh;}
-  #centerac {height: 0;}
-  #centerac {width: 74vw;}
+  #centerac {height: 0; width: 74vw;}
   body {height: 80vh;}
 }
