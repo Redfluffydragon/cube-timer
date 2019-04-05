@@ -1,6 +1,5 @@
 /**todo:
  * make into PWA (for use offline) - just add a service worker to cache it?
- * add averages to csv files?
  */
 
 let cube;
@@ -26,7 +25,7 @@ let alltimes = [];
 let justTimes = []; //just the times - for best/worst
 let displaytimes = []; //just the times from current session - for display
 let moddedTimes = [];
-let timeKeys = ["number", "time", "cube", "session", "scramble", "date", "comment", "dnf", "plustwo"];
+let timeKeys = ["number", "time", "ao5", "ao12", "cube", "session", "scramble", "date", "comment", "dnf", "plustwo"];
 
 let cells0 = [];
 let cells1 = [];
@@ -274,8 +273,15 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
     displaytimes[i].plustwo ? 
     displaytimes[i].time+"+" : 
     displaytimes[i].time;
-    cells2[i].textContent = average(i+1, 5);
-    cells3[i].textContent = average(i+1, 12);
+    let avgofiv = average(i+1, 5);
+    let avgotwe = average(i+1, 12);
+    displaytimes[i].ao5 = avgofiv;
+    displaytimes[i].ao12 = avgotwe;
+    cells2[i].textContent = avgofiv;
+    cells3[i].textContent = avgotwe;
+    let saveBack = alltimes.indexOf(displaytimes[i]);
+    alltimes[saveBack].ao5 = avgofiv;
+    alltimes[saveBack].ao12 = avgotwe;
   }
 
   clickTable();
@@ -695,7 +701,7 @@ function fin() { //finish timing, save result
   time.style.zIndex = "1";
   onlytime.style.display = "none";      
   timealert.style.display = "none";
-  alltimes.push({number: "", time: counter, cube: cube, session: session, scramble: fscramble, date: makeDate(), comment: "", dnf: dnf, plustwo: plustwo});
+  alltimes.push({number: "", time: counter, ao5: "", ao12: "", cube: cube, session: session, scramble: fscramble, date: makeDate(), comment: "", dnf: dnf, plustwo: plustwo});
   localStorage.setItem("all", JSON.stringify(alltimes));
 
   dnf = false;
@@ -870,10 +876,6 @@ function closeAll() { //close everything
   sespop = false;
   sesoptpop = false;
   clicked = false;
-}
-
-function modTime(typ, bool) {
-  
 }
 
 //close the time editing popup
