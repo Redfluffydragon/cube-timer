@@ -23,6 +23,7 @@ let inspecting = false;
 let alltimes = [];
 let justTimes = []; //just the times - for best/worst
 let displaytimes = []; //just the times from current session - for display
+let moddedTimes = [];
 let timeKeys = ["number", "time", "cube", "session", "scramble", "date", "comment", "dnf", "plustwo"];
 
 let cells0 = [];
@@ -188,7 +189,7 @@ let sessionsdiv = document.getElementById("sessions");
 
 let isMobile = (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
 
-function createTable() {
+function createTableRow() {
   let columnClass = ["number", "times", "avgofive", "avgotwelve"];
   let row = timebody.insertRow(0);
   row.className = "idAll";
@@ -225,12 +226,13 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
   alltimes = gotem("all", []);
       bestworst();
 
+  moddedTimes = gotem("modded", []);
+
   sessions = gotem("sessions", [{name: "Session 1", description: "Default session"}]);
       for (i in sessions) { sesnames.push(sessions[i].name); }
 
   session = gotem("currses", sessions[0].name);
       sesslc.textContent = session;
-      colorIndicator(delaytime, (startdelay/1000)+"s");
       displaytimes.length = 0;
       for (i in alltimes) {
         if (alltimes[i].session === session) {
@@ -262,16 +264,16 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
   timebody.innerHTML = "";
   for (let i = 0; i < displaytimes.length; i++) {
     displaytimes[i].number = i+1;
-    createTable();
+    createTableRow();
 
     cells0[i].textContent = displaytimes[i].number;
     cells1[i].textContent = 
     displaytimes[i].dnf     ? "DNF" : 
     displaytimes[i].plustwo ? 
-    displaytimes[i].time+2+"+" : 
+    displaytimes[i].time+"+" : 
     displaytimes[i].time;
-    cells2[i].textContent = Avg(i+1, 5);
-    cells3[i].textContent = Avg(i+1, 12);
+    cells2[i].textContent = average(i+1, 5);
+    cells3[i].textContent = average(i+1, 12);
   }
 
   clickTable();
@@ -307,9 +309,7 @@ function clickTable() { //set up row clicks on the time table
   let rowID = document.getElementById("timebody").getElementsByTagName('tr');
   let clickTouch = isMobile ? "touchend" : "click";
   for (i = 0; i < rowID.length; i++) {
-    let touchMoved;
-    rowID[i].addEventListener(clickTouch, (e) => {
-      if ((isMobile && !touchMoved) || !isMobile) {
+    rowID[i].addEventListener(clickTouch, function() {
       let rvrsrow = displaytimes.length - this.rowIndex+1; //reverse the row index
       let findem;
       for(let i = 0; i < displaytimes.length; i++) {
@@ -348,12 +348,7 @@ function clickTable() { //set up row clicks on the time table
         morepop = morepop ? false : true;
       }, false);
       clicked = true;
-    }
-    }).on("touchmove", (e) => {
-      touchMoved = true;
-    }).on("touchstart", () => {
-      touchMoved = false;
-    });
+    }, false);
   }
 }
 
@@ -361,7 +356,6 @@ function clickTable() { //set up row clicks on the time table
 let clickTouch = isMobile ? "touchstart" : "click";
 document.addEventListener(clickTouch, (evt) => {
   if(evt.target.closest(".popup")) return;
-  console.log("out");
   if ((timepop || sespop || sesoptpop) && !clicked) { closeAll(); }
   else if (clicked) {
     timepop = true;
@@ -373,14 +367,16 @@ document.addEventListener(clickTouch, (evt) => {
 
 function bestworst() {
   justTimes.length = 0;
-  for (i in alltimes) { justTimes.push(alltimes[i].time); }
+  for (i in alltimes) {
+    if (alltimes[i].time) { justTimes.push(alltimes[i].time); }
+  }
   let worstTime = Math.max(...justTimes);
   let bestTime = Math.min(...justTimes);
   best.textContent = !isNaN(JSON.stringify(bestTime)) ? bestTime : "--";
   worst.textContent = !isNaN(JSON.stringify(worstTime)) ? worstTime : "--";
 }
 
-function DropDown (button, content) { //toggle dropdowns 
+function dropDown (button, content) { //toggle dropdowns 
   let dropdown = false;
   document.addEventListener("click", (evt) => {
     let target = evt.target;
@@ -399,10 +395,10 @@ function DropDown (button, content) { //toggle dropdowns
   });
 };
 
-DropDown(cubeButton, cubeDrop);
-DropDown(inspectButton, inspectDrop);
-DropDown(delayButton, delayDrop);
-DropDown(sesslc, sesdrop);
+dropDown(cubeButton, cubeDrop);
+dropDown(inspectButton, inspectDrop);
+dropDown(delayButton, delayDrop);
+dropDown(sesslc, sesdrop);
 
 
 function makeDate() {
@@ -530,7 +526,10 @@ function checksqu() {//probably doesn't work. I don't know what moves aren't all
     firstnum = tscramble[tscramble.length-1].charAt(1);
     secondnum = tscramble[tscramble.length-1].charAt(3);
   }
-  if ((onerand === firstnum && tworand === secondnum) || (onerand === 0 && tworand === 0)) {return;} //there are probably other exclusions (0,0)?
+  if ((onerand === firstnum && tworand === secondnum) || 
+      (onerand === secondnum && tworand === firstnum) ||
+      (onerand === 0 && tworand === 0))
+      { return; } //there are probably other exclusions
   else {tscramble.push("(" + onerand + "," + tworand + ")")}
 }
 
@@ -539,8 +538,7 @@ function checkclo() {
   for (let i = 0; i < clocks.length; i++) {
     let clockrand = Math.round((Math.random()*11)-5);
     let clkstr = JSON.stringify(clockrand);
-    let rvrsclock;
-    rvrsclock = clkstr.length > 1 ? clkstr.charAt(1)+clkstr.charAt(0) : clkstr.charAt(0)+"+"; 
+    let rvrsclock = clkstr.length > 1 ? clkstr.charAt(1)+clkstr.charAt(0) : clkstr.charAt(0)+"+"; 
     clocks[i] !== "y2" ? tscramble.unshift(clocks[i]+rvrsclock) : tscramble.unshift(clocks[i]);
   }
 }
@@ -555,7 +553,7 @@ function scramble() {
   localStorage.setItem("scramble", JSON.stringify(fscramble));
 }
 
-function Avg(startpoint, leng) {
+function average(startpoint, leng) {
   let sum;
 
   avgAll.length = 0;
@@ -570,14 +568,23 @@ function Avg(startpoint, leng) {
 
   let minindex = avgAll.indexOf(Math.min(...avgAll));
   avgAll.splice(minindex, 1);
+
+  let minindex2;
+  if (minindex === 0) {
+    minindex2 = avgAll.indexOf(Math.min(...avgAll));
+  }
+  if (minindex2 === 0) {
+    return "DNF";
+  }
   
   if (avgAll.length !== 0) {
     sum = avgAll.reduce((previous, current) => current += previous);
   }
 
   let avg = Math.trunc((sum/avgAll.length)*100)/100;
-
-  return !isNaN(avg) ? avg : "";
+  if (sum !== undefined && isNaN(avg)) { return "DNF"; }
+  else if (isNaN(avg)) { return ""; }
+  else { return avg; }
 }
 
 //display inspection countdown, as well as 8s, 12s, +2, and DNF by timeout
@@ -594,6 +601,7 @@ function inspection() {
   }
   if (displayctdn === undefined) {
     time.textContent = "0.00";
+    counter = 0;
     fin();
   }
   if (displayctdn === "+2") { plustwo = 1; }
@@ -668,11 +676,14 @@ function otimeout() { //setInterval for ptimeout
  
 function fin() { //finish timing, save result
   started = false;
+  inspecting = false;
   played8 = false;
   played12 = false;
   clearInterval(intstart);
   clearInterval(inspectstart);
   
+  time.style.display = "initial"
+  time.style.color = "black";
   onlytime.style.display = "none";      
   timealert.style.display = "none";
   alltimes.push({number: "", time: counter, cube: cube, session: session, scramble: fscramble, date: makeDate(), comment: "", dnf: dnf, plustwo: plustwo});
@@ -686,7 +697,7 @@ function fin() { //finish timing, save result
 }
 
 function down() {
-  if (!timepop && !sespop && !sesoptpop) {
+  if (!timepop && !sespop && !sesoptpop && !dnf) {
     if (!onstart && !started) {
       if (!inspectTime || inspecting) { otimeout(); }
       else if (inspectTime) {
@@ -694,8 +705,7 @@ function down() {
       }
       onstart = true;
     }
-
-    if(started) {
+    else if(started) {
       fin();
       keydown = true;
     }
@@ -703,9 +713,9 @@ function down() {
 }
   
 function up () {
-  time.style.color = "#000000";
+  time.style.color = "black";
   insptime.style.color = mode === "light" ? "red" : "cyan";
-  if (!timepop && !sespop && !sesoptpop) {
+  if (!timepop && !sespop && !sesoptpop && !dnf) {
     if (!started && !waiting) {
       clearInterval(oto); //reset the hold delay
       onstart = false;
@@ -713,15 +723,15 @@ function up () {
 
     if (!keydown && !pause) {
       if (inspectTime && !inspecting) { runinspect(); }
-      if (waiting) { go(); }
+      if (!inspectTime || waiting) { go(); }
     }
     else if (keydown) { keydown = false; }
   }
 }
 
 function touchdown(evt) {
-    evt.preventDefault();
-    down();
+  evt.preventDefault();
+  down();
 }
 
 window.addEventListener("keydown", (evt) => {
@@ -757,8 +767,8 @@ window.addEventListener("keydown", (evt) => {
     draw();
   }
   if (key === 13 && sespop) {newSession();}
-  if (key === 50 && timepop) { allthistime.plustwo = changeallplus ? false : true; closeNdraw();}
-  if (key === 68 && timepop) { allthistime.dnf = changealldnf ? false : true; closeNdraw();}
+  // if (key === 50 && timepop) { allthistime.plustwo = changeallplus ? false : true; closeNdraw();}
+  // if (key === 68 && timepop) { allthistime.dnf = changealldnf ? false : true; closeNdraw();}
 }, false);
 
 window.addEventListener("keyup", (evt) => {
@@ -853,6 +863,10 @@ function closeAll() { //close everything
   clicked = false;
 }
 
+function modTime(typ, bool) {
+  
+}
+
 //close the time editing popup
 cancelbtn.addEventListener("click", closeAll, false);
 
@@ -861,8 +875,29 @@ document.addEventListener("click", (evt) => { //+2, DNF, and delete for individu
   evt.preventDefault();
   let selection = evt.target.textContent;
 
-  if (selection === "+2") { allthistime.plustwo = changeallplus ? false : true; }
-  if (selection === "DNF") {allthistime.dnf = changealldnf ? false : true; }
+  if (selection === "+2") {
+    allthistime.time = Math.trunc((changeallplus ? allthistime.time-2 : allthistime.time+2)*100)/100;
+    allthistime.plustwo = changeallplus ? false : true; 
+  }
+  if (selection === "DNF") {
+    if (changealldnf) {
+      for (i in moddedTimes) {
+        if (moddedTimes[i].date === allthistime.date) {
+          allthistime.time = moddedTimes[i].time;
+          moddedTimes.splice(i, 1);
+          localStorage.setItem("modded", JSON.stringify(moddedTimes));
+        }
+      }
+      allthistime.dnf = false;
+    }
+    else if (!changealldnf) {
+      moddedTimes.push(allthistime);
+      localStorage.setItem("modded", JSON.stringify(moddedTimes));
+      allthistime.time = 0;
+      allthistime.dnf = true;
+    }
+  }
+
   if (selection === "Delete") {
       let conf = confirm("Remove this time?")
       if(conf){
@@ -1103,5 +1138,3 @@ document.getElementById("clearall").addEventListener("click", () => {
   }
   draw();
 }, false);
-
-
