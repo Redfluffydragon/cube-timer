@@ -8,6 +8,7 @@ let inspectTime;
 let mode;
 let startdelay;
 let timein;
+let saveWidth;
 let ctrl;
 let removed = [];
 let sesremoved = [];
@@ -292,10 +293,13 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
 
   //timetable in or out
   timein = gotem("timein", false);
+  saveWidth = gotem("setWidth", "70vw");
+
   timicon();
   if (timein) {
     timetable.style.transform = "translateX(-40vw)";
     sessionsdiv.style.transform = "translateX(-100vw)";
+    settings.style.width = saveWidth;
   }
 }
 draw();
@@ -359,8 +363,8 @@ function clickTable() { //set up row clicks on the time table
 }
 
 //close modals on click outside
-let clickTouch = isMobile ? "touchstart" : "mousedown";
-document.addEventListener(clickTouch, (evt) => {
+let mouseTouch = isMobile ? "touchstart" : "mousedown";
+document.addEventListener(mouseTouch, (evt) => {
   if(evt.target.closest(".popup")) return;
   if (timepop || sespop || sesoptpop) { closeAll(); }
 }, false);
@@ -377,6 +381,7 @@ function bestworst() {
 }
 
 function dropDown (button, content) { //toggle dropdowns 
+  let clickTouch = isMobile ? "touchstart" : "click";
   let dropdown = false;
   document.addEventListener("click", (evt) => {
     let target = evt.target;
@@ -1111,8 +1116,13 @@ document.addEventListener("click", (evt) => {
 function timesInOut() {
   timetable.style.transform = timein ? "translateX(0)" : "translateX(-50vw)";
   sessionsdiv.style.transform = timein ? "translateX(0)" : "translateX(-100vw)";
+  if (!timein) {
+    saveWidth = settings.style.width;
+  }
+  settings.style.width = timein ? saveWidth : "90vw";
   timein = timein ? false : true;
-  localStorage.setItem("timein", JSON.stringify(timein)); 
+  localStorage.setItem("timein", JSON.stringify(timein));
+  localStorage.setItem("setWidth", JSON.stringify(saveWidth)); 
 }
 
 inicon.addEventListener("click", timesInOut, false);

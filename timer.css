@@ -133,8 +133,8 @@ body {
   padding: 5px 21px 4px 22px;
   text-decoration: none;
   position: absolute;
-  left: -15px;
-  top: 0;
+  left: -20px;
+  top: -2px;
   overflow: hidden;
   text-align: center;
   transition: transform .8s;
@@ -226,7 +226,7 @@ body {
 #sessions {
   position: absolute;
   display: inline-block;
-  left: 1vh;
+  left: .6vh;
   transition: transform .8s;
   bottom: .6vh;
   margin: 0;
@@ -424,9 +424,11 @@ button:hover {
 
 #settings {
   position: absolute;
-  right: 8px;
+  right: 4px;
+  top: 4px;
   width: 70vw;
   height: 20vh;
+  transition: width .8s;
 }
 
 #shadow {
@@ -550,8 +552,8 @@ button:hover {
 
 #clearall {
   position: absolute;
-  bottom: 7px;
-  right: 7px;
+  bottom: .6vh;
+  right: .6vh;
 }
 
 @media screen and (min-width: 600px) {
