@@ -641,6 +641,7 @@ function go() { //run stopwatch & stuff
   onlytime.style.display = "initial";
   insptime.style.display = "none";
   time.style.display = "initial";
+  time.style.zIndex = "4";
   timealert.style.display = "none";
   clearInterval(inspectstart);
   clearInterval(oto);
@@ -684,6 +685,7 @@ function fin() { //finish timing, save result
   
   time.style.display = "initial"
   time.style.color = "black";
+  time.style.zIndex = "1";
   onlytime.style.display = "none";      
   timealert.style.display = "none";
   alltimes.push({number: "", time: counter, cube: cube, session: session, scramble: fscramble, date: makeDate(), comment: "", dnf: dnf, plustwo: plustwo});
@@ -1122,6 +1124,7 @@ function timesInOut() {
   timetable.style.transform = timein ? "translateX(0)" : "translateX(-50vw)";
   sessionsdiv.style.transform = timein ? "translateX(0)" : "translateX(-100vw)";
   if (!timein) { saveWidth = settings.style.width; }
+  if (timein) { outicon.style.display = "none"; }
   settings.style.width = timein ? saveWidth : "90vw";
   timein = timein ? false : true;
   localStorage.setItem("timein", JSON.stringify(timein));
@@ -1130,7 +1133,9 @@ function timesInOut() {
 
 inicon.addEventListener("click", timesInOut, false);
 outicon.addEventListener("click", timesInOut, false);
-timetable.addEventListener("transitionend", timicon, false);
+timetable.addEventListener("transitionend", () => {
+  if (timein) { outicon.style.display = "initial"; }
+}, false);
 
 document.getElementById("clearall").addEventListener("click", () => {
   let clearall = confirm("Clear everything?")
