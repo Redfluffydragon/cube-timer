@@ -293,7 +293,7 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
 
   //timetable in or out
   timein = gotem("timein", false);
-  saveWidth = gotem("setWidth", "50vw");
+  saveWidth = gotem("setWidth", "60vw");
 
   timicon();
   if (timein) {
