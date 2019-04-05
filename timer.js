@@ -308,7 +308,7 @@ function clickTable() { //set up row clicks on the time table
   let clickTouch = isMobile ? "touchend" : "click";
   for (i = 0; i < rowID.length; i++) {
     let touchMoved;
-    rowID[i].addEventListener(clickTouch, function(e) {
+    rowID[i].addEventListener(clickTouch, (e) => {
       if ((isMobile && !touchMoved) || !isMobile) {
       let rvrsrow = displaytimes.length - this.rowIndex+1; //reverse the row index
       let findem;
@@ -349,7 +349,7 @@ function clickTable() { //set up row clicks on the time table
       }, false);
       clicked = true;
     }
-    }, false).on("touchmove", (e) => {
+    }).on("touchmove", (e) => {
       touchMoved = true;
     }).on("touchstart", () => {
       touchMoved = false;
