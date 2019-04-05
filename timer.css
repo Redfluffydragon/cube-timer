@@ -565,7 +565,6 @@ button:hover {
 }
 
 @media screen and (max-width: 1000px) { 
-  #settings{width: 70vw;}
   #sescontcenter{width: 30vw;}
   #cancelbtn{right: 50vw;}
   #sesoptpopup button {width: 25vw;}

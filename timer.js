@@ -293,12 +293,17 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
 
   //timetable in or out
   timein = gotem("timein", false);
-  saveWidth = gotem("setWidth", "70vw");
+  saveWidth = gotem("setWidth", "50vw");
 
   timicon();
   if (timein) {
-    timetable.style.transform = "translateX(-40vw)";
+    timetable.style.transform = "translateX(-50vw)";
     sessionsdiv.style.transform = "translateX(-100vw)";
+    settings.style.width = "90vw";
+  }
+  else if (!timein) {
+    timetable.style.transform = "translateX(0)";
+    sessionsdiv.style.transform = "translateX(0)";
     settings.style.width = saveWidth;
   }
 }
@@ -1116,9 +1121,7 @@ document.addEventListener("click", (evt) => {
 function timesInOut() {
   timetable.style.transform = timein ? "translateX(0)" : "translateX(-50vw)";
   sessionsdiv.style.transform = timein ? "translateX(0)" : "translateX(-100vw)";
-  if (!timein) {
-    saveWidth = settings.style.width;
-  }
+  if (!timein) { saveWidth = settings.style.width; }
   settings.style.width = timein ? saveWidth : "90vw";
   timein = timein ? false : true;
   localStorage.setItem("timein", JSON.stringify(timein));
