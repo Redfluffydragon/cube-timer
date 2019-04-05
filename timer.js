@@ -307,7 +307,9 @@ function clickTable() { //set up row clicks on the time table
   let rowID = document.getElementById("timebody").getElementsByTagName('tr');
   let clickTouch = isMobile ? "touchend" : "click";
   for (i = 0; i < rowID.length; i++) {
-    rowID[i].addEventListener(clickTouch, function() {
+    let touchMoved;
+    rowID[i].addEventListener(clickTouch, function(e) {
+      if ((isMobile && !touchMoved) || !isMobile) {
       let rvrsrow = displaytimes.length - this.rowIndex+1; //reverse the row index
       let findem;
       for(let i = 0; i < displaytimes.length; i++) {
@@ -346,7 +348,12 @@ function clickTable() { //set up row clicks on the time table
         morepop = morepop ? false : true;
       }, false);
       clicked = true;
-    }, false);
+    }
+    }, false).on("touchmove", (e) => {
+      touchMoved = true;
+    }).on("touchstart", () => {
+      touchMoved = false;
+    });
   }
 }
 
