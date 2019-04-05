@@ -80,6 +80,8 @@ body {
   display: table-cell;
   vertical-align: bottom;
   z-index: 3;
+  transition: width .4s;
+  
 }
 
 .rdropdown {

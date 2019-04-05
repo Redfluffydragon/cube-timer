@@ -9,6 +9,7 @@ let mode;
 let startdelay;
 let timein;
 let setWidth;
+let scramWidth;
 let ctrl;
 let removed = [];
 let sesremoved = [];
@@ -293,18 +294,24 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
 
   //timetable in or out
   timein = gotem("timein", false);
-  setWidth = gotem("setWidth", "60vw");
+  setWidth = gotem("setWidth", settings.style.width);
+  scramWidth = gotem("scramWidth", scrambletxt.style.width);
+  scramLeft = gotem("scramLeft", scrambletxt.style.left);
 
   timicon();
   if (timein) {
     timetable.style.transform = "translateX(-50vw)";
     sessionsdiv.style.transform = "translateX(-100vw)";
     settings.style.width = "90vw";
+    scrambletxt.style.width = "90vw";
+    scrambletxt.style.left = "5vw";
   }
   else if (!timein) {
     timetable.style.transform = "translateX(0)";
     sessionsdiv.style.transform = "translateX(0)";
     settings.style.width = setWidth;
+    scrambletxt.style.width = scramWidth;
+    scrambletxt.style.left = scramLeft;
   }
 }
 draw();
@@ -1123,12 +1130,20 @@ document.addEventListener("click", (evt) => {
 function timesInOut() {
   timetable.style.transform = timein ? "translateX(0)" : "translateX(-50vw)";
   sessionsdiv.style.transform = timein ? "translateX(0)" : "translateX(-100vw)";
-  if (!timein) { setWidth = settings.style.width; }
+  if (!timein) { 
+    setWidth = settings.style.width; 
+    scramWidth = scrambletxt.style.width;
+    scramLeft = scrambletxt.style.left;
+  }
   if (timein) { outicon.style.display = "none"; }
   settings.style.width = timein ? setWidth : "90vw";
+  scrambletxt.style.width = timein ? scramWidth : "90vw";
+  scrambletxt.style.left = timein ? scramLeft : "5vw";
   timein = timein ? false : true;
   localStorage.setItem("timein", JSON.stringify(timein));
   localStorage.setItem("setWidth", JSON.stringify(setWidth)); 
+  localStorage.setItem("scramWidth", JSON.stringify(scramWidth));
+  localStorage.setItem("scramLeft", JSON.stringify(scramLeft));
 }
 
 inicon.addEventListener("click", timesInOut, false);
