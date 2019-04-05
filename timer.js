@@ -308,8 +308,11 @@ function closeNdraw() {
 function clickTable() { //set up row clicks on the time table 
   let rowID = document.getElementById("timebody").getElementsByTagName('tr');
   let clickTouch = isMobile ? "touchend" : "click";
+  let touchMoved;
   for (i = 0; i < rowID.length; i++) {
     rowID[i].addEventListener(clickTouch, function() {
+      console.log(touchMoved)
+      if (!isMobile || !touchMoved) {
       let rvrsrow = displaytimes.length - this.rowIndex+1; //reverse the row index
       let findem;
       for(let i = 0; i < displaytimes.length; i++) {
@@ -348,7 +351,10 @@ function clickTable() { //set up row clicks on the time table
         morepop = morepop ? false : true;
       }, false);
       clicked = true;
+    }
     }, false);
+    rowID[i].addEventListener("touchmove", () => {touchMoved = true;}, false);
+    rowID[i].addEventListener("touchstart", () => {touchMoved = false;}, false);
   }
 }
 
