@@ -602,7 +602,7 @@ button:hover {
   #sesname {width: 48vw;}
   #sescrip {width: 48vw;}
   #seesescrip {width: 58vw;}
-  #scrambletxt {top: 20vh; left: 37vw; width: 58vw; height: 37vh; overflow: scroll; -webkit-overflow-scrolling: touch;}
+  #scrambletxt {top: 20vh; left: 37vw; width: 58vw; max-height: 37vh; overflow: scroll; -webkit-overflow-scrolling: touch;}
   #settings {height: 20vh;}
   #time {top: initial; bottom: 45vh; height: 0;}
   #insptime{top: initial; bottom: 45vh; height: 0;}
