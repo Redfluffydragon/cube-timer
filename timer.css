@@ -188,9 +188,10 @@ body {
   -ms-overflow-style: none;
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
 }
 
-#timetable tbody::-webkit-scrollbar { width: 0 !important}
+#timetable tbody::-webkit-scrollbar { width: 0 }
 
 .idAll:nth-child(odd) {background-color: #f2f2f2;}
 
