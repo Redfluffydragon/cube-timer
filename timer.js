@@ -396,8 +396,8 @@ function bestworst() {
   }
   let worstTime = Math.max(...justTimes);
   let bestTime = Math.min(...justTimes);
-  best.textContent = !isNaN(JSON.stringify(bestTime)) ? bestTime : "--";
-  worst.textContent = !isNaN(JSON.stringify(worstTime)) ? worstTime : "--";
+  best.textContent = !isNaN(JSON.stringify(bestTime)) ? toMinutes(bestTime) : "--";
+  worst.textContent = !isNaN(JSON.stringify(worstTime)) ? toMinutes(worstTime) : "--";
 }
 
 function dropDown (button, content) { //toggle dropdowns 
