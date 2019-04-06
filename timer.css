@@ -623,6 +623,6 @@ button:hover {
   #time {position: fixed; top: initial; bottom: 190px;}
   #insptime{position: fixed; top: initial; bottom: 20px; margin-left: 20px}
   #timetable tbody {height: 50vh;}
-  #centerac {height: 0; width: 74vw; bottom: 6vh;}
+  #centerac {height: 0; width: 84vw; bottom: 6vh;}
   body {height: 80vh;}
 }
