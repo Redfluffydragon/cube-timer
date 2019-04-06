@@ -624,8 +624,8 @@ button:hover {
   #seesescrip {width: 58vw;}
   #scrambletxt {top: 17vh; left: 37vw; width: 58vw; max-height: 37vh; overflow: scroll; -webkit-overflow-scrolling: touch;}
   #settings {height: 20vh;}
-  #time {position: fixed; top: initial; bottom: 220px;}
-  #insptime{position: fixed; top: initial; bottom: 220px; padding-left: 9vw;}
+  #time {position: fixed; top: initial; bottom: 200px;}
+  #insptime{position: fixed; top: initial; bottom: 200px; padding-left: 9vw;}
   #timetable tbody {height: 50vh;}
   #centerac {height: 0; width: 74vw; bottom: 6vh;}
   body {height: 80vh;}
