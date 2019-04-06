@@ -1,5 +1,6 @@
 /**todo:
  * make into PWA (for use offline) - just add a service worker to cache it?
+ * display minutes correctly
  */
 
 let cube;
@@ -16,6 +17,7 @@ let sesremoved = [];
 //for stopwatch
 let timer;
 let counter;
+let thetime;
 let start;
 let intstart;
 let started = false;
@@ -271,8 +273,8 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
     cells1[i].textContent = 
     displaytimes[i].dnf     ? "DNF" : 
     displaytimes[i].plustwo ? 
-    displaytimes[i].time+"+" : 
-    displaytimes[i].time;
+    toMinutes(displaytimes[i].time)+"+" : 
+    toMinutes(displaytimes[i].time);
     let avgofiv = average(i+1, 5);
     let avgotwe = average(i+1, 12);
     displaytimes[i].ao5 = avgofiv;
@@ -597,10 +599,26 @@ function average(startpoint, leng) {
   }
 
   let avg = Math.trunc((sum/avgAll.length)*100)/100;
-  return isNaN(avg) ? "" : avg;
+  return isNaN(avg) ? "" : toMinutes(avg);
 }
 
 //display inspection countdown, as well as 8s, 12s, +2, and DNF by timeout
+function toMinutes(time) {
+  let temptime;
+  if (time < 60) {
+    temptime = time;
+  }
+  else if (time > 60 && time < 3600) {
+    let minutes = Math.trunc(time/60);
+    let secondsafter = Math.trunc((time-(60*minutes))*100)/100;
+    if (secondsafter < 10) {
+      secondsafter = "0" + secondsafter;
+    }
+    temptime = minutes + ":" + secondsafter;
+  }
+  return temptime;
+}
+
 function inspection() {
   clearInterval(intstart);
   itimer = new Date();
@@ -647,8 +665,9 @@ function runinspect() {
 
 function stopwatch() {
   timer = new Date();
-  counter = Math.trunc((timer - start)/10)/100;
-  time.textContent = counter;
+  counter = (Math.trunc((timer - start)/10)/100);
+  thetime = toMinutes(counter);
+  time.textContent = thetime;
 };
 
 function go() { //run stopwatch & stuff
@@ -692,7 +711,6 @@ function otimeout() { //setInterval for ptimeout
 function fin() { //finish timing, save result
   started = false;
   inspecting = false;
-  onstart = false;
   played8 = false;
   played12 = false;
   keydown = true;
@@ -700,10 +718,10 @@ function fin() { //finish timing, save result
   clearInterval(intstart);
   clearInterval(inspectstart);
   
-  let addTwo = plustwo ? 2 : 0;
+  let addTwo = plustwo ? 2 : null;
   time.style.display = "initial"
   time.style.color = "black";
-  time.style.zIndex = "1";
+  time.style.zIndex = "0";
   onlytime.style.display = "none";      
   timealert.style.display = "none";
   alltimes.push({number: "", time: counter+addTwo, ao5: "", ao12: "", cube: cube, session: session, scramble: fscramble, date: makeDate(), comment: "", dnf: dnf, plustwo: plustwo});
