@@ -666,7 +666,7 @@ function runinspect() {
 function stopwatch() {
   timer = new Date();
   counter = (Math.trunc((timer - start)/10)/100);
-  thetime = toMinutes(counter);
+  thetime = Math.trunc((toMinutes(counter))*10)/10;
   time.textContent = thetime;
 };
 
