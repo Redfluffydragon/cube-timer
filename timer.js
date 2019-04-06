@@ -607,7 +607,7 @@ function toMinutes(time) {
   let temptime;
   if (time < 60) {
     if (time-Math.trunc(time).toString().length < 1) {
-      temptime = time + 0;
+      temptime = time + "0";
     }
     else {
       temptime = time;
@@ -620,7 +620,7 @@ function toMinutes(time) {
       secondsafter = "0" + secondsafter;
     }
     else if (secondsafter.toString().length < 1) {
-      secondsafter = secondsafter + 0;
+      secondsafter = secondsafter + "0";
     }
     temptime = minutes + ":" + secondsafter;
   }
