@@ -3,6 +3,7 @@ body {
   top: 0;
   left: 0;
   touch-action: manipulation;
+  overflow-x: hidden;
 }
 
 * {
@@ -21,9 +22,10 @@ body {
   position: absolute;
   top: 48vh;
   font-family: 'Times New Roman', Times, serif;
-  z-index: 1;
+  z-index: 0;
   margin: 0;
   height: 0;
+  transition: 0s;
 }
 
 #onlytime {
@@ -188,7 +190,7 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
-#timetable tbody::-webkit-scrollbar { width: 0 !important }
+#timetable tbody::-webkit-scrollbar { width: 0 !important}
 
 .idAll:nth-child(odd) {background-color: #f2f2f2;}
 
@@ -258,6 +260,8 @@ body {
 
 .dropup {
   display: inline-block;
+  position: relative;
+  z-index: 3;
 }
 
 .dropupcontent {
@@ -399,15 +403,6 @@ body {
   margin: 0 auto;
   clear: both;
   display: none;
-}
-
-#confirmpopup h3, button{
-  margin: 4px;
-}
-
-#confirmpopup {
-  position: absolute;
-  z-index: 8;
 }
 
 button {
@@ -622,10 +617,10 @@ button:hover {
   #sesname {width: 48vw;}
   #sescrip {width: 48vw;}
   #seesescrip {width: 58vw;}
-  #scrambletxt {top: 17vh; left: 37vw; width: 58vw; max-height: 37vh; overflow: scroll; -webkit-overflow-scrolling: touch;}
+  #scrambletxt {top: 17vh; left: 40vw; width: 57vw; max-height: 37vh; overflow: scroll; -webkit-overflow-scrolling: touch;}
   #settings {height: 20vh;}
   #time {position: fixed; top: initial; bottom: 190px;}
-  #insptime{position: fixed; top: initial; bottom: 190px; padding-left: 9vw;}
+  #insptime{position: fixed; top: initial; bottom: 20px; margin-left: 20px}
   #timetable tbody {height: 50vh;}
   #centerac {height: 0; width: 74vw; bottom: 6vh;}
   body {height: 80vh;}
