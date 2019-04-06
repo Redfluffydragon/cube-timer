@@ -606,7 +606,7 @@ function average(startpoint, leng) {
 function toMinutes(time) {
   let temptime;
   if (time < 60) {
-    if (time-Math.trunc(time).toString().length < 1) {
+    if ((time-Math.trunc(time)).toString().length < 1) {
       temptime = time + "0";
     }
     else {
