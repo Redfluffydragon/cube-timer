@@ -611,6 +611,7 @@ function inspection() {
     timealert.style.display = "none";
     dnf = true;
     plustwo = false;
+    clearInterval(oto);
   }
   if (displayctdn === undefined) {
     time.textContent = "0.00";
@@ -691,17 +692,21 @@ function otimeout() { //setInterval for ptimeout
 function fin() { //finish timing, save result
   started = false;
   inspecting = false;
+  onstart = false;
   played8 = false;
   played12 = false;
+  keydown = true;
+  waiting = false;
   clearInterval(intstart);
   clearInterval(inspectstart);
   
+  let addTwo = plustwo ? 2 : 0;
   time.style.display = "initial"
   time.style.color = "black";
   time.style.zIndex = "1";
   onlytime.style.display = "none";      
   timealert.style.display = "none";
-  alltimes.push({number: "", time: counter, ao5: "", ao12: "", cube: cube, session: session, scramble: fscramble, date: makeDate(), comment: "", dnf: dnf, plustwo: plustwo});
+  alltimes.push({number: "", time: counter+addTwo, ao5: "", ao12: "", cube: cube, session: session, scramble: fscramble, date: makeDate(), comment: "", dnf: dnf, plustwo: plustwo});
   localStorage.setItem("all", JSON.stringify(alltimes));
 
   dnf = false;
@@ -712,7 +717,7 @@ function fin() { //finish timing, save result
 }
 
 function down() {
-  if (!timepop && !sespop && !sesoptpop && !dnf) {
+  if (!timepop && !sespop && !sesoptpop) {
     if (!onstart && !started) {
       if (!inspectTime || inspecting) { otimeout(); }
       else if (inspectTime) {
@@ -720,10 +725,7 @@ function down() {
       }
       onstart = true;
     }
-    else if(started) {
-      fin();
-      keydown = true;
-    }
+    else if(started) { fin(); }
   }
 }
   
