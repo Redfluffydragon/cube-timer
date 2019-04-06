@@ -730,6 +730,7 @@ function fin() { //finish timing, save result
   time.style.display = "initial"
   time.style.color = "black";
   time.style.zIndex = "0";
+  time.textContent = toMinutes(counter);
   onlytime.style.display = "none";      
   timealert.style.display = "none";
   alltimes.push({number: "", time: counter+addTwo, ao5: "", ao12: "", cube: cube, session: session, scramble: fscramble, date: makeDate(), comment: "", dnf: dnf, plustwo: plustwo});
