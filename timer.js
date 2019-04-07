@@ -669,6 +669,12 @@ function stopwatch() {
   counter = (Math.trunc((timer - start)/10)/100);
   thetime = toMinutes(counter).toString().slice(0, -1);
   time.textContent = thetime;
+  if (isMobile) {
+    centerac.style.width = counter >= 10 ? "150vw" : "74vw";
+  }
+  else {
+    centerac.style.width = counter >= 60 ? "50vw" : "30vw";
+  }
 };
 
 function go() { //run stopwatch & stuff
@@ -723,7 +729,7 @@ function fin() { //finish timing, save result
   time.style.display = "initial"
   time.style.color = "black";
   time.style.zIndex = "0";
-  time.textContent = toMinutes(counter);
+  // time.textContent = toMinutes(counter); 
   onlytime.style.display = "none";      
   timealert.style.display = "none";
   alltimes.push({number: "", time: counter+addTwo, ao5: "", ao12: "", cube: cube, session: session, scramble: fscramble, date: makeDate(), comment: "", dnf: dnf, plustwo: plustwo});
