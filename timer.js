@@ -607,21 +607,13 @@ function average(startpoint, leng) {
 function toMinutes(time) {
   let temptime;
   if (time < 60) {
-    if ((time-Math.trunc(time)).toString().length < 1) {
-      temptime = time + ".0";
-    }
-    else {
-      temptime = time;
-    }
+    temptime = time.toFixed(2);
   }
   else if (time > 60 && time < 3600) {
     let minutes = Math.trunc(time/60);
-    let secondsafter = Math.trunc((time-(60*minutes))*100)/100;
+    let secondsafter = (Math.trunc((time-(60*minutes))*100)/100).toFixed(2);
     if (secondsafter < 10) {
       secondsafter = "0" + secondsafter;
-    }
-    else if ((secondsafter-Math.trunc(secondsafter)).toString().length < 1) {
-      secondsafter = secondsafter + ".0";
     }
     temptime = minutes + ":" + secondsafter;
   }
@@ -675,7 +667,7 @@ function runinspect() {
 function stopwatch() {
   timer = new Date();
   counter = (Math.trunc((timer - start)/10)/100);
-  thetime = Math.trunc((toMinutes(counter))*10)/10;
+  thetime = toMinutes(counter).toString().slice(0, -1);
   time.textContent = thetime;
 };
 
