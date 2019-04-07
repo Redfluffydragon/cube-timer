@@ -1,6 +1,7 @@
 /**todo:
  * make into PWA (for use offline) - just add a service worker to cache it?
- * display minutes correctly
+ * add undo button for mobile
+ * add colors?
  */
 
 let cube;
