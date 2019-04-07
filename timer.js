@@ -607,13 +607,21 @@ function average(startpoint, leng) {
 function toMinutes(time) {
   let temptime;
   if (time < 60) {
-    temptime = time;
+    if ((time-Math.trunc(time)).toString().length < 1) {
+      temptime = time + ".0";
+    }
+    else {
+      temptime = time;
+    }
   }
   else if (time > 60 && time < 3600) {
     let minutes = Math.trunc(time/60);
     let secondsafter = Math.trunc((time-(60*minutes))*100)/100;
     if (secondsafter < 10) {
       secondsafter = "0" + secondsafter;
+    }
+    else if ((secondsafter-Math.trunc(secondsafter)).toString().length < 1) {
+      secondsafter = secondsafter + ".0";
     }
     temptime = minutes + ":" + secondsafter;
   }
@@ -667,7 +675,7 @@ function runinspect() {
 function stopwatch() {
   timer = new Date();
   counter = (Math.trunc((timer - start)/10)/100);
-  thetime = toMinutes(counter);
+  thetime = Math.trunc((toMinutes(counter))*10)/10;
   time.textContent = thetime;
 };
 
@@ -723,6 +731,7 @@ function fin() { //finish timing, save result
   time.style.display = "initial"
   time.style.color = "black";
   time.style.zIndex = "0";
+  time.textContent = toMinutes(counter);
   onlytime.style.display = "none";      
   timealert.style.display = "none";
   alltimes.push({number: "", time: counter+addTwo, ao5: "", ao12: "", cube: cube, session: session, scramble: fscramble, date: makeDate(), comment: "", dnf: dnf, plustwo: plustwo});

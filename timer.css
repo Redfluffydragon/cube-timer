@@ -183,7 +183,7 @@ body {
 #timetable tbody {
   overflow-y: auto;
   display: block;
-  height: 86vh;
+  max-height: 86vh;
   overflow: -moz-scrollbars-none;
   -ms-overflow-style: none;
   overflow-y: scroll;
@@ -586,7 +586,7 @@ button:hover {
   #sescontcenter{width: 30vw;}
   #cancelbtn{right: 50vw;}
   #sesoptpopup button {width: 25vw;}
-  #timetable tbody {height: 83vh;}
+  #timetable tbody {max-height: 83vh;}
   #time {top: 49vh;}
   #insptime {top: 49vh;}
 }
@@ -604,7 +604,7 @@ button:hover {
   #settings{width: 60vw;}
   #settingslist{padding-left: 2vw;}
   #sesoptpopup button {width: 29vw;}
-  #timetable tbody {height: 84vh;}
+  #timetable tbody {max-height: 84vh;}
 }
 
 @media screen and (max-width: 600px) { #comment {width: 90vw;} }
@@ -622,7 +622,7 @@ button:hover {
   #settings {height: 20vh;}
   #time {position: fixed; top: initial; bottom: 190px;}
   #insptime{position: fixed; top: initial; bottom: 20px; margin-left: 20px}
-  #timetable tbody {height: 50vh;}
+  #timetable tbody {max-height: 50vh;}
   #centerac {height: 0; width: 74vw; bottom: 6vh;}
   body {height: 80vh;}
 }
