@@ -1,7 +1,6 @@
 /**todo:
  * make into PWA (for use offline) - just add a service worker to cache it?
  * add undo button for mobile
- * add colors?
  */
 
 let cube;
@@ -190,8 +189,10 @@ let exportses = document.getElementById("exportses");
 let changesesname = document.getElementById("changesesname");
 let seesescrip = document.getElementById("seesescrip");
 let sessionsdiv = document.getElementById("sessions");
+let undobtn = document.getElementById("undobtn");
 
 let isMobile = (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
+isMobile ? undobtn.classList.remove("none") : undobtn.classList.add("none");
 
 function createTableRow() {
   let columnClass = ["number", "times", "avgofive", "avgotwelve"];
@@ -767,38 +768,40 @@ function touchdown(evt) {
   down();
 }
 
+function undo() {
+  removed = gotem("removed", [], sessionStorage);
+  sesremoved = gotem("sesremoved", [], sessionStorage);
+  if (removed.length) {
+    let getIdx = removed[0].index;
+    for (i in removed) {
+      alltimes[getIdx] === undefined ? alltimes.push(removed[i].time) : alltimes.splice(getIdx, 0, removed[i].time); 
+    }
+    removed.length = 0;
+    sessionStorage.removeItem("removed");
+  }
+  if (sesremoved.length) {
+    console.log(sesremoved);
+    for (i in sesremoved) {
+      if (!sessions.includes(sesremoved[i])) {
+        sessions.push({name: sesremoved[i].name, description: sesremoved[i].description});
+      }
+    }
+    session = sesremoved[sesremoved.length-1].name;
+    sesremoved.length = 0;
+    sessionStorage.removeItem("sesremoved");
+  }
+  localStorage.setItem("all", JSON.stringify(alltimes));
+  localStorage.setItem("sessions", JSON.stringify(sessions));
+  localStorage.setItem("currses", JSON.stringify(session));
+  draw();
+}
+
 window.addEventListener("keydown", (evt) => {
   let key = evt.keyCode;
   if (key === 32) { down(); }
   if (key === 27) { closeAll(); }
   if (key === 17) {ctrl = true;}
-  if (key === 90 && ctrl) {
-    removed = gotem("removed", [], sessionStorage);
-    sesremoved = gotem("sesremoved", [], sessionStorage);
-    if (removed.length) {
-      let getIdx = removed[0].index;
-      for (i in removed) {
-        alltimes[getIdx] === undefined ? alltimes.push(removed[i].time) : alltimes.splice(getIdx, 0, removed[i].time); 
-      }
-      removed.length = 0;
-      sessionStorage.removeItem("removed");
-    }
-    if (sesremoved.length) {
-      console.log(sesremoved);
-      for (i in sesremoved) {
-        if (!sessions.includes(sesremoved[i])) {
-          sessions.push({name: sesremoved[i].name, description: sesremoved[i].description});
-        }
-      }
-      session = sesremoved[sesremoved.length-1].name;
-      sesremoved.length = 0;
-      sessionStorage.removeItem("sesremoved");
-    }
-    localStorage.setItem("all", JSON.stringify(alltimes));
-    localStorage.setItem("sessions", JSON.stringify(sessions));
-    localStorage.setItem("currses", JSON.stringify(session));
-    draw();
-  }
+  if (key === 90 && ctrl) { undo(); }
   if (key === 13 && sespop) {newSession();}
   if (key === 50 && timepop && !morepop) { allthistime.plustwo = changeallplus ? false : true; closeNdraw();}
   if (key === 68 && timepop && !morepop) { allthistime.dnf = changealldnf ? false : true; closeNdraw();}
@@ -1134,6 +1137,8 @@ saveses.addEventListener("click", () => {
   localStorage.setItem("currses", JSON.stringify(session));
   closeNdraw();
 }, false);
+
+undobtn.addEventListener("click", undo, false);
 
 //switch sessions
 document.addEventListener("click", (evt) => {
