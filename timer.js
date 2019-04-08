@@ -665,12 +665,6 @@ function stopwatch() {
   counter = (Math.trunc((timer - start)/10)/100);
   thetime = toMinutes(counter).toString().slice(0, -1);
   time.textContent = thetime;
-  if (isMobile) {
-    // counter >= 10 ? centerac.classList.add("hundredWidth") : centerac.classList.remove("hundredWidth");
-  }
-  else {
-    counter >= 10 ? centerac.classList.add("fiftyWidth") : centerac.classList.remove("fiftyWidth");
-  }
 };
 
 function go() { //run stopwatch & stuff
