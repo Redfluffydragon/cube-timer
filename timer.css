@@ -624,11 +624,11 @@ button:hover {
 }
 
 .inlineBlock {
-  display: inline-block;
+  display: inline-block !IMPORTANT;
 }
 
 .block {
-  display: block;
+  display: block !IMPORTANT;
 }
 
 .none {
