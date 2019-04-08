@@ -616,7 +616,7 @@ function toMinutes(time) {
   return temptime;
 }
 
-function inspection() { 
+function inspection() {
   clearInterval(intstart);
   itimer = new Date();
   icounter = Math.trunc((itimer-istart)/1000);
@@ -724,6 +724,7 @@ function fin() { //finish timing, save result
   
   let addTwo = plustwo ? 2 : null;
   time.className = ("");
+  time.textContent = toMinutes(counter);
   insptime.classList.remove("orange", "blue", "green", "magenta")
   onlytime.classList.remove("initial");      
   timealert.classList.add("none");
@@ -1156,9 +1157,9 @@ function timesInOut() {
     sessionsdiv.classList.remove("transXhundred");
     outicon.classList.add("none");
 
-    settings.classList.remove("ninetyWidth");
-    scrambletxt.classList.remove("fiveLeft");
-    scrambletxt.classList.remove("ninetyWidth");
+    settings.style.width = "";
+    scrambletxt.style.left = "";
+    scrambletxt.style.width = "";
     timein = false;
   }
   else if (!timein) {
@@ -1166,9 +1167,9 @@ function timesInOut() {
     sessionsdiv.classList.add("transXhundred");
     outicon.classList.remove("none");
 
-    settings.classList.add("ninetyWidth");
-    scrambletxt.classList.add("fiveLeft");
-    scrambletxt.classList.add("ninetyWidth");
+    settings.style.width = "90vw";
+    scrambletxt.style.left = "5vw";
+    scrambletxt.style.width = "90vw";
     timein = true;
   }
   localStorage.setItem("timein", JSON.stringify(timein));

@@ -73,9 +73,9 @@ body {
   display: table-cell;
   vertical-align: bottom;
   z-index: 3;
-  transition: all .4s;
+  transition: width 1s;
   margin-right: 10px;
-  width: initial;
+  width: 70vw;
 }
 
 .rdropdown {
@@ -571,7 +571,7 @@ button:hover {
 }
 
 @media screen and (max-width: 1100px) {
-  #scrambletxt {top: 15vh; font-size: calc(6px + 1.6vmax);}
+  #scrambletxt {top: 15vh; font-size: calc(6px + 1.6vmax); width: 50vw;}
 }
 
 @media screen and (max-width: 1000px) { 
@@ -592,7 +592,7 @@ button:hover {
 @media screen and (max-width: 650px) { /*if viewport width is less than 480 px*/
   #centerac {width: 40vw;}
   #insptime {top: 57vh;}
-  #scrambletxt {top: 12vh;}
+  #scrambletxt {top: 12vh; width: 60vw;}
   #settings{width: 60vw;}
   #settingslist{padding-left: 2vw;}
   #sesoptpopup button {width: 29vw;}
@@ -610,10 +610,10 @@ button:hover {
   #sesname {width: 48vw;}
   #sescrip {width: 48vw;}
   #seesescrip {width: 58vw;}
-  #scrambletxt {top: 17vh; /* left: 40vw; */ max-height: 37vh; margin-right: 3px; overflow: scroll; -webkit-overflow-scrolling: touch;}
+  #scrambletxt {top: 17vh; left: 40vw; width: 57vw; max-height: 37vh; margin-right: 3px; overflow: scroll; -webkit-overflow-scrolling: touch;}
   #settings {height: 20vh;}
-  /* #time {position: fixed; top: initial; bottom: 190px;} */
-  /* #insptime{position: fixed; top: initial; bottom: 20px; margin-left: 20px} */
+  #time {position: fixed; top: initial; bottom: 190px;}
+  #insptime{position: fixed; top: initial; bottom: 10px; margin-left: 20px}
   #timetable tbody {max-height: 50vh;}
   #centerac {height: 0; width: 74vw; bottom: 6vh;}
   body {height: 80vh;}
