@@ -22,22 +22,14 @@ body {
   position: absolute;
   top: 48vh;
   font-family: 'Times New Roman', Times, serif;
-  z-index: 0;
   margin: 0;
   height: 0;
   transition: 0s;
 }
 
 #onlytime {
-  width: 100%;
-  height: 100%;
   background-color: white;
   z-index: 4;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  display: none;
   transition: opacity .8s;
 }
 
@@ -47,9 +39,7 @@ body {
   position: absolute;
   top: 48vh;
   padding-left: 5vw;
-  display: none;
   font-family: 'Times New Roman', Times, serif;
-  color: #FF0000;
   z-index: 4;
   margin: 0;
 }
@@ -79,13 +69,13 @@ body {
 #scrambletxt {
   position: absolute;
   text-align: bottom;
-  width: 52vw;
   top: 6vh;
   display: table-cell;
   vertical-align: bottom;
   z-index: 3;
-  transition: width .4s;
-  
+  transition: all .4s;
+  margin-right: 10px;
+  width: initial;
 }
 
 .rdropdown {
@@ -223,7 +213,6 @@ body {
 }
 
 #outicon {
-  display: none;
   position: absolute;
   left: 3px;
   top: 4px;
@@ -445,14 +434,8 @@ button:hover {
 }
 
 #shadow {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(200, 200, 200, .8);
-  bottom: 0;
-  left: 0;
+  background-color: rgba(255, 255, 255, .8);
   z-index: 5;
-  display: none;
 }
 
 #touch {
@@ -479,6 +462,15 @@ button:hover {
   font-size: calc(12px + .7vw);
   box-shadow: 5px 5px 5px gray;
   z-index: 7;
+}
+
+.coverall {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  display: none;
 }
 
 
@@ -579,7 +571,7 @@ button:hover {
 }
 
 @media screen and (max-width: 1100px) {
-  #scrambletxt {width: 54vw; top: 15vh; left: 30vw; font-size: calc(6px + 1.6vmax);}
+  #scrambletxt {top: 15vh; font-size: calc(6px + 1.6vmax);}
 }
 
 @media screen and (max-width: 1000px) { 
@@ -600,7 +592,7 @@ button:hover {
 @media screen and (max-width: 650px) { /*if viewport width is less than 480 px*/
   #centerac {width: 40vw;}
   #insptime {top: 57vh;}
-  #scrambletxt {width: 64vw; top: 12vh;}
+  #scrambletxt {top: 12vh;}
   #settings{width: 60vw;}
   #settingslist{padding-left: 2vw;}
   #sesoptpopup button {width: 29vw;}
@@ -618,11 +610,103 @@ button:hover {
   #sesname {width: 48vw;}
   #sescrip {width: 48vw;}
   #seesescrip {width: 58vw;}
-  #scrambletxt {top: 17vh; left: 40vw; width: 57vw; max-height: 37vh; overflow: scroll; -webkit-overflow-scrolling: touch;}
+  #scrambletxt {top: 17vh; /* left: 40vw; */ max-height: 37vh; margin-right: 3px; overflow: scroll; -webkit-overflow-scrolling: touch;}
   #settings {height: 20vh;}
-  #time {position: fixed; top: initial; bottom: 190px;}
-  #insptime{position: fixed; top: initial; bottom: 20px; margin-left: 20px}
+  /* #time {position: fixed; top: initial; bottom: 190px;} */
+  /* #insptime{position: fixed; top: initial; bottom: 20px; margin-left: 20px} */
   #timetable tbody {max-height: 50vh;}
   #centerac {height: 0; width: 74vw; bottom: 6vh;}
   body {height: 80vh;}
+}
+
+.initial {
+  display: initial;
+}
+
+.inlineBlock {
+  display: inline-block;
+}
+
+.block {
+  display: block;
+}
+
+.none {
+  display: none;
+}
+
+.oneeighty {
+  background-color: rgb(180, 180, 180);
+}
+
+.oneforty {
+  background-color: rgb(140, 140, 140);
+}
+
+.twotwenty {
+  background-color: rgb(220, 220, 220)
+}
+
+.backblack {
+  background-color: black;
+}
+
+.red {
+  color: red;
+}
+
+.cyan {
+  color: cyan;
+}
+
+.green {
+  color: rgb(0, 255, 0);
+}
+
+.magenta {
+  color: rgb(255, 0, 255);
+}
+
+.orange {
+  color: orange;
+}
+
+.blue {
+  color: rgb(0, 90, 255);
+}
+
+.darkboxshadow {
+  box-shadow: 5px 5px 10px #E6E6E6;
+}
+
+.transXsixty {
+  transform: translateX(-60vw);
+}
+
+.transXhundred {
+  transform: translateX(-100vw);
+}
+
+.ninetyWidth {
+  width: 90vw;
+}
+
+.fiftyWidth {
+  width: 50vw;
+}
+
+.fiftySevenWidth {
+  width: 57vw;
+}
+
+.hundredWidth {
+  width: 100vw;
+}
+
+.fiveLeft {
+  left: 5vw;
+}
+
+.zfour {
+  z-index: 4;
 }

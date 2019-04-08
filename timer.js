@@ -126,7 +126,7 @@ let delaytime = document.getElementsByClassName("delaytime");
 
 //other elements
 let css;
-timicon = () => {timein ? outicon.style.display = "initial": outicon.style.display = "none"};
+timicon = () => {!timein ? outicon.classList.add("none") : outicon.classList.remove("none");};
 
 let timebody = document.getElementById("timetable").getElementsByTagName("tbody")[0];
 let inicon = document.getElementById("inicon");
@@ -219,7 +219,7 @@ gotem = (item, defalt, type) => {
 colorIndicator = (array, value) => {
   for (i in array) {
     if (array[i].textContent === value) {
-      array[i].style.backgroundColor = "rgb(140, 140, 140)";
+      array[i].classList.add("oneforty");
     }
   }
 }
@@ -303,24 +303,22 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
 
   //timetable in or out
   timein = gotem("timein", false);
-  setWidth = gotem("setWidth", settings.style.width);
-  scramWidth = gotem("scramWidth", scrambletxt.style.width);
-  scramLeft = gotem("scramLeft", scrambletxt.style.left);
-
+  
   timicon();
+  
   if (timein) {
-    timetable.style.transform = "translateX(-50vw)";
-    sessionsdiv.style.transform = "translateX(-100vw)";
-    settings.style.width = "90vw";
-    scrambletxt.style.width = "90vw";
-    scrambletxt.style.left = "5vw";
+    timetable.classList.add("transXsixty");
+    sessionsdiv.classList.add("transXhundred");
+    settings.classList.add("ninetyWidth");
+    scrambletxt.classList.add("ninetyWidth");
+    scrambletxt.classList.add("fiveLeft");
   }
   else if (!timein) {
-    timetable.style.transform = "translateX(0)";
-    sessionsdiv.style.transform = "translateX(0)";
-    settings.style.width = setWidth;
-    scrambletxt.style.width = scramWidth;
-    scrambletxt.style.left = scramLeft;
+    timetable.classList.remove("transXsixty");
+    sessionsdiv.classList.remove("transXhundred");
+    settings.classList.remove("ninetyWidth");
+    scrambletxt.classList.remove("ninetyWidth");
+    scrambletxt.classList.remove("fiveLeft");
   }
 }
 draw();
@@ -351,17 +349,16 @@ function clickTable() { //set up row clicks on the time table
       changeallplus = allthistime.plustwo;
       changealldnf = allthistime.dnf;
 
-      timepopup.style.display = "inline-block";
-      shadow.style.display = "initial";
+      timepopup.classList.add("inlineBlock");
+      shadow.classList.add("initial");
 
       if (alwaysmore) {
-        morepopup.style.display = "block";
+        morepopup.classList.add("block");
         morepop = true;
       }
 
-      thetwo.style.backgroundColor = changeallplus ? "rgb(140, 140, 140)" : "initial";
-      
-      thednf.style.backgroundColor = changealldnf ? "rgb(140, 140, 140)" : "initial";
+      changeallplus ? thetwo.classList.add("oneforty") : thetwo.classList.remove("oneforty");
+      changealldnf ? thednf.classList.add("oneforty") : thednf.classList.remove("oneforty");
       let timetoshine = changealldnf ? "DNF" : allthistime.time;
       timedit.innerHTML = "Edit time " + rvrsrow + " ("+ timetoshine + ") <span id='inmore'>[more]</span>";
 
@@ -372,7 +369,7 @@ function clickTable() { //set up row clicks on the time table
       if (allthistime.comment !== undefined) { comment.value = allthistime.comment; }
 
       document.getElementById("inmore").addEventListener("click", () => {
-        morepopup.style.display = morepop ? "none" : "block";
+        !morepop ? morepopup.classList.add("block") : morepopup.classList.remove("block");
         morepop = morepop ? false : true;
       }, false);
       timepop = true;
@@ -402,20 +399,19 @@ function bestworst() {
 }
 
 function dropDown (button, content) { //toggle dropdowns 
-  let clickTouch = isMobile ? "touchstart" : "click";
   let dropdown = false;
   document.addEventListener("click", (evt) => {
     let target = evt.target;
     do {
       if (target === button) {
-        content.style.display = dropdown ? "none" : "block";
+        !dropdown ? content.classList.add("block") : content.classList.remove("block");
         dropdown = dropdown ? false : true;
         return;
       }
       target = target.parentNode;
     } 
     while (target);
-    content.style.display = "none";
+    content.classList.remove("block");
     dropdown = false;
     button.blur();
   });
@@ -452,9 +448,9 @@ document.addEventListener("click", (evt) => { //switch delay times
   evt.preventDefault();
   let dlytime = document.querySelectorAll(".delaytime");
   for (let i = 0; i < dlytime.length; i++) {
-    dlytime[i].style.backgroundColor = "initial";
+    dlytime[i].classList.remove("oneforty");
   }
-  evt.target.style.backgroundColor = "rgb(140, 140, 140)";
+  evt.target.classList.add("oneforty");
   startdelay = evt.target.textContent.slice(0, -1)*1000;
   localStorage.setItem("delaysave", JSON.stringify(startdelay));
 });
@@ -466,8 +462,8 @@ function switchInspect(evt) { //switch inspection times
   inspColor();
 }
 function inspColor() {
-  inspect15.style.backgroundColor =  inspectTime ? "rgb(140, 140, 140)" : "initial";
-  inspectnone.style.backgroundColor = inspectTime ? "initial" : "rgb(140, 140, 140)";
+  inspectTime ? inspect15.classList.add("oneforty") : inspect15.classList.remove("oneforty");
+  inspectTime ? inspectnone.classList.remove("oneforty") : inspectnone.classList.add("oneforty");
 }
 inspectnone.addEventListener("click", switchInspect, false);
 inspect15.addEventListener("click", switchInspect, false);
@@ -477,9 +473,9 @@ document.addEventListener("click", (evt) => { //switch cubes
   evt.preventDefault();
   let cubecolor = document.querySelectorAll(".cubeselect");
   for (let i = 0; i < cubecolor.length; i++) {
-    cubecolor[i].style.backgroundColor = "initial";
+    cubecolor[i].classList.remove("oneforty");
   }
-  evt.target.style.backgroundColor = "rgb(140, 140, 140)";
+  evt.target.classList.add("oneforty");
   if (cube !== evt.target.textContent) {
     cube = evt.target.textContent;
     cubeButton.textContent = cube;
@@ -620,14 +616,14 @@ function toMinutes(time) {
   return temptime;
 }
 
-function inspection() {
+function inspection() { 
   clearInterval(intstart);
   itimer = new Date();
   icounter = Math.trunc((itimer-istart)/1000);
   displayctdn = countdown[icounter];
   insptime.textContent = displayctdn;
   if (displayctdn === "DNF") {
-    timealert.style.display = "none";
+    timealert.classList.add("none");
     dnf = true;
     plustwo = false;
     clearInterval(oto);
@@ -637,9 +633,9 @@ function inspection() {
     counter = 0;
     fin();
   }
-  if (displayctdn === "+2") { plustwo = 1; }
+  if (displayctdn === "+2") { plustwo = true; }
   if (displayctdn === 7) {
-    timealert.style.display = "initial";
+    timealert.classList.remove("none");
     timealert.textContent = "8s!";
     if (!played8) {
       eightSecSound.play();
@@ -657,9 +653,9 @@ function inspection() {
 
 function runinspect() {
   inspecting = true;
-  time.style.display = "none";
-  insptime.style.display = "initial";
-  onlytime.style.display = "initial";
+  time.classList.add("none");
+  insptime.classList.remove("none");
+  onlytime.classList.add("initial");
   inspectstart = setInterval(inspection, 10);
   istart = new Date();
 }
@@ -670,19 +666,19 @@ function stopwatch() {
   thetime = toMinutes(counter).toString().slice(0, -1);
   time.textContent = thetime;
   if (isMobile) {
-    centerac.style.width = counter >= 10 ? "150vw" : "74vw";
+    counter >= 10 ? centerac.classList.add("hundredWidth") : centerac.classList.remove("hundredWidth");
   }
   else {
-    centerac.style.width = counter >= 60 ? "50vw" : "30vw";
+    counter >= 10 ? centerac.classList.add("fiftyWidth") : centerac.classList.remove("fiftyWidth");
   }
 };
 
 function go() { //run stopwatch & stuff
-  onlytime.style.display = "initial";
-  insptime.style.display = "none";
-  time.style.display = "initial";
-  time.style.zIndex = "4";
-  timealert.style.display = "none";
+  onlytime.classList.add("initial");
+  insptime.classList.add("none");
+  time.classList.remove("none");
+  time.classList.add("zfour");
+  timealert.classList.add("none");
   clearInterval(inspectstart);
   clearInterval(oto);
   pause = false;
@@ -697,15 +693,16 @@ function ptimeout() { //add the holding delay, and colors
   outime = new Date();
   countime = outime-timeou;
 
-  if (countime > startdelay) {
+  if (countime <= startdelay) {
+    time.classList.add(mode === "light" ? "red" : "cyan");
+    insptime.classList.add(mode === "light" ? "orange" : "blue");
+  }
+  else if (countime > startdelay) {
     pause = false;
     waiting = true;
-    time.style.color = mode === "light" ? "#00FF00" : "#FF00FF";
-    insptime.style.color = mode === "light" ? "#00FF00" : "#FF00FF";
-  }
-  else if (countime <= startdelay) {
-    time.style.color = mode === "light" ? "#FF0000" : "#00FFFF";
-    insptime.style.color = mode === "light" ? "#FFAA00" : "#0055FF";
+    time.classList.add(mode === "light" ? "green" : "magenta");
+    insptime.classList.remove("orange", "blue");
+    insptime.classList.add(mode === "light" ? "green" : "magenta");
   }
 }
 
@@ -726,12 +723,10 @@ function fin() { //finish timing, save result
   clearInterval(inspectstart);
   
   let addTwo = plustwo ? 2 : null;
-  time.style.display = "initial"
-  time.style.color = "black";
-  time.style.zIndex = "0";
-  // time.textContent = toMinutes(counter); 
-  onlytime.style.display = "none";      
-  timealert.style.display = "none";
+  time.className = ("");
+  insptime.classList.remove("orange", "blue", "green", "magenta")
+  onlytime.classList.remove("initial");      
+  timealert.classList.add("none");
   alltimes.push({number: "", time: counter+addTwo, ao5: "", ao12: "", cube: cube, session: session, scramble: fscramble, date: makeDate(), comment: "", dnf: dnf, plustwo: plustwo});
   localStorage.setItem("all", JSON.stringify(alltimes));
 
@@ -747,7 +742,7 @@ function down() {
     if (!onstart && !started) {
       if (!inspectTime || inspecting) { otimeout(); }
       else if (inspectTime) {
-        time.style.color = mode === "light" ? "#00FF00" : "#FF00FF";
+        time.classList.add(mode === "light" ? "green" : "magenta");
       }
       onstart = true;
     }
@@ -756,8 +751,8 @@ function down() {
 }
   
 function up () {
-  time.style.color = "black";
-  insptime.style.color = mode === "light" ? "red" : "cyan";
+  time.classList.remove("red", "green", "cyan", "magenta");
+  insptime.classList.remove("orange", "blue");
   if (!timepop && !sespop && !sesoptpop && !dnf) {
     if (!started && !waiting) {
       clearInterval(oto); //reset the hold delay
@@ -833,17 +828,16 @@ lighticon.addEventListener("click", () => {runmode(false)}, false);
 
 function darkmode() {
   if (!isMobile) {
-    document.body.style.backgroundColor = "black";
+    document.body.classList.add("backblack");
   }
-  shadow.style.backgroundColor = "rgba(255, 255, 255, .8)";
-  cancelbtn.style.backgroundColor = "#DCDCDC";
-  sescreate.style.backgroundColor = "#DCDCDC";
-  timealert.style.color = "cyan";
-  insptime.style.color = "cyan";
+  cancelbtn.classList.add("twotwenty");
+  sescreate.classList.add("twotwenty");
+  timealert.classList.add("cyan");
+  insptime.classList.add("cyan");
 
   for (let i = 0; i < shadows.length; i++) {
-    shadows[i].style.backgroundColor = "#D2D2D2";
-    shadows[i].style.boxShadow = "5px 5px 10px #E6E6E6";
+    shadows[i].classList.add("oneeighty");
+    shadows[i].classList.add("darkboxshadow");
   }
 
   css = 'html {-webkit-filter: invert(100%);' + '-moz-filter: invert(100%);' + '-o-filter: invert(100%);' + '-ms-filter: invert(100%); }';
@@ -851,17 +845,16 @@ function darkmode() {
 
 function lightmode() {
   if (!isMobile) {
-    document.body.style.backgroundColor = "white";
+    document.body.classList.remove("backblack");
   }  
-  shadow.style.backgroundColor = "rgba(255, 255, 255, .8)";
-  cancelbtn.style.backgroundColor = "#8C8C8C";
-  sescreate.style.backgroundColor = "#8C8C8C";
-  timealert.style.color = "red";
-  insptime.style.color = "red";
+  cancelbtn.classList.remove("twotwenty");
+  sescreate.classList.remove("twotwenty");
+  timealert.classList.remove("cyan");
+  insptime.classList.remove("cyan");
 
   for (let i = 0; i < shadows.length; i++) {
-    shadows[i].style.backgroundColor = "#B4B4B4";
-    shadows[i].style.boxShadow = "5px 5px 5px gray";
+    shadows[i].classList.remove("oneeighty");
+    shadows[i].classList.remove("darkboxshadow");
   }
 
   css = 'html {-webkit-filter: invert(0%); -moz-filter: invert(0%); -o-filter: invert(0%); -ms-filter: invert(0%); }'
@@ -883,15 +876,15 @@ function runmode(start) { // switch modes, and open in saved mode
 }
 
 function closeAll() { //close everything
-  timepopup.style.display = "none";
-  morepopup.style.display = "none";
-  cubeDrop.style.display = "none";
-  inspectDrop.style.display = "none";
-  delayDrop.style.display = "none";
-  sesdrop.style.display = "none";
-  sesoptpopup.style.display = "none";
-  sespopup.style.display = "none";
-  shadow.style.display = "none";
+  timepopup.classList.remove("inlineBlock");
+  morepopup.classList.remove("block");
+  cubeDrop.classList.remove("block");
+  inspectDrop.classList.remove("block");
+  delayDrop.classList.remove("block");
+  sesdrop.classList.remove("block");
+  sesoptpopup.classList.remove("inlineBlock");
+  sespopup.classList.remove("inlineBlock");
+  shadow.classList.remove("initial");
   
   if (comment.value) {
     let commentxt = comment.value;
@@ -959,8 +952,8 @@ checkmore.addEventListener("click", () => {
 
 //open the new session popup
 newses.addEventListener("click", () => {
-  sespopup.style.display = "inline-block";
-  shadow.style.display = "initial";
+  sespopup.classList.add("inline-block");
+  shadow.classList.add("initial");
   sesname.focus();
   sespop = true;
 }, false);
@@ -1107,8 +1100,8 @@ exportses.addEventListener("click", () => {
 }, false);
 
 sesopt.addEventListener("click", () => {
-  sesoptpopup.style.display = "inline-block";
-  shadow.style.display = "initial";
+  sesoptpopup.classList.add("inline-block");
+  shadow.classList.add("initial");
   changesesname.value = session;
   let tempcrip;
   for (let i = 0; i < sessions.length; i++) {
@@ -1158,28 +1151,33 @@ document.addEventListener("click", (evt) => {
 }, false);
 
 function timesInOut() {
-  timetable.style.transform = timein ? "translateX(0)" : "translateX(-50vw)";
-  sessionsdiv.style.transform = timein ? "translateX(0)" : "translateX(-100vw)";
-  if (!timein) { 
-    setWidth = settings.style.width; 
-    scramWidth = scrambletxt.style.width;
-    scramLeft = scrambletxt.style.left;
+  if (timein) {
+    timetable.classList.remove("transXsixty");
+    sessionsdiv.classList.remove("transXhundred");
+    outicon.classList.add("none");
+
+    settings.classList.remove("ninetyWidth");
+    scrambletxt.classList.remove("fiveLeft");
+    scrambletxt.classList.remove("ninetyWidth");
+    timein = false;
   }
-  if (timein) { outicon.style.display = "none"; }
-  settings.style.width = timein ? setWidth : "90vw";
-  scrambletxt.style.width = timein ? scramWidth : "90vw";
-  scrambletxt.style.left = timein ? scramLeft : "5vw";
-  timein = timein ? false : true;
+  else if (!timein) {
+    timetable.classList.add("transXsixty");
+    sessionsdiv.classList.add("transXhundred");
+    outicon.classList.remove("none");
+
+    settings.classList.add("ninetyWidth");
+    scrambletxt.classList.add("fiveLeft");
+    scrambletxt.classList.add("ninetyWidth");
+    timein = true;
+  }
   localStorage.setItem("timein", JSON.stringify(timein));
-  localStorage.setItem("setWidth", JSON.stringify(setWidth)); 
-  localStorage.setItem("scramWidth", JSON.stringify(scramWidth));
-  localStorage.setItem("scramLeft", JSON.stringify(scramLeft));
 }
 
 inicon.addEventListener("click", timesInOut, false);
 outicon.addEventListener("click", timesInOut, false);
 timetable.addEventListener("transitionend", () => {
-  if (timein) { outicon.style.display = "initial"; }
+  if (timein) { outicon.classList.remove("none"); }
 }, false);
 
 document.getElementById("clearall").addEventListener("click", () => {

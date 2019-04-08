@@ -3,11 +3,11 @@
   <head>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Cube Timer</title>
     <link rel="icon" href="icon.png" type="image/png">
     <link rel="apple-touch-icon" sizes="620x620" href="apple-touch-icon.png">
     <link rel="stylesheet" type="text/css" media="screen" href="timer.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="timer.js" type="text/javascript" async></script>
   </head>
 
@@ -16,13 +16,13 @@
       <p id="scrambletxt" title="Just a random move scrambler."></p>
     </div>
   
-    <div id="onlytime"></div>
+    <div id="onlytime" class="coverall"></div>
 
-    <p id="timealert">8s</p> 
+    <p id="timealert" class="none">8s</p> 
 
     <div id="centerac">
       <p id="time">0.00</p>
-      <p id="insptime">15</p>
+      <p id="insptime" class="red none">15</p>
     </div>
     
     <div id="touch"></div>
@@ -91,7 +91,7 @@
       </div>
     </div>
     
-    <div id="shadow"></div>
+    <div id="shadow" class="coverall"></div>
     
     <div id="centerpop">
       <div id="timepopup" class="popup">
