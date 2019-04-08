@@ -615,10 +615,10 @@ button:hover {
   #scrambletxt {top: 17vh; left: 40vw; width: 57vw; max-height: 37vh; margin-right: 3px; overflow: scroll; -webkit-overflow-scrolling: touch;}
   #settings {height: 20vh;}
   /* #time {position: fixed; top: initial; bottom: 190px; margin: 0;} */
-  /* #time {margin-left: 0; margin-bottom: 20vh;} */
+  #time {position: relative; margin: 0; top: 60vh;}
   /* #insptime{position: fixed; top: initial; bottom: 10px; margin-left: 20vw} */
   #timetable tbody {max-height: 50vh;}
-  #centerac {height: 0; top: 0vh;}
+  /* #centerac {height: 0; top: 0vh;} */
   body {height: 80vh;}
 }
 
