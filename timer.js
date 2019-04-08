@@ -309,16 +309,16 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
   if (timein) {
     timetable.classList.add("transXsixty");
     sessionsdiv.classList.add("transXhundred");
-    settings.classList.add("ninetyWidth");
-    scrambletxt.classList.add("ninetyWidth");
-    scrambletxt.classList.add("fiveLeft");
+    settings.style.width = "90vw";
+    scrambletxt.style.width = "90vw";
+    scrambletxt.style.left = "5vw";
   }
   else if (!timein) {
     timetable.classList.remove("transXsixty");
     sessionsdiv.classList.remove("transXhundred");
-    settings.classList.remove("ninetyWidth");
-    scrambletxt.classList.remove("ninetyWidth");
-    scrambletxt.classList.remove("fiveLeft");
+    settings.style.width = "";
+    scrambletxt.style.width = "";
+    scrambletxt.style.left = "";
   }
 }
 draw();
@@ -666,7 +666,7 @@ function stopwatch() {
   thetime = toMinutes(counter).toString().slice(0, -1);
   time.textContent = thetime;
   if (isMobile) {
-    counter >= 10 ? centerac.classList.add("hundredWidth") : centerac.classList.remove("hundredWidth");
+    // counter >= 10 ? centerac.classList.add("hundredWidth") : centerac.classList.remove("hundredWidth");
   }
   else {
     counter >= 10 ? centerac.classList.add("fiftyWidth") : centerac.classList.remove("fiftyWidth");
@@ -674,6 +674,8 @@ function stopwatch() {
 };
 
 function go() { //run stopwatch & stuff
+  start = new Date();
+  intstart = setInterval(stopwatch, 10); //actually start the stopwatch
   onlytime.classList.add("initial");
   insptime.classList.add("none");
   time.classList.remove("none");
@@ -682,8 +684,6 @@ function go() { //run stopwatch & stuff
   clearInterval(inspectstart);
   clearInterval(oto);
   pause = false;
-  start = new Date();
-  intstart = setInterval(stopwatch, 10); //actually start the stopwatch
   inspecting = false;
   waiting = false;
   started = true;
@@ -953,7 +953,7 @@ checkmore.addEventListener("click", () => {
 
 //open the new session popup
 newses.addEventListener("click", () => {
-  sespopup.classList.add("inline-block");
+  sespopup.classList.add("inlineBlock");
   shadow.classList.add("initial");
   sesname.focus();
   sespop = true;
@@ -1101,7 +1101,7 @@ exportses.addEventListener("click", () => {
 }, false);
 
 sesopt.addEventListener("click", () => {
-  sesoptpopup.classList.add("inline-block");
+  sesoptpopup.classList.add("inlineBlock");
   shadow.classList.add("initial");
   changesesname.value = session;
   let tempcrip;
