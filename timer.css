@@ -614,8 +614,8 @@ button:hover {
   #seesescrip {width: 58vw;}
   #scrambletxt {top: 17vh; left: 40vw; width: 57vw; max-height: 37vh; margin-right: 3px; overflow: scroll; -webkit-overflow-scrolling: touch;}
   #settings {height: 20vh;}
-  #time {margin: 0; top: 57vh;}
-  #insptime{top: 57vh;}
+  #time {margin: 0; top: 54vh;}
+  #insptime{top: 54vh;}
   #timetable tbody {max-height: 50vh;}
   body {height: 80vh;}
 }
