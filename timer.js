@@ -156,13 +156,13 @@ let seecube = document.getElementById("seecube");
 let best = document.getElementById("best");
 let worst = document.getElementById("worst");
 
-let timepop;
-let clicked;
+let timepop; //popups open or closed
 let morepop;
+let infopop;
+let sespop;
+let sesoptpop; 
 
 //session elements
-let sespop;
-let sesoptpop; //popups open or closed
 let sessions = [{name: "Session 1", description: "Default session"}];
 let session;
 let sesnames = [];
@@ -190,6 +190,10 @@ let seesescrip = document.getElementById("seesescrip");
 let sessionsdiv = document.getElementById("sessions");
 let undobtn = document.getElementById("undobtn");
 
+let clearall = document.getElementById("clearall");
+let infobtn = document.getElementById("infobtn");
+let infopopup = document.getElementById("infopopup");
+
 let isMobile = (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
 isMobile ? undobtn.classList.remove("none") : undobtn.classList.add("none");
 
@@ -202,7 +206,7 @@ function createTableRow() {
     tempCell.className = columnClass[i];
     cellArrs[i].push(tempCell);
   }
-}
+};
 
 gotem = (item, defalt, type=localStorage) => {
   let vari;
@@ -213,7 +217,7 @@ gotem = (item, defalt, type=localStorage) => {
     type.setItem(item, JSON.stringify(vari));
   }
   return vari;
-}
+};
 
 colorIndicator = (array, value) => {
   for (i in array) {
@@ -221,7 +225,7 @@ colorIndicator = (array, value) => {
       array[i].classList.add("oneforty");
     }
   }
-}
+};
 
 function draw() { //on startup/reload. Also to redraw table after modifying a time
   for (i in cellArrs) { cellArrs[i].length = 0; }
@@ -299,21 +303,21 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
   }
   
   sesslc.textContent = session;
-}
+};
 draw();
 
 function onStart() {
   timein = gotem("timein", false);
   timicon();
   timesInOut(null, false);
-}
+};
 
 onStart();
 
 function closeNdraw() {
   closeAll();
   draw();
-}
+};
 
 function clickTable() { //set up row clicks on the time table 
   let rowID = document.getElementById("timebody").getElementsByTagName('tr');
@@ -321,7 +325,6 @@ function clickTable() { //set up row clicks on the time table
   let touchMoved;
   for (i = 0; i < rowID.length; i++) {
     rowID[i].addEventListener(clickTouch, function() {
-      console.log(touchMoved)
       if (!isMobile || !touchMoved) {
       let rvrsrow = displaytimes.length - this.rowIndex+1; //reverse the row index
       let findem;
@@ -365,14 +368,16 @@ function clickTable() { //set up row clicks on the time table
     rowID[i].addEventListener("touchmove", () => {touchMoved = true;}, false);
     rowID[i].addEventListener("touchstart", () => {touchMoved = false;}, false);
   }
-}
+};
 
-//close modals on click outside
 let mouseTouch = isMobile ? "touchstart" : "mousedown";
-document.addEventListener(mouseTouch, evt => {
-  if(evt.target.closest(".popup")) return;
-  if (timepop || sespop || sesoptpop) { closeNdraw(); }
+let tapped;
+document.addEventListener(mouseTouch, evt => { //close modals on click outside
+  if (evt.target.closest(".popup")) return;
+  if (timepop || sespop || sesoptpop || infopop && !tapped) { closeNdraw();}
+  if (isMobile) {tapped = true;}
 }, false);
+document.addEventListener("touchend", () => {tapped = false;}, false);
 
 function bestworst() {
   justTimes.length = 0;
@@ -383,7 +388,7 @@ function bestworst() {
   let bestTime = Math.min(...justTimes);
   best.textContent = !isNaN(JSON.stringify(bestTime)) ? toMinutes(bestTime) : "--";
   worst.textContent = !isNaN(JSON.stringify(worstTime)) ? toMinutes(worstTime) : "--";
-}
+};
 
 function dropDown (button, content) { //toggle dropdowns 
   let dropdown = false;
@@ -428,7 +433,7 @@ function makeDate() {
 
   let finaldate = days[day]+", "+months[month]+ " "+daydate+", "+year+" "+hour+":"+minute+":"+seconds+" UTC"+timezone;
   return finaldate;
-}
+};
 
 document.addEventListener("click", evt => { //switch delay times
   if (!evt.target.matches(".delaytime")) return;
@@ -447,11 +452,11 @@ function switchInspect(evt) { //switch inspection times
   inspectTime = inspectTime ? false : true;
   localStorage.setItem("inspectsave", JSON.stringify(inspectTime));
   inspColor();
-}
+};
 function inspColor() {
   inspectTime ? inspect15.classList.add("oneforty") : inspect15.classList.remove("oneforty");
   inspectTime ? inspectnone.classList.remove("oneforty") : inspectnone.classList.add("oneforty");
-}
+};
 inspectnone.addEventListener("click", switchInspect, false);
 inspect15.addEventListener("click", switchInspect, false);
 
@@ -485,7 +490,7 @@ function checknxn(moveset) { //for nxnxn cubes
   }
   if (twochart === twocharp || charonep === charonet) {return;}
   else { tscramble.push(tempmove); }
-}
+};
 
 function checkpyr1() { // turn the big corners for pyraminx
   let random = Math.round(Math.random()*7);
@@ -496,7 +501,7 @@ function checkpyr1() { // turn the big corners for pyraminx
   if (pmove !== undefined) {charonep = pmove.charAt(0);}
   if (charonet === charonep) {return;}
   else { tscramble.unshift(tempmove); }
-}
+};
 
 function addfour(moveset, chancemod, apostrophe) { //turn 0-4 corners at the end - also for clock (pegs I think)...
   for (let i = 0; i < 4; i++) {
@@ -507,12 +512,12 @@ function addfour(moveset, chancemod, apostrophe) { //turn 0-4 corners at the end
       else { tscramble.unshift(moveset[i] + "'"); }
     }
   }
-}
+};
 
 function checkpyrall() {
   addfour(pyrpmoves, .1, true);
   while (tscramble.length < 10) { checkpyr1(); }
-}
+};
 
 function checkmeg() {
   for (let i = 0; i < slen/11; i++) {
@@ -525,7 +530,7 @@ function checkmeg() {
     let uRightLeft = Math.round(Math.random());
     uRightLeft ? tscramble.push("U<br>") : tscramble.push("U'<br>");
   }
-}
+};
 
 function checksqu() {//probably doesn't work. I don't know what moves aren't allowed for squan.
   let onerand = Math.round((Math.random()*11)-5);
@@ -540,7 +545,7 @@ function checksqu() {//probably doesn't work. I don't know what moves aren't all
       (onerand === 0 && tworand === 0))
       { return; } //there are probably other exclusions
   else {tscramble.push("(" + onerand + "," + tworand + ")")}
-}
+};
 
 function checkclo() {
   addfour(clocksl4, 0, false);
@@ -550,7 +555,7 @@ function checkclo() {
     let rvrsclock = clkstr.length > 1 ? clkstr.charAt(1)+clkstr.charAt(0) : clkstr.charAt(0)+"+"; 
     clocks[i] !== "y2" ? tscramble.unshift(clocks[i]+rvrsclock) : tscramble.unshift(clocks[i]);
   }
-}
+};
 
 function scramble() {
   tscramble.length = 0;
@@ -560,7 +565,7 @@ function scramble() {
   fscramble = tscramble.join(" ");
   scrambletxt.innerHTML = fscramble;
   localStorage.setItem("scramble", JSON.stringify(fscramble));
-}
+};
 
 function average(startpoint, leng) {
   let sum;
@@ -584,7 +589,7 @@ function average(startpoint, leng) {
 
   let avg = Math.trunc((sum/avgAll.length)*100)/100;
   return isNaN(avg) ? "" : toMinutes(avg);
-}
+};
 
 //display inspection countdown, as well as 8s, 12s, +2, and DNF by timeout
 function toMinutes(time) {
@@ -601,7 +606,7 @@ function toMinutes(time) {
     temptime = minutes + ":" + secondsafter;
   }
   return temptime;
-}
+};
 
 function inspection() {
   clearInterval(intstart);
@@ -636,7 +641,7 @@ function inspection() {
       played12 = true;
     }
   }
-}
+};
 
 function runinspect() {
   inspecting = true;
@@ -645,7 +650,7 @@ function runinspect() {
   onlytime.classList.add("initial");
   inspectstart = setInterval(inspection, 10);
   istart = new Date();
-}
+};
 
 function stopwatch() {
   timer = new Date();
@@ -685,13 +690,13 @@ function ptimeout() { //add the holding delay, and colors
     insptime.classList.remove("orange", "blue");
     insptime.classList.add(mode === "light" ? "green" : "magenta");
   }
-}
+};
 
 function otimeout() { //setInterval for ptimeout
   pause = true;
   timeou = new Date();
   oto = setInterval(ptimeout, 10);
-}
+};
  
 function fin() { //finish timing, save result
   started = false;
@@ -717,7 +722,7 @@ function fin() { //finish timing, save result
 
   scramble();
   draw();
-}
+};
 
 function down() {
   if (!timepop && !sespop && !sesoptpop) {
@@ -730,7 +735,7 @@ function down() {
     }
     else if(started) { fin(); }
   }
-}
+};
   
 function up () {
   time.classList.remove("red", "green", "cyan", "magenta");
@@ -747,12 +752,12 @@ function up () {
     }
     else if (keydown) { keydown = false; }
   }
-}
+};
 
 function touchdown(evt) {
   evt.preventDefault();
   down();
-}
+};
 
 function undo() {
   removed = gotem("removed", [], sessionStorage);
@@ -780,7 +785,7 @@ function undo() {
   localStorage.setItem("sessions", JSON.stringify(sessions));
   localStorage.setItem("currses", JSON.stringify(session));
   draw();
-}
+};
 
 window.addEventListener("keydown", evt => {
   let key = evt.keyCode;
@@ -825,7 +830,7 @@ function darkmode() {
   }
 
   css = 'html {-webkit-filter: invert(100%);' + '-moz-filter: invert(100%);' + '-o-filter: invert(100%);' + '-ms-filter: invert(100%); }';
-}
+};
 
 function lightmode() {
   if (!isMobile) {
@@ -842,7 +847,7 @@ function lightmode() {
   }
 
   css = 'html {-webkit-filter: invert(0%); -moz-filter: invert(0%); -o-filter: invert(0%); -ms-filter: invert(0%); }'
-}
+};
 
 function runmode(start) { // switch modes, and open in saved mode
   let head = document.getElementsByTagName('head')[0];
@@ -857,28 +862,38 @@ function runmode(start) { // switch modes, and open in saved mode
   
   style.styleSheet ? style.styleSheet.cssText = css : style.appendChild(document.createTextNode(css));
   head.appendChild(style);
-}
+};
 
 function closeAll() { //close everything
-  timepopup.classList.remove("inlineBlock");
-  morepopup.classList.remove("block");
   cubeDrop.classList.remove("block");
   inspectDrop.classList.remove("block");
   delayDrop.classList.remove("block");
   sesdrop.classList.remove("block");
+
+  infopopup.classList.remove("inlineBlock")
+  timepopup.classList.remove("inlineBlock");
+  morepopup.classList.remove("block");
   sesoptpopup.classList.remove("inlineBlock");
   sespopup.classList.remove("inlineBlock");
   shadow.classList.remove("initial");
   
-  alltimes[tempallidx].comment = comment.value;
+  if (timepop) {
+    alltimes[tempallidx].comment = comment.value;
+  }
   localStorage.setItem("all", JSON.stringify(alltimes));
   
   timepop = false;
   morepop = false;
   sespop = false;
   sesoptpop = false;
-  clicked = false;
-}
+  infopop = false;
+};
+
+infobtn.addEventListener("click", () => {
+  infopopup.classList.add("inlineBlock");
+  shadow.classList.add("initial");
+  infopop = true;
+}, false);
 
 //close the time editing popup
 cancelbtn.addEventListener("click", closeNdraw, false);
@@ -953,7 +968,7 @@ function newSession() {
     localStorage.setItem("currses", JSON.stringify(session));
     closeNdraw();
   }
-}
+};
 
 sescreate.addEventListener("click", newSession, false);
 
@@ -969,7 +984,7 @@ function justAsession() {
     removed.push({time: alltimes.splice(rmvidx, 1)[0], index: rmvidx, session: session});
   }
   sessionStorage.setItem("removed", JSON.stringify(removed));
-}
+};
 
 function justAll() {
   for (i in alltimes) { removed.push({time: alltimes[i], index: i}); }
@@ -978,7 +993,7 @@ function justAll() {
   sessions.length = 0;
   localStorage.removeItem("all");
   time.textContent = "0.00";
-}
+};
 
 function createArray(array, arrayKeys) { //create array of arrays from array of objects 
   let returnarray = [];
@@ -1133,6 +1148,8 @@ document.addEventListener("click", evt => {
   draw();
 }, false);
 
+infoclose.addEventListener("click", closeAll, false);
+
 function timesInOut(e, swtch=true) {
   let scLOffset;
   if (timein === swtch) {
@@ -1173,7 +1190,7 @@ function timesInOut(e, swtch=true) {
   }
   if (swtch) { timein = timein ? false : true; }
   localStorage.setItem("timein", JSON.stringify(timein));
-}
+};
 
 inicon.addEventListener("click", timesInOut, false);
 outicon.addEventListener("click", timesInOut, false);
@@ -1181,7 +1198,7 @@ timetable.addEventListener("transitionend", () => {
   if (timein) { outicon.classList.remove("none"); }
 }, false);
 
-document.getElementById("clearall").addEventListener("click", () => {
+clearall.addEventListener("click", () => {
   let clearall = confirm("Clear everything?")
   if (clearall) {
     localStorage.clear();

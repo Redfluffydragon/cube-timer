@@ -59,7 +59,6 @@ body {
   text-align: center;
   width: 52vw;
   margin: auto;
-  font-size: calc(16px + .7vmax);
   font-family: monospace;
   justify-content: center;
   display: table;
@@ -67,6 +66,7 @@ body {
 }
 
 #scrambletxt {
+  font-size: calc(16px + .7vmax);  
   position: absolute;
   text-align: bottom;
   top: 6vh;
@@ -135,7 +135,7 @@ body {
   top: -2px;
   overflow: hidden;
   text-align: center;
-  transition: transform .8s;
+  transition: transform 1s;
 }
 
 .times {
@@ -226,7 +226,7 @@ body {
   position: absolute;
   display: inline-block;
   left: .6vh;
-  transition: transform .8s;
+  transition: transform 1s;
   bottom: .6vh;
   margin: 0;
   padding: 0;
@@ -559,11 +559,39 @@ button:hover {
   float: right;
 }
 
-#clearall {
+.bottomR {
   position: absolute;
   bottom: .6vh;
   right: .6vh;
   margin: 0;
+}
+
+#infobtn {
+  border-radius: 50%;
+  width: calc(20px + 1vw);
+  height: calc(20px + 1vw);
+  position: relative;
+  top: calc(5px + .3vw);
+}
+
+#infobtn:hover {
+  cursor: pointer;
+}
+
+#infopopup h3 {
+  margin: 9px;
+  margin-top: 12px;
+}
+
+#infopopup em, a, p {
+  font-size: calc(7px + .7vw);
+}
+
+#infopopup button {
+  display: block;
+  margin-left: 33%;
+  width: 33%;
+  margin-bottom: 4px;
 }
 
 @media screen and (min-width: 600px) {
