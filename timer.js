@@ -205,10 +205,9 @@ function createTableRow() {
   }
 }
 
-gotem = (item, defalt, type) => {
-  let fixtype = type === undefined ? localStorage : type;
+gotem = (item, defalt, type=localStorage) => {
   let vari;
-  let getthething = fixtype.getItem(item);
+  let getthething = type.getItem(item);
   if (getthething !== null) { vari = JSON.parse(getthething); }
   if (vari === undefined) {
     vari = defalt;
@@ -307,20 +306,7 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
   
   timicon();
   
-  if (timein) {
-    timetable.classList.add("transXsixty");
-    sessionsdiv.classList.add("transXhundred");
-    settings.style.width = "90vw";
-    scrambletxt.style.width = "90vw";
-    scrambletxt.style.left = "5vw";
-  }
-  else if (!timein) {
-    timetable.classList.remove("transXsixty");
-    sessionsdiv.classList.remove("transXhundred");
-    settings.style.width = "";
-    scrambletxt.style.width = "";
-    scrambletxt.style.left = "";
-  }
+  timesInOut(null, false);
 }
 draw();
 
@@ -383,7 +369,7 @@ function clickTable() { //set up row clicks on the time table
 
 //close modals on click outside
 let mouseTouch = isMobile ? "touchstart" : "mousedown";
-document.addEventListener(mouseTouch, (evt) => {
+document.addEventListener(mouseTouch, evt => {
   if(evt.target.closest(".popup")) return;
   if (timepop || sespop || sesoptpop) { closeAll(); }
 }, false);
@@ -444,7 +430,7 @@ function makeDate() {
   return finaldate;
 }
 
-document.addEventListener("click", (evt) => { //switch delay times
+document.addEventListener("click", evt => { //switch delay times
   if (!evt.target.matches(".delaytime")) return;
   evt.preventDefault();
   let dlytime = document.querySelectorAll(".delaytime");
@@ -469,7 +455,7 @@ function inspColor() {
 inspectnone.addEventListener("click", switchInspect, false);
 inspect15.addEventListener("click", switchInspect, false);
 
-document.addEventListener("click", (evt) => { //switch cubes
+document.addEventListener("click", evt => { //switch cubes
   if (!evt.target.matches(".cubeselect")) return;
   evt.preventDefault();
   let cubecolor = document.querySelectorAll(".cubeselect");
@@ -796,7 +782,7 @@ function undo() {
   draw();
 }
 
-window.addEventListener("keydown", (evt) => {
+window.addEventListener("keydown", evt => {
   let key = evt.keyCode;
   if (key === 32) { down(); }
   if (key === 27) { closeAll(); }
@@ -807,7 +793,7 @@ window.addEventListener("keydown", (evt) => {
   if (key === 68 && timepop && !morepop) { allthistime.dnf = changealldnf ? false : true; closeNdraw();}
 }, false);
 
-window.addEventListener("keyup", (evt) => {
+window.addEventListener("keyup", evt => {
   if (evt.keyCode === 32) { up(); }
   if (evt.keyCode=== 17) {ctrl = false;}
 }, false);
@@ -900,7 +886,7 @@ function closeAll() { //close everything
 //close the time editing popup
 cancelbtn.addEventListener("click", closeAll, false);
 
-document.addEventListener("click", (evt) => { //+2, DNF, and delete for individual times
+document.addEventListener("click", evt => { //+2, DNF, and delete for individual times
   if (!evt.target.matches(".modtime")) return;
   evt.preventDefault();
   let selection = evt.target.textContent;
@@ -1141,7 +1127,7 @@ saveses.addEventListener("click", () => {
 undobtn.addEventListener("click", undo, false);
 
 //switch sessions
-document.addEventListener("click", (evt) => {
+document.addEventListener("click", evt => {
   if (!evt.target.matches(".sesselect")) return;
   evt.preventDefault();
   session = evt.target.textContent;
@@ -1150,27 +1136,45 @@ document.addEventListener("click", (evt) => {
   draw();
 }, false);
 
-function timesInOut() {
-  if (timein) {
+function timesInOut(e, swtch=true) {
+  let scLOffset;
+  if (timein === swtch) {
     timetable.classList.remove("transXsixty");
     sessionsdiv.classList.remove("transXhundred");
     outicon.classList.add("none");
-
     settings.style.width = "";
-    scrambletxt.style.left = "";
     scrambletxt.style.width = "";
-    timein = false;
+    if (!isMobile) {
+      requestAnimationFrame(()=> {
+        scrambletxt.style.left = "";
+        scLOffset = scrambletxt.offsetLeft;
+        requestAnimationFrame(()=>{
+          scrambletxt.style.left = "5vw";
+          requestAnimationFrame(()=>{
+            scrambletxt.style.left = scLOffset+"px";
+          });
+        });
+      });
+    }
+    else {scrambletxt.style.left = "";}
   }
-  else if (!timein) {
+  else if (timein !== swtch) {
     timetable.classList.add("transXsixty");
     sessionsdiv.classList.add("transXhundred");
     outicon.classList.remove("none");
 
     settings.style.width = "90vw";
-    scrambletxt.style.left = "5vw";
     scrambletxt.style.width = "90vw";
-    timein = true;
+
+    scLOffset = scrambletxt.offsetLeft;
+    requestAnimationFrame(() => {
+      scrambletxt.style.left = scLOffset+"px";
+      requestAnimationFrame(() => {
+        scrambletxt.style.left = "5vw";
+      });
+    });
   }
+  if (swtch) { timein = timein ? false : true; }
   localStorage.setItem("timein", JSON.stringify(timein));
 }
 
