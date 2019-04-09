@@ -25,13 +25,11 @@ body {
   font-family: 'Times New Roman', Times, serif;
   margin: 0;
   height: 0;
-  transition: all 0s;
 }
 
 #onlytime {
   background-color: white;
   z-index: 4;
-  transition: opacity .8s;
 }
 
 #insptime {
@@ -73,7 +71,6 @@ body {
   display: table-cell;
   vertical-align: bottom;
   z-index: 3;
-  transition: all 1s;
   margin-right: 10px;
   width: 70vw;
 }
@@ -135,7 +132,6 @@ body {
   top: -2px;
   overflow: hidden;
   text-align: center;
-  transition: transform 1s;
 }
 
 .times {
@@ -226,7 +222,6 @@ body {
   position: absolute;
   display: inline-block;
   left: .6vh;
-  transition: transform 1s;
   bottom: .6vh;
   margin: 0;
   padding: 0;
@@ -424,15 +419,6 @@ button:hover {
   cursor: pointer;
 }
 
-#settings {
-  position: absolute;
-  right: 4px;
-  top: 4px;
-  width: 70vw;
-  height: 20vh;
-  transition: width .8s;
-}
-
 #shadow {
   background-color: rgba(255, 255, 255, .8);
   z-index: 5;
@@ -570,8 +556,10 @@ button:hover {
   border-radius: 50%;
   width: calc(20px + 1vw);
   height: calc(20px + 1vw);
-  position: relative;
-  top: calc(5px + .3vw);
+  position: absolute;
+  bottom: .6vh;
+  right: .6vh;
+  margin: 0;
 }
 
 #infobtn:hover {
@@ -606,14 +594,22 @@ button:hover {
   top: 45vh;
   border-radius: 10px;
   background-color: rgb(100, 100, 100);
-  display: inline-block;
-  transition: all .2s;
+  transition: all .1s;
 }
 
 #undotxt {
   margin: 6px;
   font-size: calc(16px + .7vw);
   font-weight: 200;
+}
+
+#settings {
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  width: 70vw;
+  height: 20vh;
+  transition: width .8s;
 }
 
 @media screen and (min-width: 600px) {
@@ -736,6 +732,10 @@ button:hover {
 
 .transXhundred {
   transform: translateX(-100vw);
+}
+
+.transOneSec {
+  transition: all 1s;
 }
 
 .zfour {

@@ -192,7 +192,6 @@ let seesescrip = document.getElementById("seesescrip");
 let sessionsdiv = document.getElementById("sessions");
 let undobtn = document.getElementById("undobtn");
 
-let clearall = document.getElementById("clearall");
 let infobtn = document.getElementById("infobtn");
 let infopopup = document.getElementById("infopopup");
 
@@ -316,6 +315,9 @@ function onStart() {
   timein = gotem("timein", false);
   timicon();
   timesInOut(null, false);
+  sessionsdiv.classList.add("transOneSec");
+  timetable.classList.add("transOneSec");
+  scrambletxt.classList.add("transOneSec");
 };
 
 onStart();
@@ -791,11 +793,13 @@ function undo() {
   }
   undotxt.textContent = msg;
   undone.classList.remove("opzero");
+  undone.classList.add("inlineBlock");
   shadow.classList.add("initial");
   setTimeout(()=>{
     undone.classList.add("opzero");
+  undone.classList.remove("inlineBlock");
     shadow.classList.remove("initial");
-  }, 400);
+  }, 250);
   localStorage.setItem("all", JSON.stringify(alltimes));
   localStorage.setItem("sessions", JSON.stringify(sessions));
   localStorage.setItem("currses", JSON.stringify(session));
@@ -1212,16 +1216,3 @@ function timesInOut(e, swtch=true) {
 
 inicon.addEventListener("click", timesInOut, false);
 outicon.addEventListener("click", timesInOut, false);
-timetable.addEventListener("transitionend", () => {
-  if (timein) { outicon.classList.remove("none"); }
-}, false);
-
-clearall.addEventListener("click", () => {
-  let clearall = confirm("Clear everything?")
-  if (clearall) {
-    localStorage.clear();
-    sessionStorage.clear();
-    console.log("cleared");
-  }
-  draw();
-}, false);
