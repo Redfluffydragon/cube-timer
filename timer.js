@@ -268,8 +268,8 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
   for (let i = 0; i < displaytimes.length; i++) {
     displaytimes[i].number = i+1;
     createTableRow();
-
-    cells0[i].textContent = displaytimes[i].number;
+    commentYN = displaytimes[i].comment ? "*" : "";
+    cells0[i].textContent = displaytimes[i].number+commentYN;
     cells1[i].textContent = 
     displaytimes[i].dnf     ? "DNF" : 
     displaytimes[i].plustwo ? 
@@ -299,15 +299,16 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
   }
   
   sesslc.textContent = session;
-
-  //timetable in or out
-  timein = gotem("timein", false);
-  
-  timicon();
-  
-  timesInOut(null, false);
 }
 draw();
+
+function onStart() {
+  timein = gotem("timein", false);
+  timicon();
+  timesInOut(null, false);
+}
+
+onStart();
 
 function closeNdraw() {
   closeAll();
@@ -370,7 +371,7 @@ function clickTable() { //set up row clicks on the time table
 let mouseTouch = isMobile ? "touchstart" : "mousedown";
 document.addEventListener(mouseTouch, evt => {
   if(evt.target.closest(".popup")) return;
-  if (timepop || sespop || sesoptpop) { closeAll(); }
+  if (timepop || sespop || sesoptpop) { closeNdraw(); }
 }, false);
 
 function bestworst() {
@@ -869,10 +870,7 @@ function closeAll() { //close everything
   sespopup.classList.remove("inlineBlock");
   shadow.classList.remove("initial");
   
-  if (comment.value) {
-    let commentxt = comment.value;
-    alltimes[tempallidx].comment = commentxt;
-  }
+  alltimes[tempallidx].comment = comment.value;
   localStorage.setItem("all", JSON.stringify(alltimes));
   
   timepop = false;
@@ -883,7 +881,7 @@ function closeAll() { //close everything
 }
 
 //close the time editing popup
-cancelbtn.addEventListener("click", closeAll, false);
+cancelbtn.addEventListener("click", closeNdraw, false);
 
 document.addEventListener("click", evt => { //+2, DNF, and delete for individual times
   if (!evt.target.matches(".modtime")) return;
