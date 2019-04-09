@@ -321,7 +321,7 @@ body {
   font-size: calc(14px + .7vw);
   border-radius: 5px;
   background-color: transparent;
-  border: 1px dotted black;
+  border: 1px solid black;
   text-align: center;
 }
 
@@ -587,11 +587,33 @@ button:hover {
   font-size: calc(7px + .7vw);
 }
 
+#infopopup ul {
+  text-align: left;
+  font-size: calc(10px + .7vw);
+  margin-right: 4px;
+}
+
 #infopopup button {
   display: block;
   margin-left: 33%;
   width: 33%;
   margin-bottom: 4px;
+}
+
+#undone {
+  position: relative;
+  color: rgb(255, 255, 255);
+  top: 45vh;
+  border-radius: 10px;
+  background-color: rgb(100, 100, 100);
+  display: inline-block;
+  transition: all .2s;
+}
+
+#undotxt {
+  margin: 6px;
+  font-size: calc(16px + .7vw);
+  font-weight: 200;
 }
 
 @media screen and (min-width: 600px) {
@@ -640,7 +662,7 @@ button:hover {
   #sesname {width: 48vw;}
   #sescrip {width: 48vw;}
   #seesescrip {width: 58vw;}
-  #scrambletxt {top: 17vh; left: 40vw; width: 57vw; max-height: 37vh; margin-right: 3px; overflow: scroll; -webkit-overflow-scrolling: touch;}
+  #scrambletxt {top: 17vh; left: 41vw; width: 56vw; max-height: 37vh; margin-right: 2px; overflow: scroll; -webkit-overflow-scrolling: touch;}
   #settings {height: 20vh;}
   #time {margin: 0; top: 54vh;}
   #insptime{top: 54vh;}
@@ -718,4 +740,8 @@ button:hover {
 
 .zfour {
   z-index: 4;
+}
+
+.opzero {
+  opacity: 0;
 }

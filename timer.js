@@ -1,5 +1,6 @@
 /**todo:
  * make into PWA (for use offline) - just add a service worker to cache it?
+ * add next scramble function for MLTBLD
  */
 
 let cube;
@@ -12,6 +13,7 @@ let scramWidth;
 let ctrl;
 let removed = [];
 let sesremoved = [];
+let deleted;
 
 //for stopwatch
 let timer;
@@ -194,6 +196,9 @@ let clearall = document.getElementById("clearall");
 let infobtn = document.getElementById("infobtn");
 let infopopup = document.getElementById("infopopup");
 
+let undone = document.getElementById("undone");
+let undotxt = document.getElementById("undotxt");
+
 let isMobile = (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
 isMobile ? undobtn.classList.remove("none") : undobtn.classList.add("none");
 
@@ -240,12 +245,6 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
 
   session = gotem("currses", sessions[0].name);
       sesslc.textContent = session;
-      displaytimes.length = 0;
-      for (i in alltimes) {
-        if (alltimes[i].session === session) {
-          displaytimes.push(alltimes[i]);
-        }
-      }
 
   mode = gotem("mode", "light");
       runmode(true);
@@ -268,11 +267,18 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
       alwaysmore = morechecked;
 
   //fill the table
+  displaytimes.length = 0;
+  for (i in alltimes) {
+    if (alltimes[i].session === session) {
+      displaytimes.push(alltimes[i]);
+    }
+  }
+
   timebody.innerHTML = "";
   for (let i = 0; i < displaytimes.length; i++) {
     displaytimes[i].number = i+1;
     createTableRow();
-    commentYN = displaytimes[i].comment ? "*" : "";
+    commentYN = displaytimes[i].comment ? "*" : null;
     cells0[i].textContent = displaytimes[i].number+commentYN;
     cells1[i].textContent = 
     displaytimes[i].dnf     ? "DNF" : 
@@ -349,8 +355,8 @@ function clickTable() { //set up row clicks on the time table
 
       changeallplus ? thetwo.classList.add("oneforty") : thetwo.classList.remove("oneforty");
       changealldnf ? thednf.classList.add("oneforty") : thednf.classList.remove("oneforty");
-      let timetoshine = changealldnf ? "DNF" : allthistime.time;
-      timedit.innerHTML = "Edit time " + rvrsrow + " ("+ timetoshine + ") <span id='inmore'>[more]</span>";
+      let timetoshine = changealldnf ? "DNF" : toMinutes(allthistime.time);
+      timedit.innerHTML = `Edit time ${rvrsrow} (${timetoshine}) <span id='inmore'>[more]</span>`;
 
       //set up popup with correct data
       seescramble.innerHTML = allthistime.scramble;
@@ -760,6 +766,7 @@ function touchdown(evt) {
 };
 
 function undo() {
+  let msg = "Nothing to undo";
   removed = gotem("removed", [], sessionStorage);
   sesremoved = gotem("sesremoved", [], sessionStorage);
   if (removed.length) {
@@ -769,6 +776,7 @@ function undo() {
     }
     removed.length = 0;
     sessionStorage.removeItem("removed");
+    msg = "Undone!"
   }
   if (sesremoved.length) {
     console.log(sesremoved);
@@ -781,6 +789,13 @@ function undo() {
     sesremoved.length = 0;
     sessionStorage.removeItem("sesremoved");
   }
+  undotxt.textContent = msg;
+  undone.classList.remove("opzero");
+  shadow.classList.add("initial");
+  setTimeout(()=>{
+    undone.classList.add("opzero");
+    shadow.classList.remove("initial");
+  }, 400);
   localStorage.setItem("all", JSON.stringify(alltimes));
   localStorage.setItem("sessions", JSON.stringify(sessions));
   localStorage.setItem("currses", JSON.stringify(session));
@@ -877,7 +892,7 @@ function closeAll() { //close everything
   sespopup.classList.remove("inlineBlock");
   shadow.classList.remove("initial");
   
-  if (timepop) {
+  if (timepop && !deleted) {
     alltimes[tempallidx].comment = comment.value;
   }
   localStorage.setItem("all", JSON.stringify(alltimes));
@@ -887,6 +902,7 @@ function closeAll() { //close everything
   sespop = false;
   sesoptpop = false;
   infopop = false;
+  deleted = false;
 };
 
 infobtn.addEventListener("click", () => {
@@ -930,13 +946,15 @@ document.addEventListener("click", evt => { //+2, DNF, and delete for individual
       let conf = confirm("Remove this time?")
       if(conf){
         removed = [{time: alltimes.splice(tempallidx, 1)[0], index: tempallidx}];
-        sessionStorage.setItem("removed", JSON.stringify(removed)); 
+        sessionStorage.setItem("removed", JSON.stringify(removed));
+        deleted = true;
       }
   }
 
   if (selection) {
     localStorage.setItem("all", JSON.stringify(alltimes));
-    closeNdraw();
+    draw();
+    closeAll();
   }
 }, false);
 
