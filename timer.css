@@ -625,11 +625,11 @@ button:hover {
 }
 
 .inlineBlock {
-  display: inline-block !IMPORTANT;
+  display: inline-block;
 }
 
 .block {
-  display: block !IMPORTANT;
+  display: block;
 }
 
 .none {
@@ -686,26 +686,6 @@ button:hover {
 
 .transXhundred {
   transform: translateX(-100vw);
-}
-
-.ninetyWidth {
-  width: 90vw;
-}
-
-.fiftyWidth {
-  width: 50vw;
-}
-
-.fiftySevenWidth {
-  width: 57vw;
-}
-
-.hundredWidth {
-  width: 100vw;
-}
-
-.fiveLeft {
-  left: 5vw;
 }
 
 .zfour {

@@ -1,6 +1,5 @@
 /**todo:
  * make into PWA (for use offline) - just add a service worker to cache it?
- * add undo button for mobile
  */
 
 let cube;
@@ -211,7 +210,7 @@ gotem = (item, defalt, type=localStorage) => {
   if (getthething !== null) { vari = JSON.parse(getthething); }
   if (vari === undefined) {
     vari = defalt;
-    fixtype.setItem(item, JSON.stringify(vari));
+    type.setItem(item, JSON.stringify(vari));
   }
   return vari;
 }
