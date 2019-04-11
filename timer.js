@@ -1,8 +1,6 @@
 /**todo:
  * make into PWA (for use offline) - just add a service worker to cache it?
- * add next scramble function for MLTBLD
  */
-
 let cube;
 let inspectTime;
 let mode;
@@ -265,20 +263,25 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
       inspColor();
 
   fscramble = gotem("scramble", null);
-      fscramble === null ? scramble() : scrambletxt.innerHTML = fscramble;
+  scrambles = gotem("scrambles", []);
+  scrambleNum = gotem("scrambleNum", 0);
+      if (scrambles.length !== 0) {
+        scrambletxt.innerHTML = scrambles[scrambleNum];
+        scramNum.textContent = scrambleNum+1;
+      }
+      else { fscramble === null ? scramble() : scrambletxt.innerHTML = fscramble; }
 
   morechecked = gotem("moretoggle", false);
       checkmore.checked = morechecked;
       alwaysmore = morechecked;
 
-  //fill the table
   displaytimes.length = 0;
   for (i in alltimes) {
     if (alltimes[i].session === session) {
       displaytimes.push(alltimes[i]);
     }
   }
-
+  //fill the table
   timebody.innerHTML = "";
   for (let i = 0; i < displaytimes.length; i++) {
     displaytimes[i].number = i+1;
@@ -300,7 +303,6 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
     alltimes[saveBack].ao5 = avgofiv;
     alltimes[saveBack].ao12 = avgotwe;
   }
-
   clickTable();
 
   //sessions
@@ -589,23 +591,26 @@ function scramble() {
 
 nextScram.addEventListener('click', e => {
   e.preventDefault();
+  if (scrambleNum === 0) { scrambles.push(fscramble); }
   scrambleNum++;
   if (scrambleNum > scrambles.length-1) {
-    scrambles.push(fscramble);
     scramble();
-    localStorage.setItem('scrambles', JSON.stringify(scrambles));
+    scrambles.push(fscramble);
+    localStorage.setItem("scrambles", JSON.stringify(scrambles));
   }
-  else {
-    scrambletxt.textContent = scrambles[scrambleNum];
-  }
+  else { scrambletxt.textContent = scrambles[scrambleNum]; }
+  localStorage.setItem("scrambleNum", JSON.stringify(scrambleNum));
   scramNum.textContent = scrambleNum+1;
 }, false);
 
 firstScram.addEventListener('click', e => {
   e.preventDefault();
-  scrambleNum = 0;
-  scrambletxt.textContent = scrambles[scrambleNum];
-  scramNum.textContent = scrambleNum+1;
+  if (scrambles.length !== 0) {
+    scrambleNum = 0;
+    scrambletxt.textContent = scrambles[scrambleNum];
+    scramNum.textContent = scrambleNum+1;
+    localStorage.setItem("scrambleNum", JSON.stringify(scrambleNum));
+  }
 }, false);
 
 function average(startpoint, leng) {
