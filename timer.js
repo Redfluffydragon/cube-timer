@@ -326,7 +326,7 @@ function onStart() {
   scrambletxt.classList.add("transOneSec");
   if (isMobile) {
     let timeHeight = time.offsetTop;
-    multiScram.style.bottom = (window.innerHeight - timeHeight - 20) + 'px';
+    multiScram.style.bottom = (window.innerHeight - timeHeight - 30) + 'px';
   }
 };
 
