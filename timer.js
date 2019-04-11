@@ -87,11 +87,17 @@ let clocksl4 = ["UL", "DL", "DR", "UR"];
 
 let tscramble = [];
 let fscramble = [];
+let scrambles = [];
+let scrambleNum = 0;
 let tempmove;
 let pmove;
 let slen;
 
 let scrambletxt = document.getElementById("scrambletxt");
+let nextScram = document.getElementById("nextScram");
+let firstScram = document.getElementById("firstScram");
+let scramNum = document.getElementById("scramNum");
+let scramPlur = document.getElementById("scramPlur");
 
 const scramblers = { //object with all the scrambler functions in it
   "2x2": () => {slen = 10; checknxn(moves3);},
@@ -361,6 +367,8 @@ function clickTable() { //set up row clicks on the time table
       timedit.innerHTML = `Edit time ${rvrsrow} (${timetoshine}) <span id='inmore'>[more]</span>`;
 
       //set up popup with correct data
+      let singPlur = allthistime.scramble.includes(';') ? 'Scrambles: ' : 'Scramble: ';
+      scramPlur.textContent = singPlur;
       seescramble.innerHTML = allthistime.scramble;
       seedate.textContent = allthistime.date;
       seecube.textContent =  allthistime.cube;
@@ -575,6 +583,27 @@ function scramble() {
   localStorage.setItem("scramble", JSON.stringify(fscramble));
 };
 
+nextScram.addEventListener('click', e => {
+  e.preventDefault();
+  scrambleNum++;
+  if (scrambleNum > scrambles.length-1) {
+    scrambles.push(fscramble);
+    scramble();
+    localStorage.setItem('scrambles', JSON.stringify(scrambles));
+  }
+  else {
+    scrambletxt.textContent = scrambles[scrambleNum];
+  }
+  scramNum.textContent = scrambleNum+1;
+}, false);
+
+firstScram.addEventListener('click', e => {
+  e.preventDefault();
+  scrambleNum = 0;
+  scrambletxt.textContent = scrambles[scrambleNum];
+  scramNum.textContent = scrambleNum+1;
+}, false);
+
 function average(startpoint, leng) {
   let sum;
 
@@ -717,16 +746,18 @@ function fin() { //finish timing, save result
   clearInterval(inspectstart);
   
   let addTwo = plustwo ? 2 : null;
+  let whichScram = scrambles.length ? scrambles.join(';<br />') : fscramble;
   time.className = ("");
   time.textContent = toMinutes(counter);
   insptime.classList.remove("orange", "blue", "green", "magenta")
-  onlytime.classList.remove("initial");      
+  onlytime.classList.remove("initial");
   timealert.classList.add("none");
-  alltimes.push({number: "", time: counter+addTwo, ao5: "", ao12: "", cube: cube, session: session, scramble: fscramble, date: makeDate(), comment: "", dnf: dnf, plustwo: plustwo});
+  alltimes.push({number: "", time: counter+addTwo, ao5: "", ao12: "", cube: cube, session: session, scramble: whichScram, date: makeDate(), comment: "", dnf: dnf, plustwo: plustwo});
   localStorage.setItem("all", JSON.stringify(alltimes));
 
   dnf = false;
   plustwo = false;
+  scrambles.length = 0;
 
   scramble();
   draw();
@@ -1181,14 +1212,12 @@ function timesInOut(e, swtch=true) {
     settings.style.width = "";
     scrambletxt.style.width = "";
     if (!isMobile) {
-      requestAnimationFrame(()=> {
+      requestAnimationFrame(() => {
         scrambletxt.style.left = "";
         scLOffset = scrambletxt.offsetLeft;
-        requestAnimationFrame(()=>{
-          scrambletxt.style.left = "5vw";
-          requestAnimationFrame(()=>{
-            scrambletxt.style.left = scLOffset+"px";
-          });
+        scrambletxt.style.left = "5vw";
+        requestAnimationFrame(() => {
+          scrambletxt.style.left = scLOffset+"px";
         });
       });
     }
