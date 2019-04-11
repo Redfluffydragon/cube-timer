@@ -324,6 +324,10 @@ function onStart() {
   sessionsdiv.classList.add("transOneSec");
   timetable.classList.add("transOneSec");
   scrambletxt.classList.add("transOneSec");
+  if (isMobile) {
+    let timeHeight = time.offsetTop;
+    multiScram.style.bottom = (window.innerHeight - timeHeight) + 'px';
+  }
 };
 
 onStart();
