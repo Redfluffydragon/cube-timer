@@ -84,6 +84,7 @@ body {
   width: 100vw;
   left: 0;
   z-index: 1;
+  margin-top: 3px;
 }
 
 #multiScram p, a {
