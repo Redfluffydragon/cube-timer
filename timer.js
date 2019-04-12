@@ -2,7 +2,6 @@
  * make into PWA (for use offline) - just add a service worker to cache it?
  */
 
-//  localStorage.clear();
 let cube;
 let inspectTime;
 let mode;
@@ -333,8 +332,7 @@ function onStart() {
     multiScram.style.bottom = (window.innerHeight - timeHeight - 33) + 'px';
   }
 };
-
-onStart();
+window.addEventListener("load", onStart, false);
 
 function closeNdraw() {
   closeAll();
@@ -839,14 +837,12 @@ function undo() {
     sessionStorage.removeItem("sesremoved");
   }
   undotxt.textContent = msg;
-  undone.classList.remove("opzero");
   undone.classList.add("inlineBlock");
   shadow.classList.add("initial");
   setTimeout(()=>{
-    undone.classList.add("opzero");
-  undone.classList.remove("inlineBlock");
+    undone.classList.remove("inlineBlock");
     shadow.classList.remove("initial");
-  }, 250);
+  }, 300);
   localStorage.setItem("all", JSON.stringify(alltimes));
   localStorage.setItem("sessions", JSON.stringify(sessions));
   localStorage.setItem("currses", JSON.stringify(session));
@@ -882,12 +878,7 @@ onlytime.addEventListener("touchend", up, false);
 lighticon.addEventListener("click", () => {runmode(false)}, false);
 
 function darkmode() {
-  // if (!isMobile) {
-    document.body.classList.add("backblack");
-  // }
-  if (isMobile) {
-    // touch.style.backgroundColor ="black";
-  }
+  document.body.classList.add("backblack");
   cancelbtn.classList.add("twotwenty");
   sescreate.classList.add("twotwenty");
   timealert.classList.add("cyan");
@@ -902,12 +893,7 @@ function darkmode() {
 };
 
 function lightmode() {
-  // if (!isMobile) {
-    document.body.classList.remove("backblack");
-  // }  
-  if (isMobile) {
-    // touch.style.backgroundColor ="white";
-  }
+  document.body.classList.remove("backblack");
   cancelbtn.classList.remove("twotwenty");
   sescreate.classList.remove("twotwenty");
   timealert.classList.remove("cyan");

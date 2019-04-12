@@ -124,9 +124,6 @@ body {
   margin-top: 0;
   position: relative;
   z-index: 1;
-}
-
-.rdropbtn:hover {
   cursor: pointer;
 }
 
@@ -216,9 +213,6 @@ body {
 
 #inicon {
   display: block;
-}
-
-#inicon:hover {
   cursor: pointer;
 }
 
@@ -226,9 +220,6 @@ body {
   position: absolute;
   left: 3px;
   top: 4px;
-}
-
-#outicon:hover {
   cursor: pointer;
 }
 
@@ -252,9 +243,6 @@ body {
   padding-left: 12px;
   text-align: center;
   margin: 0;
-}
-
-.sesedit:hover {
   cursor: pointer;
 }
 
@@ -388,9 +376,6 @@ button {
   font-family: Arial, Helvetica, sans-serif;
   font-size: calc(12px + .7vw);
   padding: 5px;
-}
-
-button:hover {
   cursor: pointer;
 }
 
@@ -488,9 +473,6 @@ button:hover {
 #inmore {
   font-size: calc(6px + .8vw);
   position: relative;
-}
-
-#inmore:hover {
   cursor: pointer;
 }
 
@@ -500,15 +482,12 @@ button:hover {
   float: right;
 }
 
-#lighticon:hover {
-  cursor: pointer;
-}
-
 #lighticon {
   float: left;
   border-radius: 50%;
   position: relative;
   bottom: .5vh;
+  cursor: pointer;
 }
 
 .topstats {
@@ -532,9 +511,6 @@ button:hover {
   right: .6vh;
   margin: 0;
   z-index: 1;
-}
-
-#infobtn:hover {
   cursor: pointer;
 }
 
@@ -566,7 +542,6 @@ button:hover {
   top: 45vh;
   border-radius: 10px;
   background-color: rgb(100, 100, 100);
-  transition: all .1s;
 }
 
 #undotxt {
@@ -613,6 +588,7 @@ button:hover {
   #settingslist{padding-left: 2vw;}
   #sesoptpopup button {width: 29vw;}
   #timetable tbody {max-height: 84vh;}
+  #multiScram {bottom: 37vh;}
 }
 
 @media screen and (max-width: 600px) { 
@@ -634,7 +610,6 @@ button:hover {
   #time {margin: 0; top: 54vh;}
   #insptime{top: 54vh;}
   #timetable tbody {max-height: 50vh;}
-  #multiScram {bottom: 37vh;}
   body {height: 80vh;}
 }
 
