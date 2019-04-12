@@ -2,6 +2,10 @@
  * make into PWA (for use offline) - just add a service worker to cache it?
  */
 
+if (navigator.serviceWorker) {
+  navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
+}
+
 let cube;
 let inspectTime;
 let mode;
