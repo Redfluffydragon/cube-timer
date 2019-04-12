@@ -886,7 +886,7 @@ function darkmode() {
     document.body.classList.add("backblack");
   // }
   if (isMobile) {
-    touch.style.backgroundColor ="black";
+    // touch.style.backgroundColor ="black";
   }
   cancelbtn.classList.add("twotwenty");
   sescreate.classList.add("twotwenty");
@@ -906,7 +906,7 @@ function lightmode() {
     document.body.classList.remove("backblack");
   // }  
   if (isMobile) {
-    touch.style.backgroundColor ="white";
+    // touch.style.backgroundColor ="white";
   }
   cancelbtn.classList.remove("twotwenty");
   sescreate.classList.remove("twotwenty");
