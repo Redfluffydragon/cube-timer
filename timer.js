@@ -1,6 +1,8 @@
 /**todo:
  * make into PWA (for use offline) - just add a service worker to cache it?
  */
+
+//  localStorage.clear();
 let cube;
 let inspectTime;
 let mode;
@@ -761,7 +763,7 @@ function fin() { //finish timing, save result
   
   let addTwo = plustwo ? 2 : null;
   let whichScram = scrambles.length ? scrambles.join(';<br />') : fscramble;
-  time.className = ("");
+  time.className = ("zone");
   time.textContent = toMinutes(counter);
   insptime.classList.remove("orange", "blue", "green", "magenta")
   onlytime.classList.remove("initial");
@@ -900,7 +902,9 @@ function darkmode() {
 };
 
 function lightmode() {
-  document.body.classList.remove("backblack");
+  // if (!isMobile) {
+    document.body.classList.remove("backblack");
+  // }  
   if (isMobile) {
     touch.style.backgroundColor ="white";
   }
@@ -914,7 +918,7 @@ function lightmode() {
     shadows[i].classList.remove("darkboxshadow");
   }
 
-  css = 'html {-webkit-filter: invert(0);' + '-moz-filter: invert(0);' + '-o-filter: invert(0);' + '-ms-filter: invert(0); }';
+  css = 'html {-webkit-filter: invert(0);' + '-moz-filter: invert(100);' + '-o-filter: invert(100);' + '-ms-filter: invert(100); }';
 };
 
 function runmode(start) { // switch modes, and open in saved mode
