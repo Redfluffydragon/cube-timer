@@ -1,6 +1,7 @@
 /**todo:
  * make into PWA (for use offline) - just add a service worker to cache it?
  */
+console.log(window.innerWidth);
 
 let cube;
 let inspectTime;
