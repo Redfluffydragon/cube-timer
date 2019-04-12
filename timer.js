@@ -1,15 +1,12 @@
 /**todo:
  * make into PWA (for use offline) - just add a service worker to cache it?
  */
-console.log(window.innerWidth);
 
 let cube;
 let inspectTime;
 let mode;
 let startdelay;
 let timein;
-let setWidth;
-let scramWidth;
 let ctrl;
 let removed = [];
 let sesremoved = [];
@@ -29,6 +26,10 @@ let justTimes = []; //just the times - for best/worst
 let displaytimes = []; //just the times from current session - for display
 let moddedTimes = [];
 let timeKeys = ["number", "time", "ao5", "ao12", "cube", "session", "scramble", "date", "comment", "dnf", "plustwo"];
+let tempallidx;
+let allthistime;
+let changealldnf;
+let changeallplus;
 
 let cells0 = [];
 let cells1 = [];
@@ -130,17 +131,21 @@ let delayButton = document.getElementById("delayButton");
 let delayDrop = document.getElementById("delayDrop");
 let delaytime = document.getElementsByClassName("delaytime");
 
+let settings = document.getElementById("settings");
 //other elements
 let css;
-timicon = () => {!timein ? outicon.classList.add("none") : outicon.classList.remove("none");};
+let timicon = () => {!timein ? outicon.classList.add("none") : outicon.classList.remove("none");};
 
 let timebody = document.getElementById("timetable").getElementsByTagName("tbody")[0];
+let timetable = document.getElementById("timetable");
 let inicon = document.getElementById("inicon");
 let outicon = document.getElementById("outicon");
 
 let time = document.getElementById("time");
 let insptime = document.getElementById("insptime");
 let timealert = document.getElementById("timealert");
+let onlytime = document.getElementById("onlytime");
+let centerac = document.getElementById("centerac");
 
 let touch = document.getElementById("touch");
 
@@ -192,14 +197,17 @@ let exportallses = document.getElementById("exportallses");
 let clearallses = document.getElementById("clearallses");
 let closeses = document.getElementById("closeses");
 let saveses = document.getElementById("saveses");
+let clearses = document.getElementById("clearses");
 let exportses = document.getElementById("exportses");
 let changesesname = document.getElementById("changesesname");
 let seesescrip = document.getElementById("seesescrip");
 let sessionsdiv = document.getElementById("sessions");
 let undobtn = document.getElementById("undobtn");
+let multiScram = document.getElementById("multiScram");
 
 let infobtn = document.getElementById("infobtn");
 let infopopup = document.getElementById("infopopup");
+let infoclose = document.getElementById("infoclose");
 
 let undone = document.getElementById("undone");
 let undotxt = document.getElementById("undotxt");
@@ -216,9 +224,9 @@ function createTableRow() {
     tempCell.className = columnClass[i];
     cellArrs[i].push(tempCell);
   }
-};
+}
 
-gotem = (item, defalt, type=localStorage) => {
+let gotem = (item, defalt, type=localStorage) => {
   let vari;
   let getthething = type.getItem(item);
   if (getthething !== null) { vari = JSON.parse(getthething); }
@@ -229,30 +237,30 @@ gotem = (item, defalt, type=localStorage) => {
   return vari;
 };
 
-colorIndicator = (array, value) => {
-  for (i in array) {
+let colorIndicator = (array, value) => {
+  for (let i in array) {
     if (array[i].textContent === value) {
       array[i].classList.add("oneforty");
     }
   }
 };
 
-function draw() { //on startup/reload. Also to redraw table after modifying a time
-  for (i in cellArrs) { cellArrs[i].length = 0; }
+function onStart() {
+  mode = gotem("mode", "light");
+  runmode(true);
+
+  morechecked = gotem("moretoggle", false);
+  checkmore.checked = morechecked;
+  alwaysmore = morechecked;
 
   alltimes = gotem("all", []);
-      bestworst();
 
   moddedTimes = gotem("modded", []);
 
   sessions = gotem("sessions", [{name: "Session 1", description: "Default session"}]);
-      for (i in sessions) { sesnames.push(sessions[i].name); }
+      for (let i in sessions) { sesnames.push(sessions[i].name); }
 
   session = gotem("currses", sessions[0].name);
-      sesslc.textContent = session;
-
-  mode = gotem("mode", "light");
-      runmode(true);
 
   startdelay = gotem("delaysave", 300);
       colorIndicator(delaytime, (startdelay/1000)+"s");
@@ -267,18 +275,31 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
   fscramble = gotem("scramble", null);
   scrambles = gotem("scrambles", []);
   scrambleNum = gotem("scrambleNum", 0);
-      if (scrambles.length !== 0) {
-        scrambletxt.innerHTML = scrambles[scrambleNum];
-        scramNum.textContent = scrambleNum+1;
-      }
-      else { fscramble === null ? scramble() : scrambletxt.innerHTML = fscramble; }
 
-  morechecked = gotem("moretoggle", false);
-      checkmore.checked = morechecked;
-      alwaysmore = morechecked;
+  timein = gotem("timein", false);
+  timicon();
+  timesInOut(null, false);
+  if (isMobile) {
+    let timeHeight = time.offsetTop;
+    multiScram.style.bottom = (window.innerHeight - timeHeight - 33) + 'px';
+  }
+  draw();
+}
+onStart();
+
+function draw() { //to redraw things after modifying
+  bestworst();
+
+  for (let i in cellArrs) { cellArrs[i].length = 0; }
+
+  if (scrambles.length !== 0) {
+    scrambletxt.innerHTML = scrambles[scrambleNum];
+    scramNum.textContent = scrambleNum+1;
+  }
+  else { fscramble === null ? scramble() : scrambletxt.innerHTML = fscramble; }
 
   displaytimes.length = 0;
-  for (i in alltimes) {
+  for (let i in alltimes) {
     if (alltimes[i].session === session) {
       displaytimes.push(alltimes[i]);
     }
@@ -288,10 +309,10 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
   for (let i = 0; i < displaytimes.length; i++) {
     displaytimes[i].number = i+1;
     createTableRow();
-    commentYN = displaytimes[i].comment ? "*" : null;
-    cells0[i].textContent = displaytimes[i].number+commentYN;
-    cells1[i].textContent = 
-    displaytimes[i].dnf     ? "DNF" : 
+    let commentYN = displaytimes[i].comment ? "*" : null;
+    cells0[i].textContent = displaytimes[i].number + commentYN;
+    cells1[i].textContent = displaytimes[i].dnf ?
+    "DNF" : 
     displaytimes[i].plustwo ? 
     toMinutes(displaytimes[i].time)+"+" : 
     toMinutes(displaytimes[i].time);
@@ -309,7 +330,7 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
 
   //sessions
   sesdrop.innerHTML = "";
-  for(i in sessions) {
+  for(let i in sessions) {
     let sesnode = document.createElement("p");
     let sesnodename = document.createTextNode(sessions[i].name);
     sesnode.appendChild(sesnodename);
@@ -318,33 +339,25 @@ function draw() { //on startup/reload. Also to redraw table after modifying a ti
   }
   
   sesslc.textContent = session;
-};
-draw();
+}
 
-function onStart() {
-  timein = gotem("timein", false);
-  timicon();
-  timesInOut(null, false);
+function addTransitions() {
   sessionsdiv.classList.add("transOneSec");
   timetable.classList.add("transOneSec");
   scrambletxt.classList.add("transOneSec");
-  if (isMobile) {
-    let timeHeight = time.offsetTop;
-    multiScram.style.bottom = (window.innerHeight - timeHeight - 33) + 'px';
-  }
-};
-window.addEventListener("load", onStart, false);
+}
+window.addEventListener("load", addTransitions, false);
 
 function closeNdraw() {
   closeAll();
   draw();
-};
+}
 
 function clickTable() { //set up row clicks on the time table 
   let rowID = document.getElementById("timebody").getElementsByTagName('tr');
   let clickTouch = isMobile ? "touchend" : "click";
   let touchMoved;
-  for (i = 0; i < rowID.length; i++) {
+  for (let i = 0; i < rowID.length; i++) {
     rowID[i].addEventListener(clickTouch, function() {
       if (!isMobile || !touchMoved) {
       let rvrsrow = displaytimes.length - this.rowIndex+1; //reverse the row index
@@ -391,7 +404,7 @@ function clickTable() { //set up row clicks on the time table
     rowID[i].addEventListener("touchmove", () => {touchMoved = true;}, false);
     rowID[i].addEventListener("touchstart", () => {touchMoved = false;}, false);
   }
-};
+}
 
 let mouseTouch = isMobile ? "touchstart" : "mousedown";
 let tapped;
@@ -400,18 +413,18 @@ document.addEventListener(mouseTouch, evt => { //close modals on click outside
   if (timepop || sespop || sesoptpop || infopop && !tapped) { closeNdraw();}
   if (isMobile) {tapped = true;}
 }, false);
-document.addEventListener("touchend", () => {tapped = false;}, false);
+document.addEventListener("touchend", () => { tapped = false; }, false);
 
 function bestworst() {
   justTimes.length = 0;
-  for (i in alltimes) {
+  for (let i in alltimes) {
     if (alltimes[i].time) { justTimes.push(alltimes[i].time); }
   }
   let worstTime = Math.max(...justTimes);
   let bestTime = Math.min(...justTimes);
   best.textContent = !isNaN(JSON.stringify(bestTime)) ? toMinutes(bestTime) : "--";
   worst.textContent = !isNaN(JSON.stringify(worstTime)) ? toMinutes(worstTime) : "--";
-};
+}
 
 function dropDown (button, content) { //toggle dropdowns 
   let dropdown = false;
@@ -430,7 +443,7 @@ function dropDown (button, content) { //toggle dropdowns
     dropdown = false;
     button.blur();
   });
-};
+}
 
 dropDown(cubeButton, cubeDrop);
 dropDown(inspectButton, inspectDrop);
@@ -456,7 +469,7 @@ function makeDate() {
 
   let finaldate = days[day]+", "+months[month]+ " "+daydate+", "+year+" "+hour+":"+minute+":"+seconds+" UTC"+timezone;
   return finaldate;
-};
+}
 
 document.addEventListener("click", evt => { //switch delay times
   if (!evt.target.matches(".delaytime")) return;
@@ -475,11 +488,11 @@ function switchInspect(evt) { //switch inspection times
   inspectTime = inspectTime ? false : true;
   localStorage.setItem("inspectsave", JSON.stringify(inspectTime));
   inspColor();
-};
+}
 function inspColor() {
   inspectTime ? inspect15.classList.add("oneforty") : inspect15.classList.remove("oneforty");
   inspectTime ? inspectnone.classList.remove("oneforty") : inspectnone.classList.add("oneforty");
-};
+}
 inspectnone.addEventListener("click", switchInspect, false);
 inspect15.addEventListener("click", switchInspect, false);
 
@@ -518,7 +531,7 @@ function checknxn(moveset) { //for nxnxn cubes
   }
   if (twochart === twocharp || charonep === charonet) {return;}
   else { tscramble.push(tempmove); }
-};
+}
 
 function checkpyr1() { // turn the big corners for pyraminx
   let random = Math.round(Math.random()*7);
@@ -529,7 +542,7 @@ function checkpyr1() { // turn the big corners for pyraminx
   if (pmove !== undefined) {charonep = pmove.charAt(0);}
   if (charonet === charonep) {return;}
   else { tscramble.unshift(tempmove); }
-};
+}
 
 function addfour(moveset, chancemod, apostrophe) { //turn 0-4 corners at the end - also for clock (pegs I think)...
   for (let i = 0; i < 4; i++) {
@@ -540,12 +553,12 @@ function addfour(moveset, chancemod, apostrophe) { //turn 0-4 corners at the end
       else { tscramble.unshift(moveset[i] + "'"); }
     }
   }
-};
+}
 
 function checkpyrall() {
   addfour(pyrpmoves, .1, true);
   while (tscramble.length < 10) { checkpyr1(); }
-};
+}
 
 function checkmeg() {
   for (let i = 0; i < slen/11; i++) {
@@ -558,7 +571,7 @@ function checkmeg() {
     let uRightLeft = Math.round(Math.random());
     uRightLeft ? tscramble.push("U<br>") : tscramble.push("U'<br>");
   }
-};
+}
 
 function checksqu() {//probably doesn't work. I don't know what moves aren't allowed for squan.
   let onerand = Math.round((Math.random()*11)-5);
@@ -573,7 +586,7 @@ function checksqu() {//probably doesn't work. I don't know what moves aren't all
       (onerand === 0 && tworand === 0))
       { return; } //there are probably other exclusions
   else {tscramble.push("(" + onerand + "," + tworand + ")")}
-};
+}
 
 function checkclo() {
   addfour(clocksl4, 0, false);
@@ -583,7 +596,7 @@ function checkclo() {
     let rvrsclock = clkstr.length > 1 ? clkstr.charAt(1)+clkstr.charAt(0) : clkstr.charAt(0)+"+"; 
     clocks[i] !== "y2" ? tscramble.unshift(clocks[i]+rvrsclock) : tscramble.unshift(clocks[i]);
   }
-};
+}
 
 function scramble() {
   tscramble.length = 0;
@@ -593,7 +606,7 @@ function scramble() {
   fscramble = tscramble.join(" ");
   scrambletxt.innerHTML = fscramble;
   localStorage.setItem("scramble", JSON.stringify(fscramble));
-};
+}
 
 nextScram.addEventListener('click', e => {
   e.preventDefault();
@@ -641,7 +654,7 @@ function average(startpoint, leng) {
 
   let avg = Math.trunc((sum/avgAll.length)*100)/100;
   return isNaN(avg) ? "" : toMinutes(avg);
-};
+}
 
 //display inspection countdown, as well as 8s, 12s, +2, and DNF by timeout
 function toMinutes(time) {
@@ -658,7 +671,7 @@ function toMinutes(time) {
     temptime = minutes + ":" + secondsafter;
   }
   return temptime;
-};
+}
 
 function inspection() {
   clearInterval(intstart);
@@ -693,7 +706,7 @@ function inspection() {
       played12 = true;
     }
   }
-};
+}
 
 function runinspect() {
   inspecting = true;
@@ -702,14 +715,14 @@ function runinspect() {
   onlytime.classList.add("initial");
   inspectstart = setInterval(inspection, 10);
   istart = new Date();
-};
+}
 
 function stopwatch() {
   timer = new Date();
   counter = (Math.trunc((timer - start)/10)/100);
   thetime = toMinutes(counter).toString().slice(0, -1);
   time.textContent = thetime;
-};
+}
 
 function go() { //run stopwatch & stuff
   start = new Date();
@@ -725,7 +738,7 @@ function go() { //run stopwatch & stuff
   inspecting = false;
   waiting = false;
   started = true;
-};
+}
 
 function ptimeout() { //add the holding delay, and colors
   outime = new Date();
@@ -742,13 +755,13 @@ function ptimeout() { //add the holding delay, and colors
     insptime.classList.remove("orange", "blue");
     insptime.classList.add(mode === "light" ? "green" : "magenta");
   }
-};
+}
 
 function otimeout() { //setInterval for ptimeout
   pause = true;
   timeou = new Date();
   oto = setInterval(ptimeout, 10);
-};
+}
  
 function fin() { //finish timing, save result
   started = false;
@@ -780,7 +793,7 @@ function fin() { //finish timing, save result
 
   scramble();
   draw();
-};
+}
 
 function down() {
   if (!timepop && !sespop && !sesoptpop) {
@@ -793,7 +806,7 @@ function down() {
     }
     else if(started) { fin(); }
   }
-};
+}
   
 function up () {
   time.classList.remove("red", "green", "cyan", "magenta");
@@ -810,12 +823,12 @@ function up () {
     }
     else if (keydown) { keydown = false; }
   }
-};
+}
 
 function touchdown(evt) {
   evt.preventDefault();
   down();
-};
+}
 
 function undo() {
   let msg = "Nothing to undo";
@@ -823,18 +836,19 @@ function undo() {
   sesremoved = gotem("sesremoved", [], sessionStorage);
   if (removed.length) {
     let getIdx = removed[0].index;
-    for (i in removed) {
+    for (let i in removed) {
       alltimes[getIdx] === undefined ? alltimes.push(removed[i].time) : alltimes.splice(getIdx, 0, removed[i].time); 
+      localStorage.setItem("all", JSON.stringify(alltimes));      
     }
     removed.length = 0;
     sessionStorage.removeItem("removed");
     msg = "Undone!"
   }
   if (sesremoved.length) {
-    console.log(sesremoved);
-    for (i in sesremoved) {
+    for (let i in sesremoved) {
       if (!sessions.includes(sesremoved[i])) {
         sessions.push({name: sesremoved[i].name, description: sesremoved[i].description});
+        localStorage.setItem("sessions", JSON.stringify(sessions));
       }
     }
     session = sesremoved[sesremoved.length-1].name;
@@ -848,14 +862,12 @@ function undo() {
     undone.classList.remove("inlineBlock");
     shadow.classList.remove("initial");
   }, 300);
-  localStorage.setItem("all", JSON.stringify(alltimes));
-  localStorage.setItem("sessions", JSON.stringify(sessions));
   localStorage.setItem("currses", JSON.stringify(session));
   draw();
-};
+}
 
-window.addEventListener("keydown", evt => {
-  let key = evt.keyCode;
+window.addEventListener("keydown", e => {
+  let key = e.keyCode;
   if (key === 32) { down(); }
   if (key === 27) { closeAll(); }
   if (key === 17) {ctrl = true;}
@@ -865,9 +877,9 @@ window.addEventListener("keydown", evt => {
   if (key === 68 && timepop && !morepop) { allthistime.dnf = changealldnf ? false : true; closeNdraw();}
 }, false);
 
-window.addEventListener("keyup", evt => {
-  if (evt.keyCode === 32) { up(); }
-  if (evt.keyCode=== 17) {ctrl = false;}
+window.addEventListener("keyup", e => {
+  if (e.keyCode === 32) { up(); }
+  if (e.keyCode=== 17) {ctrl = false;}
 }, false);
 
 touch.addEventListener("touchstart", touchdown, false);
@@ -895,7 +907,7 @@ function darkmode() {
   }
 
   css = 'html {-webkit-filter: invert(100%);' + '-moz-filter: invert(100%);' + '-o-filter: invert(100%);' + '-ms-filter: invert(100%); }';
-};
+}
 
 function lightmode() {
   document.body.classList.remove("backblack");
@@ -910,7 +922,7 @@ function lightmode() {
   }
 
   css = 'html {-webkit-filter: invert(0);' + '-moz-filter: invert(100);' + '-o-filter: invert(100);' + '-ms-filter: invert(100); }';
-};
+}
 
 function runmode(start) { // switch modes, and open in saved mode
   let head = document.getElementsByTagName('head')[0];
@@ -925,7 +937,7 @@ function runmode(start) { // switch modes, and open in saved mode
   
   style.styleSheet ? style.styleSheet.cssText = css : style.appendChild(document.createTextNode(css));
   head.appendChild(style);
-};
+}
 
 function closeAll() { //close everything
   cubeDrop.classList.remove("block");
@@ -951,7 +963,7 @@ function closeAll() { //close everything
   sesoptpop = false;
   infopop = false;
   deleted = false;
-};
+}
 
 infobtn.addEventListener("click", () => {
   infopopup.classList.add("inlineBlock");
@@ -973,7 +985,7 @@ document.addEventListener("click", evt => { //+2, DNF, and delete for individual
   }
   if (selection === "DNF") {
     if (changealldnf) {
-      for (i in moddedTimes) {
+      for (let i in moddedTimes) {
         if (moddedTimes[i].date === allthistime.date) {
           allthistime.time = moddedTimes[i].time;
           moddedTimes.splice(i, 1);
@@ -1034,7 +1046,7 @@ function newSession() {
     localStorage.setItem("currses", JSON.stringify(session));
     closeNdraw();
   }
-};
+}
 
 sescreate.addEventListener("click", newSession, false);
 
@@ -1050,28 +1062,28 @@ function justAsession() {
     removed.push({time: alltimes.splice(rmvidx, 1)[0], index: rmvidx, session: session});
   }
   sessionStorage.setItem("removed", JSON.stringify(removed));
-};
+}
 
 function justAll() {
-  for (i in alltimes) { removed.push({time: alltimes[i], index: i}); }
+  for (let i in alltimes) { removed.push({time: alltimes[i], index: i}); }
   sessionStorage.setItem("removed", JSON.stringify(removed));
   alltimes.length = 0;
   sessions.length = 0;
   localStorage.removeItem("all");
   time.textContent = "0.00";
-};
+}
 
 function createArray(array, arrayKeys) { //create array of arrays from array of objects 
   let returnarray = [];
   let columnNames = [];
-  for (i in arrayKeys) {
+  for (let i in arrayKeys) {
     let titleCase = arrayKeys[i].charAt(0).toUpperCase() + arrayKeys[i].slice(1);
     columnNames.push(titleCase);
   }
   returnarray.push(columnNames);
-  for (i in array) {
+  for (let i in array) {
     let temparray = [];
-    for (j in arrayKeys) {
+    for (let j in arrayKeys) {
       temparray.push('"'+array[i][arrayKeys[j]].toString()+'"');
     }
     returnarray.push(temparray);
@@ -1082,7 +1094,7 @@ function createArray(array, arrayKeys) { //create array of arrays from array of 
 function createCsv(array, arrayKeys, name) {
   let makeIntoArray = createArray(array, arrayKeys);
   let csvFile = "data:text/csv;charset=utf-8,";
-  for (i in makeIntoArray) {
+  for (let i in makeIntoArray) {
     csvFile += makeIntoArray[i] + "\n";
   }
   let encoded = encodeURI(csvFile);
@@ -1093,7 +1105,7 @@ function createCsv(array, arrayKeys, name) {
   linkDownload.click();
   document.body.removeChild(linkDownload);
   closeAll();
-};
+}
 
 deleteallses.addEventListener("click", () => {
   let deleteallconf = confirm("Delete all sessions?");
@@ -1154,7 +1166,7 @@ clearses.addEventListener("click", () => {
 }, false);
 
 exportallses.addEventListener("click", () => {
-  createCsv(alltimes, timeKeys, "timer")
+  createCsv(alltimes, timeKeys, "Cube Timer - all times");
 }, false);
 
 exportses.addEventListener("click", () => {
@@ -1252,7 +1264,7 @@ function timesInOut(e, swtch=true) {
 }
   if (swtch) { timein = timein ? false : true; }
   localStorage.setItem("timein", JSON.stringify(timein));
-};
+}
 
 inicon.addEventListener("click", timesInOut, false);
 outicon.addEventListener("click", timesInOut, false);
