@@ -731,15 +731,15 @@ function ptimeout() { //add the holding delay, and colors
   countime = outime-timeou;
 
   if (countime <= startdelay) {
-    time.classList.add(mode === "light" ? "red" : "cyan");
-    insptime.classList.add(mode === "light" ? "orange" : "blue");
+    time.classList.add("red");
+    insptime.classList.add("orange");
   }
   else if (countime > startdelay) {
     pause = false;
     waiting = true;
-    time.classList.add(mode === "light" ? "green" : "magenta");
-    insptime.classList.remove("orange", "blue");
-    insptime.classList.add(mode === "light" ? "green" : "magenta");
+    time.classList.add("green");
+    insptime.classList.remove("orange");
+    insptime.classList.add("green");
   }
 };
 
@@ -763,7 +763,7 @@ function fin() { //finish timing, save result
   let whichScram = scrambles.length ? scrambles.join(';<br />') : fscramble;
   time.className = ("");
   time.textContent = toMinutes(counter);
-  insptime.classList.remove("orange", "blue", "green", "magenta")
+  insptime.classList.remove("orange", "green");
   onlytime.classList.remove("initial");
   timealert.classList.add("none");
   alltimes.push({number: "", time: counter+addTwo, ao5: "", ao12: "", cube: cube, session: session, scramble: whichScram, date: makeDate(), comment: "", dnf: dnf, plustwo: plustwo});
@@ -782,7 +782,7 @@ function down() {
     if (!onstart && !started) {
       if (!inspectTime || inspecting) { otimeout(); }
       else if (inspectTime) {
-        time.classList.add(mode === "light" ? "green" : "magenta");
+        time.classList.add("green");
       }
       onstart = true;
     }
@@ -791,8 +791,8 @@ function down() {
 };
   
 function up () {
-  time.classList.remove("red", "green", "cyan", "magenta");
-  insptime.classList.remove("orange", "blue");
+  time.classList.remove("red", "green");
+  insptime.classList.remove("orange");
   if (!timepop && !sespop && !sesoptpop && !dnf) {
     if (!started && !waiting) {
       clearInterval(oto); //reset the hold delay
@@ -880,37 +880,47 @@ onlytime.addEventListener("touchend", up, false);
 lighticon.addEventListener("click", () => {runmode(false)}, false);
 
 function darkmode() {
-  if (!isMobile) {
-    document.body.classList.add("backblack");
+  if (isMobile) {
+    document.body.style.backgroundColor = "black";
   }
+  document.body.classList.add("backblack");
   cancelbtn.classList.add("twotwenty");
   sescreate.classList.add("twotwenty");
-  timealert.classList.add("cyan");
-  insptime.classList.add("cyan");
+  timealert.classList.add("reverse");
+  insptime.style.filter = "invert(100%)";
+  time.classList.add("white");
+  time.style.filter = "invert(100%)";
+  exportses.classList.add("reverse");
+  exportallses.classList.add("reverse");
 
   for (let i = 0; i < shadows.length; i++) {
     shadows[i].classList.add("oneeighty");
     shadows[i].classList.add("darkboxshadow");
   }
 
-  css = 'html {-webkit-filter: invert(100%);' + '-moz-filter: invert(100%);' + '-o-filter: invert(100%);' + '-ms-filter: invert(100%); }';
+  css = 'html {filter: invert(100%);}'
 };
 
 function lightmode() {
-  if (!isMobile) {
-    document.body.classList.remove("backblack");
-  }  
+  if (isMobile) {
+    document.body.style.backgroundColor = "white";
+  }
+  document.body.classList.remove("backblack");
   cancelbtn.classList.remove("twotwenty");
   sescreate.classList.remove("twotwenty");
-  timealert.classList.remove("cyan");
-  insptime.classList.remove("cyan");
-
+  timealert.classList.remove("reverse");
+  insptime.style.filter = "invert(0)";
+  time.classList.remove("white");
+  time.style.filter = "invert(0)";
+  exportses.classList.remove("reverse");
+  exportallses.classList.remove("reverse");
+  
   for (let i = 0; i < shadows.length; i++) {
     shadows[i].classList.remove("oneeighty");
     shadows[i].classList.remove("darkboxshadow");
   }
 
-  css = 'html {-webkit-filter: invert(0%); -moz-filter: invert(0%); -o-filter: invert(0%); -ms-filter: invert(0%); }'
+  css = 'html {filter: invert(0%);}'
 };
 
 function runmode(start) { // switch modes, and open in saved mode
@@ -1246,13 +1256,11 @@ function timesInOut(e, swtch=true) {
     scrambletxt.style.width = "90vw";
 
     scLOffset = scrambletxt.offsetLeft;
+    scrambletxt.style.left = scLOffset+"px";
     requestAnimationFrame(() => {
-      scrambletxt.style.left = scLOffset+"px";
-      requestAnimationFrame(() => {
-        scrambletxt.style.left = "5vw";
-      });
+      scrambletxt.style.left = "5vw";
     });
-  }
+}
   if (swtch) { timein = timein ? false : true; }
   localStorage.setItem("timein", JSON.stringify(timein));
 };

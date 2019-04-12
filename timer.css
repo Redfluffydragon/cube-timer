@@ -667,28 +667,20 @@ button:hover {
   background-color: black;
 }
 
-.red {
-  color: red;
+.white {
+  color: white;
 }
 
-.cyan {
-  color: cyan;
+.red {
+  color: red;
 }
 
 .green {
   color: rgb(0, 255, 0);
 }
 
-.magenta {
-  color: rgb(255, 0, 255);
-}
-
 .orange {
   color: orange;
-}
-
-.blue {
-  color: rgb(0, 90, 255);
 }
 
 .darkboxshadow {
@@ -713,4 +705,8 @@ button:hover {
 
 .opzero {
   opacity: 0;
+}
+
+.reverse {
+  filter: invert(100%);
 }
