@@ -731,15 +731,15 @@ function ptimeout() { //add the holding delay, and colors
   countime = outime-timeou;
 
   if (countime <= startdelay) {
-    time.classList.add("red");
-    insptime.classList.add("orange");
+    time.classList.add(mode === "light" ? "red" : "cyan");
+    insptime.classList.add(mode === "light" ? "orange" : "blue");
   }
   else if (countime > startdelay) {
     pause = false;
     waiting = true;
-    time.classList.add("green");
-    insptime.classList.remove("orange");
-    insptime.classList.add("green");
+    time.classList.add(mode === "light" ? "green" : "magenta");
+    insptime.classList.remove("orange", "blue");
+    insptime.classList.add(mode === "light" ? "green" : "magenta");
   }
 };
 
@@ -763,7 +763,7 @@ function fin() { //finish timing, save result
   let whichScram = scrambles.length ? scrambles.join(';<br />') : fscramble;
   time.className = ("");
   time.textContent = toMinutes(counter);
-  insptime.classList.remove("orange", "green");
+  insptime.classList.remove("orange", "blue", "green", "magenta")
   onlytime.classList.remove("initial");
   timealert.classList.add("none");
   alltimes.push({number: "", time: counter+addTwo, ao5: "", ao12: "", cube: cube, session: session, scramble: whichScram, date: makeDate(), comment: "", dnf: dnf, plustwo: plustwo});
@@ -782,7 +782,7 @@ function down() {
     if (!onstart && !started) {
       if (!inspectTime || inspecting) { otimeout(); }
       else if (inspectTime) {
-        time.classList.add("green");
+        time.classList.add(mode === "light" ? "green" : "magenta");
       }
       onstart = true;
     }
@@ -791,8 +791,8 @@ function down() {
 };
   
 function up () {
-  time.classList.remove("red", "green");
-  insptime.classList.remove("orange");
+  time.classList.remove("red", "green", "cyan", "magenta");
+  insptime.classList.remove("orange", "blue");
   if (!timepop && !sespop && !sesoptpop && !dnf) {
     if (!started && !waiting) {
       clearInterval(oto); //reset the hold delay
@@ -880,49 +880,37 @@ onlytime.addEventListener("touchend", up, false);
 lighticon.addEventListener("click", () => {runmode(false)}, false);
 
 function darkmode() {
-  if (isMobile) {
-    document.body.style.backgroundColor = "black";
-    document.body.classList.add("reverse");
+  if (!isMobile) {
+    document.body.classList.add("backblack");
   }
-  document.body.classList.add("backblack");
   cancelbtn.classList.add("twotwenty");
   sescreate.classList.add("twotwenty");
-  timealert.classList.add("reverse");
-  insptime.style.filter = "invert(100%)";
-  time.classList.add("white");
-  time.style.filter = "invert(100%)";
-  exportses.classList.add("reverse");
-  exportallses.classList.add("reverse");
+  timealert.classList.add("cyan");
+  insptime.classList.add("cyan");
 
   for (let i = 0; i < shadows.length; i++) {
     shadows[i].classList.add("oneeighty");
     shadows[i].classList.add("darkboxshadow");
   }
 
-  css = 'html {filter: invert(100%);}'
+  css = 'html {filter: invert(100%);}';
 };
 
 function lightmode() {
-  if (isMobile) {
-    document.body.style.backgroundColor = "";
-    document.body.classList.remove("reverse");
-  }
-  document.body.classList.remove("backblack");
+  if (!isMobile) {
+    document.body.classList.remove("backblack");
+  }  
   cancelbtn.classList.remove("twotwenty");
   sescreate.classList.remove("twotwenty");
-  timealert.classList.remove("reverse");
-  insptime.style.filter = "invert(0)";
-  time.classList.remove("white");
-  time.style.filter = "invert(0)";
-  exportses.classList.remove("reverse");
-  exportallses.classList.remove("reverse");
-  
+  timealert.classList.remove("cyan");
+  insptime.classList.remove("cyan");
+
   for (let i = 0; i < shadows.length; i++) {
     shadows[i].classList.remove("oneeighty");
     shadows[i].classList.remove("darkboxshadow");
   }
 
-  css = 'html {filter: invert(0%);}'
+  css = 'html {filter: invert(0);}';
 };
 
 function runmode(start) { // switch modes, and open in saved mode
