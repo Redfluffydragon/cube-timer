@@ -3,7 +3,7 @@ body {
   top: 0;
   left: 0;
   touch-action: manipulation;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 * { touch-action: manipulation; }
@@ -440,6 +440,8 @@ button {
 #morepopup {
   margin-top: 9px;
   font-size: calc(9px + .7vw);
+  max-height: 50vh;
+  overflow: auto;
 }
 
 #alwsmore {
@@ -606,6 +608,7 @@ button {
   #sescrip {width: 48vw;}
   #seesescrip {width: 58vw;}
   #scrambletxt {top: 17vh; left: 41vw; width: 56vw; max-height: 37vh; margin-right: 2px; overflow: scroll; -webkit-overflow-scrolling: touch;}
+  #morepopup {overflow: scroll; -webkit-overflow-scrolling: touch;}
   #settings {height: 20vh;}
   #time {margin: 0; top: 54vh;}
   #insptime{top: 54vh;}
