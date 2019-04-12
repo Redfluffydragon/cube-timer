@@ -328,7 +328,7 @@ function onStart() {
   scrambletxt.classList.add("transOneSec");
   if (isMobile) {
     let timeHeight = time.offsetTop;
-    multiScram.style.bottom = (window.innerHeight - timeHeight - 30) + 'px';
+    multiScram.style.bottom = (window.innerHeight - timeHeight - 33) + 'px';
   }
 };
 
@@ -494,6 +494,7 @@ document.addEventListener("click", evt => { //switch cubes
     cube = evt.target.textContent;
     cubeButton.textContent = cube;
     localStorage.setItem("cubesave", JSON.stringify(cube));
+    scrambles.length = 0;
     scramble();
   }
 }, false);
