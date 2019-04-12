@@ -495,6 +495,10 @@ document.addEventListener("click", evt => { //switch cubes
     cubeButton.textContent = cube;
     localStorage.setItem("cubesave", JSON.stringify(cube));
     scrambles.length = 0;
+    scrambleNum = 0;
+    localStorage.removeItem('scrambles');
+    localStorage.removeItem('scrambleNum');
+    scramNum.textContent = '1';
     scramble();
   }
 }, false);
