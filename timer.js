@@ -880,8 +880,11 @@ onlytime.addEventListener("touchend", up, false);
 lighticon.addEventListener("click", () => {runmode(false)}, false);
 
 function darkmode() {
-  if (!isMobile) {
+  // if (!isMobile) {
     document.body.classList.add("backblack");
+  // }
+  if (isMobile) {
+    touch.classList.add("backblack");
   }
   cancelbtn.classList.add("twotwenty");
   sescreate.classList.add("twotwenty");
@@ -893,13 +896,16 @@ function darkmode() {
     shadows[i].classList.add("darkboxshadow");
   }
 
-  css = 'html {filter: invert(100%);}';
+  css = 'html {-webkit-filter: invert(100%); filter: invert(100%);}';
 };
 
 function lightmode() {
-  if (!isMobile) {
+  // if (!isMobile) {
     document.body.classList.remove("backblack");
-  }  
+  // }  
+  if (isMobile) {
+    touch.classList.remove("backblack");
+  }
   cancelbtn.classList.remove("twotwenty");
   sescreate.classList.remove("twotwenty");
   timealert.classList.remove("cyan");
@@ -910,7 +916,7 @@ function lightmode() {
     shadows[i].classList.remove("darkboxshadow");
   }
 
-  css = 'html {filter: invert(0);}';
+  css = 'html {-webkit-filter: invert(0); filter: invert(0);}';
 };
 
 function runmode(start) { // switch modes, and open in saved mode

@@ -675,12 +675,24 @@ button:hover {
   color: red;
 }
 
+.cyan {
+  color: cyan;
+}
+
 .green {
   color: rgb(0, 255, 0);
 }
 
+.magenta {
+  color: rgb(255, 0, 255);
+}
+
 .orange {
   color: orange;
+}
+
+.blue {
+  color: rgb(0, 90, 255);
 }
 
 .darkboxshadow {
