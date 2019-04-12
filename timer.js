@@ -773,6 +773,10 @@ function fin() { //finish timing, save result
   dnf = false;
   plustwo = false;
   scrambles.length = 0;
+  scrambleNum = 0;
+  localStorage.setItem('scrambles', JSON.stringify(scrambles));
+  localStorage.setItem('scrambleNum', JSON.stringify(scrambleNum));
+  scramNum.textContent = '1';
 
   scramble();
   draw();
