@@ -273,7 +273,6 @@ body {
   background-color: rgb(150, 150, 150);
 }
 
-
 #sespopup button{
   display: inline-block;
   margin-bottom: 4px;
@@ -613,94 +612,48 @@ button {
   body {height: 80vh;}
 }
 
-.initial {
-  display: initial;
-}
+.initial { display: initial; }
 
-.inlineBlock {
-  display: inline-block;
-}
+.inlineBlock { display: inline-block; }
 
-.block {
-  display: block;
-}
+.block { display: block; }
 
-.none {
-  display: none;
-}
+.none { display: none; }
 
-.oneeighty {
-  background-color: rgb(180, 180, 180);
-}
+.oneeighty { background-color: rgb(180, 180, 180); }
 
-.oneforty {
-  background-color: rgb(140, 140, 140);
-}
+.oneforty { background-color: rgb(140, 140, 140); }
 
-.twotwenty {
-  background-color: rgb(220, 220, 220)
-}
+.twotwenty { background-color: rgb(220, 220, 220) }
 
-.backblack {
-  background-color: black;
-}
+.backblack { background-color: black; }
 
-.white {
-  color: white;
-}
+.white { color: white; }
 
-.red {
-  color: red;
-}
+.red { color: red; }
 
-.cyan {
-  color: cyan;
-}
+.cyan { color: cyan; }
 
-.green {
-  color: rgb(0, 255, 0);
-}
+.green { color: rgb(0, 255, 0); }
 
-.magenta {
-  color: rgb(255, 0, 255);
-}
+.magenta { color: rgb(255, 0, 255); }
 
-.orange {
-  color: orange;
-}
+.orange { color: orange; }
 
-.blue {
-  color: rgb(0, 90, 255);
-}
+.blue { color: rgb(0, 90, 255); }
 
-.darkboxshadow {
-  box-shadow: 5px 5px 10px #E6E6E6;
-}
+.darkboxshadow { box-shadow: 5px 5px 10px #E6E6E6; }
 
-.transXsixty {
-  transform: translateX(-60vw);
-}
+.transXsixty { transform: translateX(-60vw); }
 
-.transXhundred {
-  transform: translateX(-100vw);
-}
+.transXhundred { transform: translateX(-100vw); }
 
-.transOneSec {
-  transition: all 1s;
-}
+.transOneSec { transition: all 1s; }
 
-.zone {
-  z-index: 1;
-}
+.zone { z-index: 1; }
 
-.zfour {
-  z-index: 4;
-}
+.zfour { z-index: 4; }
 
-.opzero {
-  opacity: 0;
-}
+.opzero { opacity: 0; }
 
-.reverse {
-  filter: invert(100%);
-}
+.reverse { filter: invert(100%); }
