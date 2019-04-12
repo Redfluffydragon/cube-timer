@@ -882,6 +882,7 @@ lighticon.addEventListener("click", () => {runmode(false)}, false);
 function darkmode() {
   if (isMobile) {
     document.body.style.backgroundColor = "black";
+    document.body.classList.add("reverse");
   }
   document.body.classList.add("backblack");
   cancelbtn.classList.add("twotwenty");
@@ -903,7 +904,8 @@ function darkmode() {
 
 function lightmode() {
   if (isMobile) {
-    document.body.style.backgroundColor = "white";
+    document.body.style.backgroundColor = "";
+    document.body.classList.remove("reverse");
   }
   document.body.classList.remove("backblack");
   cancelbtn.classList.remove("twotwenty");
