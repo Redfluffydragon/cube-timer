@@ -2,11 +2,8 @@ body {
   height: 95vh;
   top: 0;
   left: 0;
-  touch-action: manipulation;
   overflow: hidden;
 }
-
-* { touch-action: manipulation; }
 
 #centerac {
   margin: 0 auto;
@@ -551,6 +548,16 @@ button {
   font-weight: 200;
 }
 
+#undobtn {
+  padding: 0;
+  border-radius: 50%;
+  height: calc(19px + .7vw);
+  width: calc(19px + .7vw);
+  margin: 0;
+  position: relative;
+  top: 5px;
+}
+
 #settings {
   position: absolute;
   right: 4px;
@@ -661,3 +668,5 @@ button {
 .opzero { opacity: 0; }
 
 .reverse { filter: invert(100%); }
+
+* { touch-action: manipulation; }

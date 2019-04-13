@@ -1,3 +1,7 @@
+/**todo:
+ * add more options
+ */
+
 if (navigator.serviceWorker) {
   navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
 }
@@ -842,9 +846,9 @@ function up () {
   }
 }
 
-function touchdown(evt) {
-  evt.preventDefault();
-  if (forAutoplay === true) {
+function touchdown(e) {
+  e.preventDefault();
+  if (forAutoplay && isMobile) {
     eightSecSound.play();
     eightSecSound.pause();
     twelveSecSound.play();
