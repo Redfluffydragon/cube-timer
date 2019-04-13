@@ -218,6 +218,10 @@ let undotxt = document.getElementById("undotxt");
 
 let isMobile = (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
 isMobile ? undobtn.classList.remove("none") : undobtn.classList.add("none");
+let standalone = false;
+if (window.matchMedia('(display-mode: standalone)').matches) {
+  standalone = true;
+}
 
 function createTableRow() {
   let columnClass = ["number", "times", "avgofive", "avgotwelve"];
@@ -280,6 +284,12 @@ function onStart() {
   scrambles = gotem("scrambles", []);
   scrambleNum = gotem("scrambleNum", 0);
 
+  if (standalone === true) {
+    time.style.top = "67vh";
+    timebody.style.maxHeight = "62vh";
+    scrambletxt.style.maxHeight = "48vh"; 
+  }
+
   timein = gotem("timein", false);
   timicon();
   timesInOut(null, false);
@@ -287,6 +297,7 @@ function onStart() {
     let timeHeight = time.offsetTop;
     multiScram.style.bottom = (window.innerHeight - timeHeight - 33) + 'px';
   }
+
   draw();
 }
 onStart();
