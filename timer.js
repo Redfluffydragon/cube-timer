@@ -288,6 +288,8 @@ function onStart() {
     time.style.top = "67vh";
     timebody.style.maxHeight = "62vh";
     scrambletxt.style.maxHeight = "48vh"; 
+    insptime.style.top = "67vh";
+    timealert.style.bottom = "4vh";
   }
 
   timein = gotem("timein", false);
@@ -695,7 +697,6 @@ function inspection() {
   displayctdn = countdown[icounter];
   insptime.textContent = displayctdn;
   if (displayctdn === "DNF") {
-    timealert.classList.add("none");
     dnf = true;
     plustwo = false;
     clearInterval(oto);
@@ -705,7 +706,10 @@ function inspection() {
     counter = 0;
     fin();
   }
-  if (displayctdn === "+2") { plustwo = true; }
+  if (displayctdn === "+2") {
+    plustwo = true;
+    timealert.classList.add("none");
+  }
   if (displayctdn === 7) {
     timealert.classList.remove("none");
     timealert.textContent = "8s!";

@@ -45,10 +45,9 @@ body {
   font-size: calc(14px + 6vmax);
   position: absolute;
   right: 8vw;
-  bottom: 18vh;
+  bottom: 11vh;
   color: red;
   z-index: 4;
-  display: none;
 }
 
 #scramblediv {
@@ -614,6 +613,7 @@ button {
   #insptime{top: 54vh;}
   #timetable tbody {max-height: 50vh;}
   body {height: 80vh;}
+  #timealert {bottom: 16vh;}
 }
 
 .initial { display: initial; }
