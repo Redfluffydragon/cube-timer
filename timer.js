@@ -777,6 +777,10 @@ function ptimeout() { //add the holding delay, and colors
 }
 
 function otimeout() { //setInterval for ptimeout
+  eightSecSound.play();
+  eightSecSound.pause();
+  twelveSecSound.play();
+  twelveSecSound.pause();
   pause = true;
   timeou = new Date();
   oto = setInterval(ptimeout, 10);
@@ -917,7 +921,7 @@ function darkmode() {
   document.body.classList.add("backblack");
   cancelbtn.classList.add("twotwenty");
   sescreate.classList.add("twotwenty");
-  timealert.classList.add("cyan");
+  timealert.classList.add("reverse");
   insptime.classList.add("cyan");
 
   for (let i = 0; i < shadows.length; i++) {
@@ -932,7 +936,7 @@ function lightmode() {
   document.body.classList.remove("backblack");
   cancelbtn.classList.remove("twotwenty");
   sescreate.classList.remove("twotwenty");
-  timealert.classList.remove("cyan");
+  timealert.classList.remove("reverse");
   insptime.classList.remove("cyan");
 
   for (let i = 0; i < shadows.length; i++) {
