@@ -218,7 +218,10 @@ let undotxt = document.getElementById("undotxt");
 
 let isMobile = (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
 isMobile ? undobtn.classList.remove("none") : undobtn.classList.add("none");
-let standalone = (window.matchMedia('(display-mode: standalone)').matches) || (window.navigator.standalone);
+let standalone = false;
+if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+  standalone = true;
+}
 alert(standalone);
 
 function createTableRow() {
@@ -282,7 +285,7 @@ function onStart() {
   scrambles = gotem("scrambles", []);
   scrambleNum = gotem("scrambleNum", 0);
 
-  if (standalone === true) {
+  if (standalone) {
     time.style.top = "67vh";
     timebody.style.maxHeight = "62vh";
     scrambletxt.style.maxHeight = "48vh"; 
