@@ -1,8 +1,3 @@
-/**todo:
- * play sounds on mobile
- * splash screen of some sort
- */
-
 if (navigator.serviceWorker) {
   navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
 }
@@ -61,10 +56,11 @@ let displayctdn;
 let countdown = [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, "+2", "+2", "DNF"];
 let dnf = false;
 let plustwo = false;
-let eightSecSound = new Audio("eight.mp3");
-let twelveSecSound = new Audio("twelve.mp3");
+let eightSecSound = document.getElementById("eightSecSound");
+let twelveSecSound = document.getElementById("twelveSecSound");
 let played8 = false;
 let played12 = false;
+let forAutoplay = false;
 
 //scramble generator variables
 let faces = ["F", "U", "L", "R", "D", "B"];
@@ -363,6 +359,7 @@ function addTransitions() {
   sessionsdiv.classList.add("transOneSec");
   timetable.classList.add("transOneSec");
   scrambletxt.classList.add("transOneSec");
+  forAutoplay = true;
 }
 window.addEventListener("load", addTransitions, false);
 
@@ -778,10 +775,6 @@ function ptimeout() { //add the holding delay, and colors
 }
 
 function otimeout() { //setInterval for ptimeout
-  eightSecSound.play();
-  eightSecSound.pause();
-  twelveSecSound.play();
-  twelveSecSound.pause();
   pause = true;
   timeou = new Date();
   oto = setInterval(ptimeout, 10);
@@ -851,6 +844,13 @@ function up () {
 
 function touchdown(evt) {
   evt.preventDefault();
+  if (forAutoplay === true) {
+    eightSecSound.play();
+    eightSecSound.pause();
+    twelveSecSound.play();
+    twelveSecSound.pause();
+    forAutoplay = false;
+  }
   down();
 }
 
