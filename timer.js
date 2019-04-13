@@ -222,7 +222,6 @@ let standalone = false;
 if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
   standalone = true;
 }
-alert(standalone);
 
 function createTableRow() {
   let columnClass = ["number", "times", "avgofive", "avgotwelve"];

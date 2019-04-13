@@ -1,6 +1,6 @@
 {
   "name": "Cube Timer",
-
+  "short_name": "Cube Timer",
   "icons": [
     {
       "src": "icon512x512.png",
