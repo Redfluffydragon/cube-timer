@@ -218,10 +218,8 @@ let undotxt = document.getElementById("undotxt");
 
 let isMobile = (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
 isMobile ? undobtn.classList.remove("none") : undobtn.classList.add("none");
-let standalone = false;
-if (window.matchMedia('(display-mode: standalone)').matches) {
-  standalone = true;
-}
+let standalone = (window.matchMedia('(display-mode: standalone)').matches) || (window.navigator.standalone);
+alert(standalone);
 
 function createTableRow() {
   let columnClass = ["number", "times", "avgofive", "avgotwelve"];
