@@ -79,27 +79,32 @@
         </div>
       </div>
       
-      <div class="rdropdown">
-        <button class="rdropbtn" id="inspectButton">Inspection</button>
-        <div class="rdropcontent" id="inspectDrop">
-          <a href="#" id="inspectnone">None</a>
-          <a href="#" id="inspect15">15s (WCA)</a>
+      <div id="hsSpot">
+        <div id="inspectSet" class="rdropdown">
+          <button class="rdropbtn" id="inspectButton">Inspection</button>
+          <div class="rdropcontent" id="inspectDrop">
+            <a href="#" id="inspectnone">None</a>
+            <a href="#" id="inspect15">15s (WCA)</a>
+          </div>
+        </div>
+
+        <div id="delaySet" class="rdropdown">
+          <button class= "rdropbtn" id="delayButton" title="how long you have to hold the spacebar to start">Delay time</button>
+          <div class="rdropcontent" id="delayDrop">
+            <a href="#" class="delaytime">0s</a>
+            <a href="#" class="delaytime">0.3s</a>
+            <a href="#" class="delaytime">0.55s</a>
+            <a href="#" class="delaytime">1s</a>
+          </div>
         </div>
       </div>
-
-      <div class="rdropdown">
-        <button class= "rdropbtn" id="delayButton" title="how long you have to hold the spacebar to start">Delay time</button>
-        <div class="rdropcontent" id="delayDrop">
-          <a href="#" class="delaytime">0s</a>
-          <a href="#" class="delaytime">0.3s</a>
-          <a href="#" class="delaytime">0.55s</a>
-          <a href="#" class="delaytime">1s</a>
-        </div>
+      <div id="settingsIconSize">
+        <img src="settingsicon.png" id="settingsIcon" alt="More settings icon" style="width: 100%; height: 100%;"/>
       </div>
-
       <div id="iconsize">
-        <img src="lightmode.png" id="lighticon" alt="light/dark mode icon" title="light/dark mode" style="width: 100%; height: 100%;">
+        <img src="lightmode.png" id="lighticon" alt="Light/dark mode icon" title="light/dark mode" style="width: 100%; height: 100%;">
       </div>
+
       <div id="bestworst">
         <h4 id="worse" class="topstats">Worst: <span id="worst">--</span></h4>
         <h4 id="better" class="topstats">Best: <span id="best">--</span></h4>
@@ -134,6 +139,19 @@
         <label>Comments: </label>
         <textarea id="comment" resize></textarea>
         <label id="alwsmore"><input id="checkmore"type="checkbox">Always show more</label>
+      </div>
+
+      <div id="setpopup" class="popup">
+        <h3>Settings</h3>
+        <ul>
+          <li><label><input type="checkbox" checked id="countAnnounce"/> Countdown announcer</label></li>
+          <li><label><input type="checkbox" checked id="showSettings"/> Show delay & inspection settings on main screen</label></li>
+          <li><label><input type="checkbox" checked id="showBW"/> Show best/worst</label></li>
+          <li><label><input type="checkbox" id="BWSesAll"/> Do best/worst per session (auto is out of all times)</label></li>
+          <li><label><input type="checkbox" checked id="hideThings"/> Hide everything else while timing</label></li>
+          <li id="centerThisOne"><div id="popSpot"></div></li>
+        </ul>
+        <button id="settingsClose">Close</button>
       </div>
 
       <div id="sespopup" class="popup">

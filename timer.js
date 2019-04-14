@@ -1,9 +1,10 @@
 /**todo:
  * add more options
+ * add manual times entry
  */
 
 if (navigator.serviceWorker) {
-  navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
+  // navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
 }
 
 let cube;
@@ -127,16 +128,19 @@ let cubeButton = document.getElementById("cubeButton");
 let cubeDrop = document.getElementById("cubeDrop");
 let cubeselect = document.getElementsByClassName("cubeselect");
 
+let inspectSet = document.getElementById("inspectSet");
 let inspectButton = document.getElementById("inspectButton");
 let inspectDrop = document.getElementById("inspectDrop");
 let inspectnone = document.getElementById("inspectnone");
 let inspect15 = document.getElementById("inspect15");
 
+let delaySet = document.getElementById("delaySet");
 let delayButton = document.getElementById("delayButton");
 let delayDrop = document.getElementById("delayDrop");
 let delaytime = document.getElementsByClassName("delaytime");
 
 let settings = document.getElementById("settings");
+let hsSpot = document.getElementById("hsSpot");
 //other elements
 let css;
 let timicon = () => {!timein ? outicon.classList.add("none") : outicon.classList.remove("none");};
@@ -173,12 +177,12 @@ let seecube = document.getElementById("seecube");
 
 let best = document.getElementById("best");
 let worst = document.getElementById("worst");
+let BWdiv = document.getElementById("bestworst");
 
 let timepop; //popups open or closed
 let morepop;
-let infopop;
 let sespop;
-let sesoptpop; 
+let popup;
 
 //session elements
 let sessions = [{name: "Session 1", description: "Default session"}];
@@ -217,6 +221,17 @@ let infoclose = document.getElementById("infoclose");
 let undone = document.getElementById("undone");
 let undotxt = document.getElementById("undotxt");
 
+let setpopup = document.getElementById("setpopup")
+let countAnnounce = document.getElementById("countAnnounce");
+let showSettings = document.getElementById("showSettings");
+let showBW = document.getElementById("showBW");
+let BWSesAll = document.getElementById("BWSesAll");
+let hideThings = document.getElementById("hideThings");
+let popSpot = document.getElementById("popSpot");
+let settingsClose = document.getElementById("settingsClose");
+let settingsSettings = [countAnnounce, showSettings, showBW, BWSesAll, hideThings];
+let settingsArr;
+
 let isMobile = (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
 isMobile ? undobtn.classList.remove("none") : undobtn.classList.add("none");
 let standalone = false;
@@ -254,13 +269,24 @@ let colorIndicator = (array, value) => {
   }
 };
 
+function DnIspot() { //where the delay and inspection time settings are
+  if (settingsArr[1]) {
+    hsSpot.appendChild(inspectSet);
+    hsSpot.appendChild(delaySet);
+  }
+  else if (!settingsArr[1]) {
+    popSpot.appendChild(inspectSet);
+    popSpot.appendChild(delaySet);
+  }
+}
+
 function onStart() {
   mode = gotem("mode", "light");
-  runmode(true);
+      runmode(true);
 
   morechecked = gotem("moretoggle", false);
-  checkmore.checked = morechecked;
-  alwaysmore = morechecked;
+      checkmore.checked = morechecked;
+      alwaysmore = morechecked;
 
   alltimes = gotem("all", []);
 
@@ -280,6 +306,9 @@ function onStart() {
 
   inspectTime = gotem("inspectsave", true);
       inspColor();
+  
+  settingsArr = gotem("settings", [true, true, true, false, true]);
+      DnIspot();
 
   fscramble = gotem("scramble", null);
   scrambles = gotem("scrambles", []);
@@ -306,8 +335,6 @@ function onStart() {
 onStart();
 
 function draw() { //to redraw things after modifying
-  bestworst();
-
   for (let i in cellArrs) { cellArrs[i].length = 0; }
 
   if (scrambles.length !== 0) {
@@ -345,6 +372,11 @@ function draw() { //to redraw things after modifying
     alltimes[saveBack].ao12 = avgotwe;
   }
   clickTable();
+
+  let allorsession = settingsArr[3] ? displaytimes : alltimes;
+  bestworst(allorsession);
+
+  settingsArr[2] ? BWdiv.classList.remove("none") : BWdiv.classList.add("none");
 
   //sessions
   sesdrop.innerHTML = "";
@@ -429,15 +461,15 @@ let mouseTouch = isMobile ? "touchstart" : "mousedown";
 let tapped;
 document.addEventListener(mouseTouch, evt => { //close modals on click outside
   if (evt.target.closest(".popup")) return;
-  if (timepop || sespop || sesoptpop || infopop && !tapped) { closeNdraw();}
+  if ((timepop || sespop || popup) && !tapped) { closeNdraw();}
   if (isMobile) {tapped = true;}
 }, false);
 document.addEventListener("touchend", () => { tapped = false; }, false);
 
-function bestworst() {
+function bestworst(array) {
   justTimes.length = 0;
-  for (let i in alltimes) {
-    if (alltimes[i].time) { justTimes.push(alltimes[i].time); }
+  for (let i in array) {
+    if (array[i].time) { justTimes.push(array[i].time); }
   }
   let worstTime = Math.max(...justTimes);
   let bestTime = Math.min(...justTimes);
@@ -715,14 +747,14 @@ function inspection() {
   if (displayctdn === 7) {
     timealert.classList.remove("none");
     timealert.textContent = "8s!";
-    if (!played8) {
+    if (!played8 && settingsArr[0]) {
       eightSecSound.play();
       played8 = true;
     }
   }
   if (displayctdn === 3) {
     timealert.textContent = "12s!";
-    if (!played12) {
+    if (!played12 && settingsArr[0]) {
       twelveSecSound.play();
       played12 = true;
     }
@@ -733,7 +765,9 @@ function runinspect() {
   inspecting = true;
   time.classList.add("none");
   insptime.classList.remove("none");
-  onlytime.classList.add("initial");
+  if (settingsArr[4]) {
+    onlytime.classList.add("initial");
+  }
   inspectstart = setInterval(inspection, 10);
   istart = new Date();
 }
@@ -748,7 +782,9 @@ function stopwatch() {
 function go() { //run stopwatch & stuff
   start = new Date();
   intstart = setInterval(stopwatch, 10); //actually start the stopwatch
-  onlytime.classList.add("initial");
+  if (settingsArr[4]) {
+    onlytime.classList.add("initial");
+  }
   insptime.classList.add("none");
   time.classList.remove("none");
   time.classList.add("zfour");
@@ -817,7 +853,7 @@ function fin() { //finish timing, save result
 }
 
 function down() {
-  if (!timepop && !sespop && !sesoptpop) {
+  if (!timepop && !sespop && !popup) {
     if (!onstart && !started) {
       if (!inspectTime || inspecting) { otimeout(); }
       else if (inspectTime) {
@@ -832,7 +868,7 @@ function down() {
 function up () {
   time.classList.remove("red", "green", "cyan", "magenta");
   insptime.classList.remove("orange", "blue");
-  if (!timepop && !sespop && !sesoptpop && !dnf) {
+  if (!timepop && !sespop && !popup && !dnf) {
     if (!started && !waiting) {
       clearInterval(oto); //reset the hold delay
       onstart = false;
@@ -978,6 +1014,7 @@ function closeAll() { //close everything
   morepopup.classList.remove("block");
   sesoptpopup.classList.remove("inlineBlock");
   sespopup.classList.remove("inlineBlock");
+  setpopup.classList.remove("inlineBlock");
   shadow.classList.remove("initial");
   
   if (timepop && !deleted) {
@@ -988,15 +1025,14 @@ function closeAll() { //close everything
   timepop = false;
   morepop = false;
   sespop = false;
-  sesoptpop = false;
-  infopop = false;
+  popup = false;
   deleted = false;
 }
 
 infobtn.addEventListener("click", () => {
   infopopup.classList.add("inlineBlock");
   shadow.classList.add("initial");
-  infopop = true;
+  popup = true;
 }, false);
 
 //close the time editing popup
@@ -1212,7 +1248,7 @@ sesopt.addEventListener("click", () => {
     }
   }
   seesescrip.value = tempcrip;
-  sesoptpop = true;
+  popup = true;
 }, false);
 
 //close the session options popup
@@ -1296,3 +1332,22 @@ function timesInOut(e, swtch=true) {
 
 inicon.addEventListener("click", timesInOut, false);
 outicon.addEventListener("click", timesInOut, false);
+
+settingsIcon.addEventListener("click", () => {
+  for (let i in settingsSettings) {
+    settingsSettings[i].checked = settingsArr[i];
+  }
+  setpopup.classList.add("inlineBlock");
+  shadow.classList.add("initial");
+  popup = true;
+}, false);
+
+settingsClose.addEventListener("click", () => {
+  for (let i in settingsSettings) {
+    settingsArr[i] = settingsSettings[i].checked;
+  }
+  localStorage.setItem("settings", JSON.stringify(settingsArr));
+  DnIspot();
+  draw();
+  closeAll();
+}, false);

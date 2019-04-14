@@ -436,7 +436,7 @@ button {
 #morepopup {
   margin-top: 9px;
   font-size: calc(9px + .7vw);
-  max-height: 50vh;
+  max-height: 80vh;
   overflow: auto;
 }
 
@@ -565,6 +565,34 @@ button {
   width: 70vw;
   height: 20vh;
   transition: width .8s;
+}
+
+#setpopup ul {
+  list-style-type: none;
+  text-align: left;
+  margin: 5px;
+  position: relative;
+  left: -20px;
+}
+
+#setpopup button {
+  margin: 4px;
+}
+
+#popSpot {
+  display: inline-block;
+}
+
+#centerThisOne {
+  margin-top: 9px;
+  text-align: center;
+}
+
+#settingsIconSize {
+  width: calc(21px + 1vw);
+  height: calc(21px + 1vw);
+  float: right;
+  cursor: pointer;
 }
 
 @media screen and (min-width: 600px) {
