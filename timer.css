@@ -413,7 +413,7 @@ button {
   position: relative;
   text-align: center;
   z-index: 7;
-  top: -40vh;
+  top: -280px;
 }
 
 .popup {
@@ -641,7 +641,7 @@ button {
   #insptime {top: 57vh;}
 }
 
-@media screen and (max-width: 650px) { /*if viewport width is less than 650*/
+@media screen and (max-width: 650px) { /* if viewport width is at most 650px */
   #insptime {top: 57vh;}
   #scrambletxt {top: 12vh; width: 60vw;}
   #settings{width: 60vw;}
@@ -675,12 +675,13 @@ button {
   #timealert {bottom: 16vh;}
 }
 
-@media screen and (orientation: landscape) {
+@media screen and (orientation: landscape) and (max-height: 420px) {
   #time {top: 40vh; margin: 0;}
   #insptime {top: 40vh;}
   #scrambletxt{top: 15vh; max-height: 25vh; left: 24vw; width: 70vw;}
-  #settings{width: 76vw;}
+  #settings{width: 65vw;}
   #timetable tbody {max-height: 80vh;}
+  #overtop {top: -70vh;}
 }
 
 .initial { display: initial; }
@@ -728,5 +729,3 @@ button {
 .opzero { opacity: 0; }
 
 .reverse { filter: invert(100%); }
-
-* { touch-action: manipulation; }
