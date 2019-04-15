@@ -314,6 +314,10 @@ body {
   text-align: center;
 }
 
+#sesoptpopup label {
+  display: block;
+}
+
 #optbuttons {
   justify-content: center;
   width: 100%;

@@ -1270,22 +1270,28 @@ exportses.addEventListener("click", () => {
   createCsv(displaytimes, timeKeys, session);
 }, false);
 
+let tempcrip;
 sesopt.addEventListener("click", () => {
   sesoptpopup.classList.add("inlineBlock");
   shadow.classList.add("initial");
   changesesname.value = session;
-  let tempcrip;
   for (let i = 0; i < sessions.length; i++) {
     if (sessions[i].name === session) {
-      tempcrip = sessions[i].description;
+      tempcrip = sessions[i];
     }
   }
-  seesescrip.value = tempcrip;
+  seesescrip.value = tempcrip.description;
   popup = true;
 }, false);
 
 saveses.addEventListener("click", () => {
-  if (checkSession(changesesname.value, sameAlertAgain)) {
+  if (changesesname.value === session) {
+    let sesidx = sessions.indexOf(tempcrip);
+    sessions[sesidx].description = seesescrip.value;
+    localStorage.setItem("sessions", JSON.stringify(sessions));
+    closeNdraw();
+  }
+  else if (checkSession(changesesname.value, sameAlertAgain)) {
     for (let i = 0; i < alltimes.length; i++) {
       if (alltimes[i].session === session) {
         alltimes[i].session = changesesname.value;
