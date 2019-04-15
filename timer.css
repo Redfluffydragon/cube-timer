@@ -661,6 +661,7 @@ button {
 }
 
 @media screen and (max-width: 420px) {
+  body {height: initial; }
   #sesname {width: 48vw;}
   #sescrip {width: 48vw;}
   #seesescrip {width: 58vw;}
@@ -672,6 +673,14 @@ button {
   #timetable tbody {max-height: 50vh;}
   body {height: 80vh;}
   #timealert {bottom: 16vh;}
+}
+
+@media screen and (orientation: landscape) {
+  #time {top: 40vh; margin: 0;}
+  #insptime {top: 40vh;}
+  #scrambletxt{top: 15vh; max-height: 25vh; left: 24vw; width: 70vw;}
+  #settings{width: 76vw;}
+  #timetable tbody {max-height: 80vh;}
 }
 
 .initial { display: initial; }

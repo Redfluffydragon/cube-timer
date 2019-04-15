@@ -329,6 +329,7 @@ function onStart() {
     scrambletxt.style.maxHeight = "48vh"; 
     insptime.style.top = "67vh";
     timealert.style.bottom = "4vh";
+    // ~show reload button~ — in settings popup or main screen? hard or soft reload?
   }
 
   timein = gotem("timein", false);
