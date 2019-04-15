@@ -1,6 +1,6 @@
 let APP_PREFIX = 'cube-timer_';
 
-let VERSION = '1.0.0.8';
+let VERSION = '1.0.0.9';
 
 let CACHE_NAME = APP_PREFIX + VERSION;
 
