@@ -1,8 +1,6 @@
 /**todo:
- * add more options
- * add manual times entry
+ * csv file upload?
  */
-
 if (navigator.serviceWorker) {
   navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
 }
@@ -105,6 +103,7 @@ let nextScram = document.getElementById("nextScram");
 let firstScram = document.getElementById("firstScram");
 let scramNum = document.getElementById("scramNum");
 let scramPlur = document.getElementById("scramPlur");
+let multiScram = document.getElementById("multiScram");
 
 const scramblers = { //object with all the scrambler functions in it
   "2x2": () => {slen = 10; checknxn(moves3);},
@@ -182,6 +181,7 @@ let BWdiv = document.getElementById("bestworst");
 let timepop; //popups open or closed
 let morepop;
 let sespop;
+let enterpop;
 let popup;
 
 //session elements
@@ -196,6 +196,8 @@ let sesdrop = document.getElementById("sesdrop");
 let sespopup = document.getElementById("sespopup");
 let sescancel = document.getElementById("sescancel");
 let sescreate = document.getElementById("sescreate");
+let sameAlert = document.getElementById("sameAlert");
+let sameAlertAgain = document.getElementById("sameAlertAgain");
 let sesname = document.getElementById("sesname");
 let sescrip = document.getElementById("sescrip");
 let sesopt = document.getElementById("sesopt");
@@ -204,7 +206,6 @@ let sesselect = document.getElementsByClassName("sesselect");
 let deleteallses = document.getElementById("deleteallses");
 let exportallses = document.getElementById("exportallses");
 let clearallses = document.getElementById("clearallses");
-let closeses = document.getElementById("closeses");
 let saveses = document.getElementById("saveses");
 let clearses = document.getElementById("clearses");
 let exportses = document.getElementById("exportses");
@@ -212,7 +213,15 @@ let changesesname = document.getElementById("changesesname");
 let seesescrip = document.getElementById("seesescrip");
 let sessionsdiv = document.getElementById("sessions");
 let undobtn = document.getElementById("undobtn");
-let multiScram = document.getElementById("multiScram");
+let timenter = document.getElementById("timenter");
+let timenterpopup = document.getElementById("timenterpopup");
+let timentertoo = document.getElementById("timentertoo");
+let cubenter = document.getElementById("cubenter");
+let scramenter = document.getElementById("scramenter");
+let datenter = document.getElementById("datenter");
+let commenter = document.getElementById("commenter");
+let dothenter = document.getElementById("dothenter");
+let enterArr = [timentertoo, cubenter, scramenter, datenter, commenter];
 
 let infobtn = document.getElementById("infobtn");
 let infopopup = document.getElementById("infopopup");
@@ -458,13 +467,10 @@ function clickTable() { //set up row clicks on the time table
 }
 
 let mouseTouch = isMobile ? "touchstart" : "mousedown";
-let tapped;
-document.addEventListener(mouseTouch, evt => { //close modals on click outside
-  if (evt.target.closest(".popup")) return;
-  if ((timepop || sespop || popup) && !tapped) { closeNdraw();}
-  if (isMobile) {tapped = true;}
+document.addEventListener(mouseTouch, e => { //close modals on click outside
+  if (e.target.closest(".popup")) return;
+  if (timepop || sespop || enterpop || popup) { closeNdraw(); }
 }, false);
-document.addEventListener("touchend", () => { tapped = false; }, false);
 
 function bestworst(array) {
   justTimes.length = 0;
@@ -479,7 +485,7 @@ function bestworst(array) {
 
 function dropDown (button, content) { //toggle dropdowns 
   let dropdown = false;
-  document.addEventListener("click", (evt) => {
+  document.addEventListener('click', (evt) => {
     let target = evt.target;
     do {
       if (target === button) {
@@ -853,7 +859,7 @@ function fin() { //finish timing, save result
 }
 
 function down() {
-  if (!timepop && !sespop && !popup) {
+  if (!timepop && !sespop && !popup && !enterpop) {
     if (!onstart && !started) {
       if (!inspectTime || inspecting) { otimeout(); }
       else if (inspectTime) {
@@ -868,7 +874,7 @@ function down() {
 function up () {
   time.classList.remove("red", "green", "cyan", "magenta");
   insptime.classList.remove("orange", "blue");
-  if (!timepop && !sespop && !popup && !dnf) {
+  if (!timepop && !sespop && !enterpop && !popup && !dnf) {
     if (!started && !waiting) {
       clearInterval(oto); //reset the hold delay
       onstart = false;
@@ -884,6 +890,7 @@ function up () {
 
 function touchdown(e) {
   e.preventDefault();
+  closeAll();
   if (forAutoplay && isMobile) {
     eightSecSound.play();
     eightSecSound.pause();
@@ -918,6 +925,7 @@ function undo() {
     session = sesremoved[sesremoved.length-1].name;
     sesremoved.length = 0;
     sessionStorage.removeItem("sesremoved");
+    msg = "Undone!"
   }
   undotxt.textContent = msg;
   undone.classList.add("inlineBlock");
@@ -935,8 +943,11 @@ window.addEventListener("keydown", e => {
   if (key === 32) { down(); }
   if (key === 27) { closeAll(); }
   if (key === 17) {ctrl = true;}
-  if (key === 90 && ctrl) { undo(); }
-  if (key === 13 && sespop) {newSession();}
+  if (key === 90 && ctrl && !timepop && !sespop && !enterpop && !popup) { undo(); }
+  if (key === 13) {
+    if (sespop) { newSession(); }
+    else if (enterpop) { closeNdraw(); }
+  }
   if (key === 50 && timepop && !morepop) { allthistime.plustwo = changeallplus ? false : true; closeNdraw();}
   if (key === 68 && timepop && !morepop) { allthistime.dnf = changealldnf ? false : true; closeNdraw();}
 }, false);
@@ -1015,7 +1026,9 @@ function closeAll() { //close everything
   sesoptpopup.classList.remove("inlineBlock");
   sespopup.classList.remove("inlineBlock");
   setpopup.classList.remove("inlineBlock");
+  timenterpopup.classList.remove("inlineBlock");
   shadow.classList.remove("initial");
+  shadow.style.zIndex = "";
   
   if (timepop && !deleted) {
     alltimes[tempallidx].comment = comment.value;
@@ -1093,19 +1106,36 @@ newses.addEventListener("click", () => {
   sespopup.classList.add("inlineBlock");
   shadow.classList.add("initial");
   sesname.focus();
+  shadow.style.zIndex = "7";
   sespop = true;
 }, false);
 
 //close the new session popup
-sescancel.addEventListener("click", closeAll, false);
+sescancel.addEventListener("click", () => {
+  sespopup.classList.remove("inlineBlock");
+  shadow.style.zIndex = "";
+  sespop = false;
+}, false);
+
+function checkSession(name, alert) {
+  for (let i in sessions) {
+    if (name === sessions[i].name) {
+      alert.textContent = "You've already used that name.";
+      sesname.value = null;
+      return false; 
+    }
+  }
+  return true;
+}
 
 function newSession() {
-  if (sesname.value !== "") {
+  if (sesname.value !== "" && checkSession(sesname.value, sameAlert)) {
     let lastses = sessions.length;
     sessions.push({name: sesname.value, description: sescrip.value});
     localStorage.setItem("sessions", JSON.stringify(sessions));
-    sesname.value = "";
-    sescrip.value = "";
+    sameAlert.textContent = null;
+    sesname.value = null;
+    sescrip.value = null;
     session = sessions[lastses].name;
     localStorage.setItem("currses", JSON.stringify(session));
     closeNdraw();
@@ -1177,7 +1207,9 @@ deleteallses.addEventListener("click", () => {
     justAll();
     sesremoved = sessions;
     sessionStorage.setItem("sesremoved", JSON.stringify(sesremoved));
+    sessions = [{name: "Session 1", description: "Default session"}];
     localStorage.removeItem("sessions");
+    session = sessions[0].name;
     localStorage.removeItem("currses");
     sesslc.textContent = session;  
     closeNdraw();
@@ -1190,6 +1222,7 @@ deleteses.addEventListener("click", () => {
     justAsession();
     for (let i = 0; i < sessions.length; i++) {
       if (sessions[i].name === session) {
+        sesremoved.length = 0;
         sesremoved.push(sessions.splice(i, 1)[0]);
         sessionStorage.setItem("sesremoved", JSON.stringify(sesremoved));
         let neyes = i-1; //switch to next available session after deleting the current one
@@ -1251,40 +1284,38 @@ sesopt.addEventListener("click", () => {
   popup = true;
 }, false);
 
-//close the session options popup
-closeses.addEventListener("click", closeAll, false);
-
 saveses.addEventListener("click", () => {
-  for (let i = 0; i < alltimes.length; i++) {
-    if (alltimes[i].session === session) {
-      alltimes[i].session = changesesname.value;
+  if (checkSession(changesesname.value, sameAlertAgain)) {
+    for (let i = 0; i < alltimes.length; i++) {
+      if (alltimes[i].session === session) {
+        alltimes[i].session = changesesname.value;
+      }
     }
-  }
-  for (let i = 0; i < sessions.length; i++) {
-    if (sessions[i].name === session) {
-      sessions[i].name = changesesname.value;
-      sessions[i].description = seesescrip.value;
-      sesslc.textContent = changesesname.value;
-      localStorage.setItem("sessions", JSON.stringify(sessions));
+    for (let i = 0; i < sessions.length; i++) {
+      if (sessions[i].name === session) {
+        sessions[i].name = changesesname.value;
+        sessions[i].description = seesescrip.value;
+        sesslc.textContent = changesesname.value;
+        localStorage.setItem("sessions", JSON.stringify(sessions));
+      }
     }
-  }
-  for (let i = 0; i < sesselect.length; i++) {
-    if (sesselect[i] === session) {
-      sesselect[i].textContent = changesesname.value;
+    for (let i = 0; i < sesselect.length; i++) {
+      if (sesselect[i] === session) {
+        sesselect[i].textContent = changesesname.value;
+      }
     }
+    session = changesesname.value;
+    localStorage.setItem("currses", JSON.stringify(session));
+    closeNdraw();
   }
-  session = changesesname.value;
-  localStorage.setItem("currses", JSON.stringify(session));
-  closeNdraw();
 }, false);
 
 undobtn.addEventListener("click", undo, false);
 
 //switch sessions
-document.addEventListener("click", evt => {
-  if (!evt.target.matches(".sesselect")) return;
-  evt.preventDefault();
-  session = evt.target.textContent;
+document.addEventListener("click", e => {
+  if (!e.target.matches(".sesselect")) return;
+  session = e.target.textContent;
   localStorage.setItem("currses", JSON.stringify(session));
   sesslc.textContent = session;
   draw();
@@ -1348,6 +1379,38 @@ settingsClose.addEventListener("click", () => {
   }
   localStorage.setItem("settings", JSON.stringify(settingsArr));
   DnIspot();
-  draw();
-  closeAll();
+  closeNdraw();
+}, false);
+
+timenter.addEventListener("click", () => {
+  timenterpopup.classList.add("inlineBlock");
+  shadow.classList.add("initial");
+  timentertoo.focus();
+  enterpop = true;
+}, false);
+
+function checkTime(time) {
+  let colonCount = time.split(":");
+  if (time < 60) { return parseFloat(time); }
+  else if (colonCount.length === 2) { return (parseInt(colonCount[0])*60 + parseFloat(colonCount[1])); }
+  else { return undefined; }
+}
+dothenter.addEventListener("click", () => {
+  if (timentertoo.value !== "" && checkTime(timentertoo.value) !== undefined) {
+    alltimes.push({
+      number: "", 
+      time: checkTime(timentertoo.value),
+      ao5: "", 
+      ao12: "", 
+      cube: cubenter.value, 
+      session: session, 
+      scramble: scramenter.value, 
+      date: datenter.value, 
+      comment: commenter.value, 
+      dnf: false, 
+      plustwo: false
+    })
+    for (let i in enterArr) { enterArr[i].value = null; }
+    closeNdraw();
+  }
 }, false);

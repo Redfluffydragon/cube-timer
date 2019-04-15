@@ -144,29 +144,32 @@
       <div id="setpopup" class="popup">
         <h3>Settings</h3>
         <ul>
-          <li><label><input type="checkbox" checked id="countAnnounce"/> Countdown announcer</label></li>
-          <li><label><input type="checkbox" checked id="showSettings"/> Show delay & inspection on main screen</label></li>
-          <li><label><input type="checkbox" checked id="showBW"/> Show best/worst</label></li>
-          <li><label><input type="checkbox" id="BWSesAll"/> Do best/worst per session (vs all times)</label></li>
-          <li><label><input type="checkbox" checked id="hideThings"/> Hide everything else while timing</label></li>
+          <li><label><input type="checkbox" checked id="countAnnounce"> Countdown announcer</label></li>
+          <li><label><input type="checkbox" checked id="showSettings"> Delay & inspection on main screen</label></li>
+          <li><label><input type="checkbox" checked id="showBW"> Show best/worst</label></li>
+          <li><label><input type="checkbox" id="BWSesAll"> Best/worst per session</label></li>
+          <li><label><input type="checkbox" checked id="hideThings"> Hide things while timing</label></li>
           <li id="centerThisOne"><div id="popSpot"></div></li>
         </ul>
         <button id="settingsClose">Close</button>
       </div>
 
-      <div id="sespopup" class="popup">
-        <h3>New Session</h3>
-          <ul style="list-style-type: none">
-            <li><label>Name: </label><input id="sesname"class="sesinput"></li>
-            <li><label>Description: <textarea id="sescrip" class="sesinput"></textarea></label></li>
-          </ul>
-        <button id="sescancel">Cancel</button>
-        <button id="sescreate">Create</button>
+      <div id="timenterpopup" class="popup">
+        <h3>Manually add times</h3>
+        <table>
+          <tr><td>Time*:</td> <td><input id="timentertoo"></td></tr>
+          <tr><td>Cube:</td> <td><input id="cubenter"></td></tr>
+          <tr><td>Scramble:</td> <td><input id="scramenter"></td></tr>
+          <tr><td>Date:</td> <td><input id="datenter" type="date"></td></tr>
+          <tr><td>Comment:</td> <td><textarea id="commenter"></textarea></td></tr>
+        </table>
+        <button id="dothenter">Add</button>
       </div>
-
+      
       <div id="sesoptpopup" class="popup">
-        <h3><input id="changesesname"value="Session 1"></input></h3>
-        <textarea id="seesescrip" class="sesinput"></textarea>
+        <h3><input id="changesesname"value="Session 1" maxlength="50"></input></h3>
+        <p id="sameAlertAgain"></p>
+        <label>Description:<textarea id="seesescrip" class="sesinput"></textarea></label>
         <div id="optbuttons">
           <table>
             <tr>
@@ -182,7 +185,7 @@
               <td><button class="exportbtn" id="exportses" title="Export as CSV">Export session<span class="csv"> (.csv)</span></button></td>
             </tr>
             <tr>
-              <td><button id="closeses">Close</button></td>
+              <td><button id="newses" title="create a new session">New Session</button></td>
               <td><button id="saveses">Save</button></td>
             </tr>
           </table>
@@ -212,13 +215,26 @@
       </div>
     </div>
 
+    <div id="overtop"> 
+      <div id="sespopup" class="popup">
+        <h3>New Session</h3>
+          <p id="sameAlert"></p>
+          <ul style="list-style-type: none">
+            <li><label>Name: </label><input id="sesname"class="sesinput" maxlength="50"></li>
+            <li><label>Description: <textarea id="sescrip" class="sesinput"></textarea></label></li>
+          </ul>
+        <button id="sescancel">Cancel</button>
+        <button id="sescreate">Create</button>
+      </div>    
+    </div>
+
     <div id="sessions">
       <div class="dropup">
           <div id="sesdrop" class="dropupcontent">Session 1</div>
         <button id="sesslc" class="sesedit dropupbtn" title="current session">Session 1 </button>
       </div>
-      <button id="newses" class="sesedit" title="create a new session">New</button>
       <button id="sesopt"class="sesedit" title="session options">Options</button>
+      <button id="timenter" class="sesedit">Add Times</button>
       <button id="undobtn" class="sesedit none"><img src="undoicon.png" style="width:80%; height:80%;"></button>
     </div>
     

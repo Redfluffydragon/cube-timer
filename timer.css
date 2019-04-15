@@ -67,7 +67,7 @@ body {
 
 #multiScram {
   position: absolute;
-  bottom: 2vh;
+  bottom: 6vh;
   text-align: center;
   width: 100vw;
   left: 0;
@@ -223,6 +223,7 @@ body {
   margin: 0;
   padding: 0;
   z-index: 2;
+  max-width: 90vw;
 }
 
 .sesedit {
@@ -361,6 +362,17 @@ body {
   border-spacing: 0;
 }
 
+#timenterpopup table {
+  text-align: right;
+  margin: 4px;
+}
+
+#timenterpopup textarea {
+  vertical-align: top;
+  max-width: 50vw;
+  max-height: 40vh;
+}
+
 button {
   background-color: rgb(215, 215, 215);
   border: none;
@@ -368,6 +380,7 @@ button {
   font-size: calc(12px + .7vw);
   padding: 5px;
   cursor: pointer;
+  margin: 4px;
 }
 
 #shadow {
@@ -390,6 +403,13 @@ button {
   position: relative;
   text-align: center;
   z-index: 6;
+}
+
+#overtop {
+  position: relative;
+  text-align: center;
+  z-index: 7;
+  top: -40vh;
 }
 
 .popup {
@@ -624,7 +644,6 @@ button {
   #settingslist{padding-left: 2vw;}
   #sesoptpopup button {width: 29vw;}
   #timetable tbody {max-height: 84vh;}
-  #multiScram {bottom: 37vh;}
 }
 
 @media screen and (max-width: 600px) { 
