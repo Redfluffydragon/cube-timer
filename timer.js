@@ -1,6 +1,3 @@
-/**todo:
- * csv file upload?
- */
 if (navigator.serviceWorker) {
   navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
 }
@@ -28,7 +25,6 @@ let alltimes = [];
 let justTimes = []; //just the times - for best/worst
 let displaytimes = []; //just the times from current session - for display
 let moddedTimes = [];
-let timeKeys = ['number', 'time', 'ao5', 'ao12', 'cube', 'session', 'scramble', 'date', 'comment', 'dnf', 'plustwo'];
 let tempallidx;
 let allthistime;
 let changealldnf;
@@ -1157,26 +1153,27 @@ function justAll() { //get everything
   time.textContent = '0.00';
 }
 
-function createArray(array, arrayKeys) { //create array of arrays from array of objects 
+function createArray(array) { //create array of arrays from array of objects, with headers from keys 
   let returnarray = [];
   let columnNames = [];
-  for (let i in arrayKeys) {
-    let titleCase = arrayKeys[i].charAt(0).toUpperCase() + arrayKeys[i].slice(1);
+  let getKeys = Object.keys(array[0]);
+  for (let i in getKeys) {
+    let titleCase = getKeys[i].charAt(0).toUpperCase() + getKeys[i].slice(1);
     columnNames.push(titleCase);
   }
   returnarray.push(columnNames);
   for (let i in array) {
     let temparray = [];
-    for (let j in arrayKeys) {
-      temparray.push('"'+array[i][arrayKeys[j]].toString()+'"');
+    for (let j in getKeys) {
+      temparray.push('"'+array[i][getKeys[j]].toString()+'"');
     }
     returnarray.push(temparray);
   }
   return returnarray;
 }
 
-function createCsv(array, arrayKeys, name) {
-  let makeIntoArray = createArray(array, arrayKeys);
+function createCsv(array, name) {
+  let makeIntoArray = createArray(array);
   let csvFile = 'data:text/csv;charset=utf-8,';
   for (let i in makeIntoArray) {
     csvFile += makeIntoArray[i] + '\n';
@@ -1252,13 +1249,9 @@ clearses.addEventListener('click', () => {
   }
 }, false);
 
-exportallses.addEventListener('click', () => {
-  createCsv(alltimes, timeKeys, 'Cube Timer - all times');
-}, false);
+exportallses.addEventListener('click', () => { createCsv(alltimes, 'Cube Timer - all times'); }, false);
 
-exportses.addEventListener('click', () => {
-  createCsv(displaytimes, timeKeys, session);
-}, false);
+exportses.addEventListener('click', () => { createCsv(displaytimes, session); }, false);
 
 let tempcrip;
 sesopt.addEventListener('click', () => {
@@ -1350,7 +1343,7 @@ function timesInOut(e, swtch=true) {
     requestAnimationFrame(() => {
       scrambletxt.style.left = '5vw';
     });
-}
+  }
   if (swtch) { timein = timein ? false : true; }
   localStorage.setItem('timein', JSON.stringify(timein));
 }
