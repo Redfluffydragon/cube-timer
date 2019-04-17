@@ -1,3 +1,7 @@
+/**
+ * redo icons
+ */
+
 if (navigator.serviceWorker) {
   navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
 }
@@ -237,6 +241,8 @@ let popSpot = document.getElementById('popSpot');
 let settingsClose = document.getElementById('settingsClose');
 let settingsSettings = [countAnnounce, showSettings, showBW, BWSesAll, hideThings];
 let settingsArr; //defined in onStart
+
+let everything = document.getElementById('everything');
 
 let isMobile = (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1);
 isMobile ? undobtn.classList.remove('none') : undobtn.classList.add('none');
@@ -959,7 +965,6 @@ onlytime.addEventListener('touchend', up, false);
 
 //dark/light mode
 lighticon.addEventListener('click', () => {runmode(false)}, false);
-
 function darkmode() {
   document.body.classList.add('backblack');
   cancelbtn.classList.add('twotwenty');
@@ -971,8 +976,7 @@ function darkmode() {
     shadows[i].classList.add('oneeighty');
     shadows[i].classList.add('darkboxshadow');
   }
-
-  css = 'html {-webkit-filter: invert(100%);' + '-moz-filter: invert(100%);' + '-o-filter: invert(100%);' + '-ms-filter: invert(100%); }';
+  everything.classList.add('reverse');
 }
 
 function lightmode() {
@@ -986,23 +990,16 @@ function lightmode() {
     shadows[i].classList.remove('oneeighty');
     shadows[i].classList.remove('darkboxshadow');
   }
-
-  css = 'html {-webkit-filter: invert(0);' + '-moz-filter: invert(100);' + '-o-filter: invert(100);' + '-ms-filter: invert(100); }';
+  everything.classList.remove('reverse');
 }
 
 function runmode(start) { // switch modes, and open in saved mode
-  let head = document.getElementsByTagName('head')[0];
-  let style = document.createElement('style');
-  style.type = 'text/css';
   if (start) { mode === 'light' ? lightmode() : darkmode(); }
   if (!start) {
     mode === 'light' ? darkmode() : lightmode();
     mode = mode === 'light' ? 'dark' : 'light';
     localStorage.setItem('mode', JSON.stringify(mode));
   }
-  
-  style.styleSheet ? style.styleSheet.cssText = css : style.appendChild(document.createTextNode(css));
-  head.appendChild(style);
 }
 
 function closeAll() { //close everything

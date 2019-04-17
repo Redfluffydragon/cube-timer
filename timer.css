@@ -5,6 +5,14 @@ body {
   overflow: hidden;
 }
 
+#everything {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+}
+
 #centerac {
   margin: 0 auto;
   width: 100vw;
@@ -671,7 +679,7 @@ button {
   #time {margin: 0; top: 54vh;}
   #insptime{top: 54vh;}
   #timetable tbody {max-height: 50vh;}
-  body {height: 80vh;}
+  body {height: initial;}
   #timealert {bottom: 16vh;}
 }
 
