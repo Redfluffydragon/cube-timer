@@ -1,7 +1,3 @@
-/**
- * redo icons
- */
-
 if (navigator.serviceWorker) {
   navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
 }

@@ -9,7 +9,13 @@ let URLS = [
   '/cube-timer/index.html',
   '/cube-timer/timer.js',
   '/cube-timer/timer.css',
-  '/cube-timer/icon16x16.png'
+  '/cube-timer/icon16x16.png',
+  '/cube-timer/undoicon.png',
+  '/cube-timer/settingsicon.png',
+  '/cube-timer/lightmode.png',
+  '/cube-timer/inicon.png',
+  '/cube-timer/outicon.png',
+  '/cube-timer/infoicon.png'
 ];
 
 self.addEventListener('fetch', e => {
