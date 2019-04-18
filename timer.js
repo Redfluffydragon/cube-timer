@@ -1,7 +1,3 @@
-if (navigator.serviceWorker) {
-  navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
-}
-
 let cube;
 let inspectTime;
 let mode;
@@ -102,20 +98,6 @@ let scramNum = document.getElementById('scramNum');
 let scramPlur = document.getElementById('scramPlur');
 let multiScram = document.getElementById('multiScram');
 
-const scramblers = { //object with all the scrambler functions in it
-  '2x2': () => {slen = 10; checknxn(moves3);},
-  '3x3': () => {slen = 20; checknxn(moves3);},
-  '4x4': () => {slen = 45; checknxn(allmoves4);},
-  '5x5': () => {slen = 60; checknxn(allmoves4);},
-  '6x6': () => {slen = 70; checknxn(allmoves6);},
-  '7x7': () => {slen = 65; checknxn(allmoves6);},
-  'Megaminx': () => {slen = 77; checkmeg();},
-  'Pyraminx': () => {slen = 10; checkpyrall();},
-  'Skewb': () => {slen = 10; checkpyr1();},
-  'Square-1': () => {slen = 15; checksqu();},
-  'Clock': () => {slen = 0; checkclo();},
-}
-
 let alwaysmore = true;
 let morechecked = false;
 
@@ -140,8 +122,6 @@ let hsSpot = document.getElementById('hsSpot');
 //other elements
 let css;
 let lighticon = document.getElementById('lighticon');
-
-let timicon = () => {!timein ? outicon.classList.add('none') : outicon.classList.remove('none');};
 
 let timebody = document.getElementById('timetable').getElementsByTagName('tbody')[0];
 let timetable = document.getElementById('timetable');
@@ -217,6 +197,7 @@ let cubenter = document.getElementById('cubenter');
 let scramenter = document.getElementById('scramenter');
 let datenter = document.getElementById('datenter');
 let commenter = document.getElementById('commenter');
+let showMScram = document.getElementById('showMScram');
 let dothenter = document.getElementById('dothenter');
 let enterArr = [timentertoo, cubenter, scramenter, datenter, commenter];
 
@@ -235,10 +216,11 @@ let BWSesAll = document.getElementById('BWSesAll');
 let hideThings = document.getElementById('hideThings');
 let popSpot = document.getElementById('popSpot');
 let settingsClose = document.getElementById('settingsClose');
-let settingsSettings = [countAnnounce, showSettings, showBW, BWSesAll, hideThings];
+let settingsSettings = [countAnnounce, showSettings, showBW, BWSesAll, hideThings, showMScram];
 let settingsArr; //defined in onStart
 
 let everything = document.getElementById('everything');
+let popups = document.getElementsByClassName('popup');
 
 let isMobile = (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1);
 isMobile ? undobtn.classList.remove('none') : undobtn.classList.add('none');
@@ -269,17 +251,6 @@ let colorIndicator = (array, value) => {
   }
 };
 
-function DnIspot() { //where the delay and inspection time settings are
-  if (settingsArr[1]) {
-    hsSpot.appendChild(inspectSet);
-    hsSpot.appendChild(delaySet);
-  }
-  else {
-    popSpot.appendChild(inspectSet);
-    popSpot.appendChild(delaySet);
-  }
-}
-
 function onStart() {
   mode = gotem('mode', 'light');
       runmode(true);
@@ -307,8 +278,7 @@ function onStart() {
   inspectTime = gotem('inspectsave', true);
       inspColor();
   
-  settingsArr = gotem('settings', [true, true, true, false, true]);
-      DnIspot();
+  settingsArr = gotem('settings', [true, true, true, false, true, true]);
 
   fscramble = gotem('scramble', null);
   scrambles = gotem('scrambles', []);
@@ -324,7 +294,7 @@ function onStart() {
   }
 
   timein = gotem('timein', false);
-  timicon();
+  timein ? outicon.classList.remove('none') : outicon.classList.add('none');
   timesInOut(null, false);
   
   draw();
@@ -332,9 +302,7 @@ function onStart() {
 onStart();
 
 function draw() { //to redraw things after modifying
-  for (let i in cellArrs) { cellArrs[i].length = 0; }
-
-  if (scrambles.length !== 0) {
+  if (scrambles.length !== 0) { //multiple scrambles or not
     scrambletxt.innerHTML = scrambles[scrambleNum];
     scramNum.textContent = scrambleNum+1;
   }
@@ -346,18 +314,21 @@ function draw() { //to redraw things after modifying
       displaytimes.push(alltimes[i]);
     }
   }
-  //fill the table
+  
+  //clear the table
   timebody.innerHTML = '';
-  for (let i = 0; i < displaytimes.length; i++) {
-    displaytimes[i].number = i+1;
+  for (let i in cellArrs) { cellArrs[i].length = 0; }
+  for (let i = 0; i < displaytimes.length; i++) { //fill the table
     createTableRow();
+    displaytimes[i].number = i+1;
     let commentYN = displaytimes[i].comment ? '*' : null;
-    cells0[i].textContent = displaytimes[i].number + commentYN;
+    cells0[i].textContent = i+1 + commentYN;
     cells1[i].textContent = displaytimes[i].dnf ?
     'DNF' : 
     displaytimes[i].plustwo ? 
     toMinutes(displaytimes[i].time)+'+' : 
     toMinutes(displaytimes[i].time);
+
     let avgofiv = average(i+1, 5);
     let avgotwe = average(i+1, 12);
     displaytimes[i].ao5 = avgofiv;
@@ -370,11 +341,13 @@ function draw() { //to redraw things after modifying
   }
   clickTable();
 
-  let allorsession = settingsArr[3] ? displaytimes : alltimes;
-  bestworst(allorsession);
-
-  //show best/worst or not
+  //settings
+  let whichSpot = settingsArr[1] ? hsSpot : popSpot;
+  whichSpot.appendChild(inspectSet);
+  whichSpot.appendChild(delaySet);
   settingsArr[2] ? BWdiv.classList.remove('none') : BWdiv.classList.add('none');
+  bestworst(settingsArr[3] ? displaytimes : alltimes);
+  settingsArr[5] ? multiScram.classList.remove('none'): multiScram.classList.add('none');
 
   //sessions
   sesdrop.innerHTML = '';
@@ -385,7 +358,6 @@ function draw() { //to redraw things after modifying
     sesnode.classList.add('sesselect');
     sesdrop.appendChild(sesnode);
   }
-  
   sesslc.textContent = session;
 }
 
@@ -400,6 +372,9 @@ function afterLoad() {
   timetable.classList.add('transOneSec');
   scrambletxt.classList.add('transOneSec');
   forAutoplay = true;
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
+  }  
 }
 window.addEventListener('load', afterLoad, false);
 
@@ -415,7 +390,7 @@ function clickTable() { //set up row clicks on the time table
       let rvrsrow = displaytimes.length - this.rowIndex+1; //reverse the row index
       let findem;
       for(let i = 0; i < displaytimes.length; i++) {
-        if (displaytimes[i].number === rvrsrow) {
+        if (i+1 === rvrsrow) {
           findem = displaytimes[i];
         }
       }
@@ -445,7 +420,7 @@ function clickTable() { //set up row clicks on the time table
       if (allthistime.comment !== undefined) { comment.value = allthistime.comment; }
 
       document.getElementById('inmore').addEventListener('click', () => {
-        !morepop ? morepopup.classList.add('block') : morepopup.classList.remove('block');
+        morepop ? morepopup.classList.remove('block') : morepopup.classList.add('block');
         morepop = morepop ? false : true;
       }, false);
       timepop = true;
@@ -648,6 +623,20 @@ function checkclo() {
   }
 }
 
+let scramblers = { //object with all the scrambler functions in it
+  '2x2': () => {slen = 10; checknxn(moves3);},
+  '3x3': () => {slen = 20; checknxn(moves3);},
+  '4x4': () => {slen = 45; checknxn(allmoves4);},
+  '5x5': () => {slen = 60; checknxn(allmoves4);},
+  '6x6': () => {slen = 70; checknxn(allmoves6);},
+  '7x7': () => {slen = 65; checknxn(allmoves6);},
+  'Megaminx': () => {slen = 77; checkmeg();},
+  'Pyraminx': () => {slen = 10; checkpyrall();},
+  'Skewb': () => {slen = 10; checkpyr1();},
+  'Square-1': () => {slen = 15; checksqu();},
+  'Clock': () => {slen = 0; checkclo();},
+}
+
 function scramble() {
   tscramble.length = 0;
   do { scramblers[cube](); }
@@ -818,7 +807,7 @@ function otimeout() { //setInterval for ptimeout
   timeou = new Date();
   oto = setInterval(ptimeout, 10);
 }
- 
+
 function fin() { //finish timing, save result
   started = false;
   inspecting = false;
@@ -836,7 +825,7 @@ function fin() { //finish timing, save result
   insptime.classList.remove('aorange', 'blue', 'green', 'magenta')
   onlytime.classList.remove('initial');
   timealert.classList.add('none');
-  alltimes.push({number: '', time: counter+addTwo, ao5: '', ao12: '', cube: cube, session: session, scramble: whichScram, date: makeDate(), comment: '', dnf: dnf, plustwo: plustwo});
+  alltimes.push({number: null, time: counter+addTwo, ao5: '', ao12: '', cube: cube, session: session, scramble: whichScram, date: makeDate(), comment: '', dnf: dnf, plustwo: plustwo});
   localStorage.setItem('all', JSON.stringify(alltimes));
 
   dnf = false;
@@ -963,8 +952,6 @@ onlytime.addEventListener('touchend', up, false);
 lighticon.addEventListener('click', () => {runmode(false)}, false);
 function darkmode() {
   document.body.classList.add('backblack');
-  cancelbtn.classList.add('twotwenty');
-  sescreate.classList.add('twotwenty');
   timealert.classList.add('reverse');
   insptime.classList.add('cyan');
 
@@ -977,8 +964,6 @@ function darkmode() {
 
 function lightmode() {
   document.body.classList.remove('backblack');
-  cancelbtn.classList.remove('twotwenty');
-  sescreate.classList.remove('twotwenty');
   timealert.classList.remove('reverse');
   insptime.classList.remove('cyan');
 
@@ -1004,20 +989,20 @@ function closeAll() { //close everything
   delayDrop.classList.remove('block');
   sesdrop.classList.remove('block');
 
-  infopopup.classList.remove('inlineBlock')
-  timepopup.classList.remove('inlineBlock');
   morepopup.classList.remove('block');
-  sesoptpopup.classList.remove('inlineBlock');
-  sespopup.classList.remove('inlineBlock');
-  setpopup.classList.remove('inlineBlock');
-  timenterpopup.classList.remove('inlineBlock');
+  for (let i = 0; i < popups.length; i++) {
+    popups[i].classList.remove('inlineBlock');
+  }
   shadow.classList.remove('initial');
   shadow.style.zIndex = '';
   
   if (timepop && !deleted) {
-    alltimes[tempallidx].comment = comment.value;
+    allthistime.comment = comment.value;
   }
   localStorage.setItem('all', JSON.stringify(alltimes));
+
+  for (let i in settingsArr) { settingsArr[i] = settingsSettings[i].checked; }
+  localStorage.setItem('settings', JSON.stringify(settingsArr));
   
   timepop = false;
   morepop = false;
@@ -1109,13 +1094,12 @@ function checkSession(name, alert) {
 
 function newSession() {
   if (sesname.value !== '' && checkSession(sesname.value, sameAlert)) {
-    let lastses = sessions.length;
     sessions.push({name: sesname.value, description: sescrip.value});
     localStorage.setItem('sessions', JSON.stringify(sessions));
     sameAlert.textContent = null;
     sesname.value = null;
     sescrip.value = null;
-    session = sessions[lastses].name;
+    session = sessions[sessions.length-1].name;
     localStorage.setItem('currses', JSON.stringify(session));
     closeNdraw();
   }
@@ -1188,10 +1172,10 @@ deleteallses.addEventListener('click', () => {
     sesremoved = sessions;
     sessionStorage.setItem('sesremoved', JSON.stringify(sesremoved));
     sessions = [{name: 'Session 1', description: 'Default session'}];
-    localStorage.removeItem('sessions');
     session = sessions[0].name;
-    localStorage.removeItem('currses');
     sesslc.textContent = session;  
+    localStorage.setItem('sessions', JSON.stringify(sessions));
+    localStorage.setItem('currses', JSON.stringify(session));
     closeNdraw();
   }
 }, false);
@@ -1304,17 +1288,16 @@ document.addEventListener('click', e => {
 infoclose.addEventListener('click', closeAll, false);
 
 function timesInOut(e, swtch=true) {
-  let scLOffset;
   if (timein === swtch) {
     timetable.classList.remove('transXsixty');
     sessionsdiv.classList.remove('transXhundred');
     outicon.classList.add('none');
     settings.style.width = '';
     scrambletxt.style.width = '';
-    if (!isMobile) {
+    if (!isMobile || window.innerWidth > 420) {
       requestAnimationFrame(() => {
         scrambletxt.style.left = '';
-        scLOffset = scrambletxt.offsetLeft;
+        let scLOffset = scrambletxt.offsetLeft;
         scrambletxt.style.left = '5vw';
         requestAnimationFrame(() => {
           scrambletxt.style.left = scLOffset+'px';
@@ -1327,14 +1310,13 @@ function timesInOut(e, swtch=true) {
     timetable.classList.add('transXsixty');
     sessionsdiv.classList.add('transXhundred');
     outicon.classList.remove('none');
-
     settings.style.width = '90vw';
     scrambletxt.style.width = '90vw';
-
-    scLOffset = scrambletxt.offsetLeft;
-    scrambletxt.style.left = scLOffset+'px';
     requestAnimationFrame(() => {
-      scrambletxt.style.left = '5vw';
+      scrambletxt.style.left = scrambletxt.offsetLeft+'px';
+      requestAnimationFrame(() => {
+        scrambletxt.style.left = '5vw';
+      });
     });
   }
   if (swtch) { timein = timein ? false : true; }
@@ -1343,18 +1325,14 @@ function timesInOut(e, swtch=true) {
 
 inicon.addEventListener('click', timesInOut, false);
 outicon.addEventListener('click', timesInOut, false);
+scrambletxt.addEventListener('transitionend', () => {if(!timein) {scrambletxt.style.left = '';}}, false);
 
 settingsIcon.addEventListener('click', () => {
   for (let i in settingsSettings) { settingsSettings[i].checked = settingsArr[i]; }
   showPop(setpopup);
 }, false);
 
-settingsClose.addEventListener('click', () => {
-  for (let i in settingsArr) { settingsArr[i] = settingsSettings[i].checked; }
-  localStorage.setItem('settings', JSON.stringify(settingsArr));
-  DnIspot();
-  closeNdraw();
-}, false);
+settingsClose.addEventListener('click', closeNdraw, false);
 
 timenter.addEventListener('click', () => {
   showPop(timenterpopup);
@@ -1368,6 +1346,7 @@ function checkTime(time) {
   else if (colonCount.length === 2) { return (parseInt(colonCount[0])*60 + parseFloat(colonCount[1])); }
   else { return undefined; }
 }
+
 dothenter.addEventListener('click', () => {
   if (timentertoo.value !== '' && checkTime(timentertoo.value) !== undefined) {
     alltimes.push({number: '', time: checkTime(timentertoo.value), ao5: '', ao12: '', cube: cubenter.value, session: session, scramble: scramenter.value, date: datenter.value, comment: commenter.value, dnf: false, plustwo: false});

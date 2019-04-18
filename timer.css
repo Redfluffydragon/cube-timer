@@ -84,7 +84,7 @@ body {
 }
 
 #multiScram p, a {
-  display: initial;
+  display: inline;
   color: black;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
 }
