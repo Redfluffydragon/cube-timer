@@ -91,6 +91,20 @@ let tempmove;
 let pmove;
 let slen;
 
+let scramblers = { //object with all the scrambler functions in it
+  '2x2': () => {slen = 10; checknxn(moves3);},
+  '3x3': () => {slen = 20; checknxn(moves3);},
+  '4x4': () => {slen = 45; checknxn(allmoves4);},
+  '5x5': () => {slen = 60; checknxn(allmoves4);},
+  '6x6': () => {slen = 70; checknxn(allmoves6);},
+  '7x7': () => {slen = 65; checknxn(allmoves6);},
+  'Megaminx': () => {slen = 77; checkmeg();},
+  'Pyraminx': () => {slen = 10; checkpyrall();},
+  'Skewb': () => {slen = 10; checkpyr1();},
+  'Square-1': () => {slen = 15; checksqu();},
+  'Clock': () => {slen = 0; checkclo();},
+}
+
 let scrambletxt = document.getElementById('scrambletxt');
 let nextScram = document.getElementById('nextScram');
 let firstScram = document.getElementById('firstScram');
@@ -621,20 +635,6 @@ function checkclo() {
     let rvrsclock = clkstr.length > 1 ? clkstr.charAt(1)+clkstr.charAt(0) : clkstr.charAt(0)+'+'; 
     clocks[i] !== 'y2' ? tscramble.unshift(clocks[i]+rvrsclock) : tscramble.unshift(clocks[i]);
   }
-}
-
-let scramblers = { //object with all the scrambler functions in it
-  '2x2': () => {slen = 10; checknxn(moves3);},
-  '3x3': () => {slen = 20; checknxn(moves3);},
-  '4x4': () => {slen = 45; checknxn(allmoves4);},
-  '5x5': () => {slen = 60; checknxn(allmoves4);},
-  '6x6': () => {slen = 70; checknxn(allmoves6);},
-  '7x7': () => {slen = 65; checknxn(allmoves6);},
-  'Megaminx': () => {slen = 77; checkmeg();},
-  'Pyraminx': () => {slen = 10; checkpyrall();},
-  'Skewb': () => {slen = 10; checkpyr1();},
-  'Square-1': () => {slen = 15; checksqu();},
-  'Clock': () => {slen = 0; checkclo();},
 }
 
 function scramble() {
