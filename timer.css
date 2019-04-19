@@ -670,7 +670,7 @@ button {
 }
 
 @media screen and (max-width: 420px) {
-  body {height: initial; }
+  body {all: initial;}
   #sesname {width: 48vw;}
   #sescrip {width: 48vw;}
   #seesescrip {width: 58vw;}
@@ -680,7 +680,6 @@ button {
   #time {margin: 0; top: 54vh;}
   #insptime{top: 54vh;}
   #timetable tbody {max-height: 50vh;}
-  body {height: initial;}
   #timealert {bottom: 16vh;}
   #sesoptpopup button {width: 45vw;}
 }
