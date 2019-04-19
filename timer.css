@@ -428,12 +428,13 @@ button {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   display: none;
   background-color: rgb(180, 180, 180);
-  margin: 0 auto;
+  margin: 5px;
   text-align: center;
   justify-content: center;
   font-size: calc(12px + .7vw);
   box-shadow: 5px 5px 5px gray;
   z-index: 7;
+  position: relative;
 }
 
 .coverall {
@@ -681,6 +682,7 @@ button {
   #timetable tbody {max-height: 50vh;}
   body {height: initial;}
   #timealert {bottom: 16vh;}
+  #sesoptpopup button {width: 45vw;}
 }
 
 @media screen and (orientation: landscape) and (max-height: 420px) {
