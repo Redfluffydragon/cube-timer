@@ -463,22 +463,23 @@ function bestworst(array) {
 }
 
 function dropDown (button, content) { //toggle dropdowns 
-  let dropdown = false;
-  document.addEventListener('click', (e) => {
-    let target = e.target;
-    do {
-      if (target === button) {
-        !dropdown ? content.classList.add('block') : content.classList.remove('block');
-        dropdown = dropdown ? false : true;
-        return;
-      }
-      target = target.parentNode;
-    } 
-    while (target);
+  function doDrop(e) {
+    if (e.target === button) {
+      content.classList.toggle('block');
+      return;
+    }
     content.classList.remove('block');
-    dropdown = false;
-    button.blur();
-  });
+  }
+  if (!isMobile) {
+    document.addEventListener('click', doDrop, false);
+  }
+  else {
+    let touched;
+    document.addEventListener('touchstart', () => {touched = true}, false);
+    document.addEventListener('touchend', e => {
+      if (touched) { doDrop(e); }
+    }, false);
+  }
 }
 
 dropDown(cubeButton, cubeDrop);
