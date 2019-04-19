@@ -173,6 +173,7 @@ let timepop; //popups open or closed
 let morepop;
 let sespop;
 let enterpop;
+let setpop;
 let popup;
 
 //session elements
@@ -416,7 +417,7 @@ function clickTable() { //set up row clicks on the time table
 
       showPop(timepopup);
       if (alwaysmore) {
-        morepopup.classList.add('block');
+        morepopup.classList.add('inlineBlock');
         morepop = true;
       }
 
@@ -434,7 +435,7 @@ function clickTable() { //set up row clicks on the time table
       if (allthistime.comment !== undefined) { comment.value = allthistime.comment; }
 
       document.getElementById('inmore').addEventListener('click', () => {
-        morepop ? morepopup.classList.remove('block') : morepopup.classList.add('block');
+        morepop ? morepopup.classList.remove('inlineBlock') : morepopup.classList.add('inlineBlock');
         morepop = morepop ? false : true;
       }, false);
       timepop = true;
@@ -476,9 +477,7 @@ function dropDown (button, content) { //toggle dropdowns
   else {
     let touched;
     document.addEventListener('touchstart', () => {touched = true}, false);
-    document.addEventListener('touchend', e => {
-      if (touched) { doDrop(e); }
-    }, false);
+    document.addEventListener('touchend', e => { if (touched) { doDrop(e); } }, false);
   }
 }
 
@@ -488,6 +487,7 @@ dropDown(delayButton, delayDrop);
 dropDown(sesslc, sesdrop);
 
 function showPop(div) {
+  centerpop.classList.remove('none');
   div.classList.add('inlineBlock');
   shadow.classList.add('initial');
   popup = true;
@@ -559,7 +559,7 @@ document.addEventListener('click', e => { //switch cubes
 
 //Just a random move scrambler.
 function checknxn(moveset) { //for nxnxn cubes
-  let random = Math.round(Math.random()*(moveset.length-1)); //zero-indexed
+  let random = Math.trunc(Math.random()*(moveset.length));
   tempmove = moveset[random];
   pmove = tscramble[tscramble.length-1];
   let twocharp, charonep;
@@ -579,8 +579,8 @@ function checkpyr1() { // turn the big corners for pyraminx
   pmove = tscramble[0];
   let charonet = tempmove.charAt(0);
   let charonep;
-  if (pmove !== undefined) {charonep = pmove.charAt(0);}
-  if (charonet === charonep) {return;}
+  if (pmove !== undefined) { charonep = pmove.charAt(0); }
+  if (charonet === charonep) { return; }
   else { tscramble.unshift(tempmove); }
 }
 
@@ -609,7 +609,7 @@ function checkmeg() {
       j%2 ? dPush() : rPush();
     }
     let uRightLeft = Math.round(Math.random());
-    uRightLeft ? tscramble.push('U<br>') : tscramble.push("U'<br>");
+    uRightLeft ? tscramble.push('U<br />') : tscramble.push("U'<br />");
   }
 }
 
@@ -625,7 +625,7 @@ function checksqu() {//probably doesn't work. I don't know what moves aren't all
       (onerand === secondnum && tworand === firstnum) ||
       (onerand === 0 && tworand === 0))
       { return; } //there are probably other exclusions
-  else {tscramble.push('(' + onerand + ',' + tworand + ')')}
+  else {tscramble.push( `(${onerand},${tworand})` )}
 }
 
 function checkclo() {
@@ -698,9 +698,8 @@ function average(startpoint, leng) {
 
 //display inspection countdown, as well as 8s, 12s, +2, and DNF by timeout
 function toMinutes(time) {
-  let temptime;
   if (time < 60) {
-    temptime = time.toFixed(2);
+    return time.toFixed(2);
   }
   else if (time > 60 && time < 3600) {
     let minutes = Math.trunc(time/60);
@@ -708,9 +707,9 @@ function toMinutes(time) {
     if (secondsafter < 10) {
       secondsafter = '0' + secondsafter;
     }
-    temptime = minutes + ':' + secondsafter;
+    return minutes + ':' + secondsafter;
   }
-  return temptime;
+  else { return "You're slow"; }
 }
 
 function inspection() {
@@ -990,7 +989,6 @@ function closeAll() { //close everything
   delayDrop.classList.remove('block');
   sesdrop.classList.remove('block');
 
-  morepopup.classList.remove('block');
   for (let i = 0; i < popups.length; i++) {
     popups[i].classList.remove('inlineBlock');
   }
@@ -1002,12 +1000,17 @@ function closeAll() { //close everything
   }
   localStorage.setItem('all', JSON.stringify(alltimes));
 
-  for (let i in settingsArr) { settingsArr[i] = settingsSettings[i].checked; }
-  localStorage.setItem('settings', JSON.stringify(settingsArr));
+  if (setpop) {
+    for (let i in settingsArr) { settingsArr[i] = settingsSettings[i].checked; }
+    localStorage.setItem('settings', JSON.stringify(settingsArr));
+  }
+
+  centerpop.classList.add('none');
   
   timepop = false;
   morepop = false;
   sespop = false;
+  setpop = false;
   popup = false;
   deleted = false;
 }
@@ -1331,6 +1334,7 @@ scrambletxt.addEventListener('transitionend', () => {if(!timein) {scrambletxt.st
 settingsIcon.addEventListener('click', () => {
   for (let i in settingsSettings) { settingsSettings[i].checked = settingsArr[i]; }
   showPop(setpopup);
+  setpop = true;
 }, false);
 
 settingsClose.addEventListener('click', closeNdraw, false);

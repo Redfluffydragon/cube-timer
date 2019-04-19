@@ -415,6 +415,7 @@ button {
   position: relative;
   text-align: center;
   z-index: 6;
+  /* display: none; */
 }
 
 #overtop {
@@ -429,12 +430,8 @@ button {
   display: none;
   background-color: rgb(180, 180, 180);
   margin: 5px;
-  text-align: center;
-  justify-content: center;
   font-size: calc(12px + .7vw);
   box-shadow: 5px 5px 5px gray;
-  z-index: 7;
-  position: relative;
 }
 
 .coverall {
@@ -467,10 +464,14 @@ button {
 }
 
 #morepopup {
-  margin-top: 9px;
   font-size: calc(9px + .7vw);
   max-height: 80vh;
   overflow: auto;
+}
+
+#timepops {
+  display: inline-block;
+  width: 70vw;
 }
 
 #alwsmore {
@@ -644,6 +645,11 @@ button {
   #insptime {top: 49vh;}
 }
 
+@media screen and (max-width: 800px) {
+  #morepopup {width: 97%;}
+  #comment {width: 90%;}
+}
+
 @media screen and (max-width: 750px) {
   #settings {width: 50vw;}
   #time {top: 57vh;}
@@ -662,6 +668,7 @@ button {
 @media screen and (max-width: 600px) { 
   #comment {width: 90vw;} 
   #time {margin-left: 15vw;}
+  #timepops {width: 100vw;}
 }
 
 @media screen and (max-width: 545px) {
@@ -670,12 +677,13 @@ button {
 }
 
 @media screen and (max-width: 420px) {
-  body {all: initial; overflow-y: hidden;}
+  body {all: initial; overflow: hidden;}
+  #everything {overflow: hidden;}
   #sesname {width: 48vw;}
   #sescrip {width: 48vw;}
   #seesescrip {width: 58vw;}
-  #scrambletxt {top: 17vh; left: 41vw; width: 56vw; max-height: 37vh; margin-right: 2px; overflow: scroll; -webkit-overflow-scrolling: touch;}
-  #morepopup {overflow: scroll; -webkit-overflow-scrolling: touch;}
+  #scrambletxt {top: 17vh; left: 41vw; width: 56vw; max-height: 37vh; margin-right: 2px; overflow-y: scroll; -webkit-overflow-scrolling: touch;}
+  #morepopup {overflow-y: scroll; -webkit-overflow-scrolling: touch;}
   #settings {height: 20vh;}
   #time {margin: 0; top: 54vh;}
   #insptime{top: 54vh;}
