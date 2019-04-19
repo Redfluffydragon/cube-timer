@@ -670,7 +670,7 @@ button {
 }
 
 @media screen and (max-width: 420px) {
-  body {all: initial; overflow-y: hide;}
+  body {all: initial; overflow-y: hidden;}
   #sesname {width: 48vw;}
   #sescrip {width: 48vw;}
   #seesescrip {width: 58vw;}
