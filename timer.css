@@ -693,7 +693,7 @@ button {
 }
 
 @media screen and (orientation: landscape) and (max-height: 420px) {
-  body {all: initial; overflow: hidden;}
+  body {overflow: hidden;}
   #time {top: 39vh; margin: 0;}
   #insptime {top: 39vh;}
   #scrambletxt{top: 15vh; max-height: 24vh; left: 24vw; width: 70vw; overflow-y: scroll; -webkit-overflow-scrolling: touch;}
