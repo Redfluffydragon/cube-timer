@@ -300,14 +300,7 @@ function onStart() {
   scrambleNum = gotem('scrambleNum', 0);
 
   if (isMobile) { window.addEventListener('orientationchange', multiScramPos, false); }
-  /* if (standalone && window.innerHeight > window.innerWidth) {
-    time.style.top = '67vh';
-    timebody.style.maxHeight = '62vh';
-    scrambletxt.style.maxHeight = '48vh'; 
-    insptime.style.top = '67vh';
-    timealert.style.bottom = '4vh';
-  }
- */
+  
   timein = gotem('timein', false);
   timein ? outicon.classList.remove('none') : outicon.classList.add('none');
   timesInOut(null, false);
@@ -377,21 +370,9 @@ function draw() { //to redraw things after modifying
 }
 
 function multiScramPos() {
-  if (standalone) {
-    let lscape = window.innerHeight > window.innerWidth;
-    let sixsev = lscape ? '' : '67vh' ;
-    let sixtwo = lscape ? '' : '62vh';
-    let foueig = lscape ? '' : '48vh';
-    let onlfou = lscape ? '' : '4vh';
-    time.style.top = sixsev;
-    timebody.style.maxHeight = sixtwo;
-    scrambletxt.style.maxHeight = foueig; 
-    insptime.style.top = sixsev;
-    timealert.style.bottom = onlfou;
-  }
-  console.log(screen.orientation.angle);
+  alert(screen.orientation.angle);
   let timeHeight = time.offsetTop;
-  multiScram.style.bottom = (window.innerHeight - timeHeight - 33) + 'px';
+  multiScram.style.bottom = (window.innerHeight - timeHeight - 30) + 'px';
 }
 
 function afterLoad() {

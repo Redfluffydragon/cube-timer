@@ -701,6 +701,14 @@ button {
   #overtop {top: -70vh;}
 }
 
+@media all and (display-mode: standalone) and (orientation: portrait) {
+  #time {top: 67vh;}
+  #timebody{max-height: 62vh;}
+  #scrambletxt {max-height: 48vh;}; 
+  #insptime {top: 67vh;}
+  #timealert {bottom: 4vh;}
+}
+
 .initial { display: initial; }
 
 .inlineBlock { display: inline-block; }
