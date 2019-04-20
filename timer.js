@@ -1,3 +1,7 @@
+if (navigator.serviceWorker) {
+  navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
+}
+
 let cube;
 let inspectTime;
 let mode;
@@ -376,15 +380,11 @@ function multiScramPos() {
 }
 
 function afterLoad() {
-  alert('loaded');
   if (isMobile) { multiScramPos(); }
   sessionsdiv.classList.add('transOneSec');
   timetable.classList.add('transOneSec');
   scrambletxt.classList.add('transOneSec');
   forAutoplay = true;
-  if (navigator.serviceWorker) {
-    navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
-  }
   window.removeEventListener('load', afterLoad, false);
 }
 window.addEventListener('load', afterLoad, false);
