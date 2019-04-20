@@ -300,7 +300,7 @@ function onStart() {
   scrambleNum = gotem('scrambleNum', 0);
 
   if (isMobile) { window.addEventListener('resize', multiScramPos, false); }
-  if (standalone) {
+  if (standalone && window.innerHeight > window.innerWidth) {
     time.style.top = '67vh';
     timebody.style.maxHeight = '62vh';
     scrambletxt.style.maxHeight = '48vh'; 
