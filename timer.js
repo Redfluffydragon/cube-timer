@@ -426,8 +426,8 @@ function clickTable() { //clicks on the time table
       }, false);
     }
   }, false);
-  timebody.addEventListener('touchmove', () => {touchMoved = true;}, false);
-  timebody.addEventListener('touchstart', () => {touchMoved = false;}, false);
+  timebody.addEventListener('touchmove', () => {touchMoved = true;}, false, {passive: true});
+  timebody.addEventListener('touchstart', () => {touchMoved = false;}, false, {passive: true});
 }
 
 let mouseTouch = isMobile ? 'touchstart' : 'mousedown';
