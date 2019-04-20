@@ -377,16 +377,18 @@ function draw() { //to redraw things after modifying
 }
 
 function multiScramPos() {
-  let lscape = window.innerHeight < window.innerWidth;
-  let sixsev = lscape ? '' : '67vh' ;
-  let foueig = lscape ? '' : '48vh';
-  let sixtwo = lscape ? '' : '62vh';
-  let onlfou = lscape ? '' : '4vh';
-  time.style.top = sixsev;
-  timebody.style.maxHeight = sixtwo;
-  scrambletxt.style.maxHeight = foueig; 
-  insptime.style.top = sixsev;
-  timealert.style.bottom = onlfou;
+  if (standalone) {
+    let lscape = window.innerHeight > window.innerWidth;
+    let sixsev = lscape ? '' : '67vh' ;
+    let sixtwo = lscape ? '' : '62vh';
+    let foueig = lscape ? '' : '48vh';
+    let onlfou = lscape ? '' : '4vh';
+    time.style.top = sixsev;
+    timebody.style.maxHeight = sixtwo;
+    scrambletxt.style.maxHeight = foueig; 
+    insptime.style.top = sixsev;
+    timealert.style.bottom = onlfou;
+  }
   console.log(screen.orientation.angle);
   let timeHeight = time.offsetTop;
   multiScram.style.bottom = (window.innerHeight - timeHeight - 33) + 'px';
