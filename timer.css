@@ -704,9 +704,9 @@ button {
 
 @media all and (display-mode: standalone) and (orientation: portrait) {
   #time {top: 67vh;}
+  #insptime {top: 67vh;}
   #timebody{max-height: 62vh;}
   #scrambletxt {max-height: 48vh;}; 
-  #insptime {top: 67vh;}
   #timealert {bottom: 4vh;}
 }
 
