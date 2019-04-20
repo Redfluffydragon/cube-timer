@@ -374,9 +374,7 @@ function draw() { //to redraw things after modifying
 }
 
 function multiScramPos() {
-  // alert(screen.orientation.angle);
-  let timeHeight = time.offsetTop;
-  multiScram.style.bottom = (window.innerHeight - timeHeight - 30) + 'px';
+  multiScram.style.bottom = (window.innerHeight - time.offsetTop - 30) + 'px';
 }
 
 function afterLoad() {
@@ -460,21 +458,13 @@ function bestworst(array) {
 }
 
 function dropDown (button, content) { //toggle dropdowns 
-  function doDrop(e) {
+  document.addEventListener('click', e => {
     if (e.target === button) {
       content.classList.toggle('block');
       return;
     }
     content.classList.remove('block');
-  }
-  // if (!isMobile) {
-    document.addEventListener('click', doDrop, false);
-  /* }
-  else {
-    let touched;
-    document.addEventListener('touchstart', () => {touched = true}, false);
-    document.addEventListener('touchend', e => { if (touched) { doDrop(e); } }, false);
-  } */
+  }, false);
 }
 
 dropDown(cubeButton, cubeDrop);
