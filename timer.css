@@ -102,12 +102,14 @@ body {
   margin-left: 4px;
 }
 
-.rdropcontent a {
+.rdropcontent p {
   font-size: calc(12px + .7vw);
   color: black;
   padding: .5vw 1vw .8vw;
   display: block;
   text-decoration: none;
+  margin: 0;
+  cursor: pointer;
 }
 
 #cubeDrop {right: 0;}
@@ -127,7 +129,7 @@ body {
   cursor: pointer;
 }
 
-.rdropcontent a:hover {
+.rdropcontent p:hover {
   background-color: rgb(150, 150, 150);
 }
 
@@ -458,9 +460,8 @@ button {
 }
 
 #timepopup button {
-  background-color: rgb(160, 160, 160);
   display: block;
-  margin-top: 3vh;
+  margin: 9px auto 5px;
 }
 
 #morepopup {
@@ -470,7 +471,6 @@ button {
 }
 
 #timepops {
-  display: inline-block;
   width: 45vw;
 }
 
@@ -489,12 +489,6 @@ button {
 #seethings td {
   vertical-align: top;
   text-align: left;
-}
-
-#cancelbtn {
-  padding: 5px;
-  margin: 4px auto;
-  display: block;
 }
 
 #inmore {
@@ -638,7 +632,7 @@ button {
 }
 
 @media screen and (max-width: 1000px) { 
-  #cancelbtn{right: 50vw;}
+  #timeclose{right: 50vw;}
   #sesoptpopup button {width: 25vw;}
   #timetable tbody {max-height: 83vh;}
   #time {top: 49vh;}

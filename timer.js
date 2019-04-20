@@ -116,9 +116,6 @@ let scramNum = document.getElementById('scramNum');
 let scramPlur = document.getElementById('scramPlur');
 let multiScram = document.getElementById('multiScram');
 
-let alwaysmore = true;
-let morechecked = false;
-
 //dropdowns
 let cubeButton = document.getElementById('cubeButton');
 let cubeDrop = document.getElementById('cubeDrop');
@@ -137,10 +134,8 @@ let delaytime = document.getElementsByClassName('delaytime');
 
 let settings = document.getElementById('settings');
 let hsSpot = document.getElementById('hsSpot');
-//other elements
-let css;
-let lighticon = document.getElementById('lighticon');
 
+//other elements
 let timebody = document.getElementById('timetable').getElementsByTagName('tbody')[0];
 let timetable = document.getElementById('timetable');
 let inicon = document.getElementById('inicon');
@@ -154,17 +149,18 @@ let centerac = document.getElementById('centerac');
 
 let touch = document.getElementById('touch');
 
-//popups
+//modals
 let timedit = document.getElementById('timedit');
 let timepopup = document.getElementById('timepopup');
+let timepops = document.getElementById('timepops');
 let shadow = document.getElementById('shadow');
 let shadows = document.getElementsByClassName('popup');
-let cancelbtn = document.getElementById('cancelbtn');
 let thetwo = document.getElementById('thetwo');
 let thednf = document.getElementById('thednf'); 
 let comment = document.getElementById('comment');
 let checkmore = document.getElementById('checkmore');
 let morepopup = document.getElementById('morepopup');
+let morechecked = false;
 let seescramble = document.getElementById('seescramble');
 let seedate = document.getElementById('seedate');
 let seecube = document.getElementById('seecube');
@@ -173,7 +169,7 @@ let best = document.getElementById('best');
 let worst = document.getElementById('worst');
 let BWdiv = document.getElementById('bestworst');
 
-let timepop; //popups open or closed
+let timepop; //modals open or closed
 let morepop;
 let sespop;
 let enterpop;
@@ -222,7 +218,6 @@ let enterArr = [timentertoo, cubenter, scramenter, datenter, commenter];
 
 let infobtn = document.getElementById('infobtn');
 let infopopup = document.getElementById('infopopup');
-let infoclose = document.getElementById('infoclose');
 
 let undone = document.getElementById('undone');
 let undotxt = document.getElementById('undotxt');
@@ -234,17 +229,15 @@ let showBW = document.getElementById('showBW');
 let BWSesAll = document.getElementById('BWSesAll');
 let hideThings = document.getElementById('hideThings');
 let popSpot = document.getElementById('popSpot');
-let settingsClose = document.getElementById('settingsClose');
 let settingsSettings = [countAnnounce, showSettings, showBW, BWSesAll, hideThings, showMScram];
 let settingsArr; //defined in onStart
 
+let lighticon = document.getElementById('lighticon');
 let everything = document.getElementById('everything');
 let popups = document.getElementsByClassName('popup');
 
 let isMobile = (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1);
 isMobile ? undobtn.classList.remove('none') : undobtn.classList.add('none');
-let standalone = false;
-if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) { standalone = true; }
 
 function createTableRow() {
   let row = timebody.insertRow(0);
@@ -276,7 +269,6 @@ function onStart() {
 
   morechecked = gotem('moretoggle', false);
       checkmore.checked = morechecked;
-      alwaysmore = morechecked;
 
   alltimes = gotem('all', []);
 
@@ -309,6 +301,7 @@ function onStart() {
   timein ? outicon.classList.remove('none') : outicon.classList.add('none');
   timesInOut(null, false);
   
+  clickTable();
   draw();
 }
 onStart();
@@ -351,7 +344,6 @@ function draw() { //to redraw things after modifying
     alltimes[saveBack].ao5 = avgofiv;
     alltimes[saveBack].ao12 = avgotwe;
   }
-  clickTable();
 
   //settings
   let whichSpot = settingsArr[1] ? hsSpot : popSpot;
@@ -389,14 +381,12 @@ window.addEventListener('load', afterLoad, false);
 
 function closeNdraw() { closeAll(); draw(); }
 
-function clickTable() { //set up row clicks on the time table 
-  let rowID = document.getElementById('timebody').getElementsByTagName('tr');
+function clickTable() { //clicks on the time table
   let clickTouch = isMobile ? 'touchend' : 'click';
   let touchMoved;
-  for (let i = 0; i < rowID.length; i++) {
-    rowID[i].addEventListener(clickTouch, function() {
-      if (!isMobile || !touchMoved) {
-      let rvrsrow = displaytimes.length - this.rowIndex+1; //reverse the row index
+  timebody.addEventListener(clickTouch, e => {
+    if ((!isMobile || !touchMoved) && e.target.parentNode.rowIndex >= 0) {
+      let rvrsrow = displaytimes.length - e.target.parentNode.rowIndex+1; //reverse the row index
       let findem;
       for(let i = 0; i < displaytimes.length; i++) {
         if (i+1 === rvrsrow) {
@@ -409,11 +399,13 @@ function clickTable() { //set up row clicks on the time table
       changeallplus = allthistime.plustwo;
       changealldnf = allthistime.dnf;
 
+      timepops.classList.add('inlineBlock');
       showPop(timepopup);
-      if (alwaysmore) {
+      if (morechecked) {
         morepopup.classList.add('inlineBlock');
         morepop = true;
       }
+      timepop = true;
 
       changeallplus ? thetwo.classList.add('oneforty') : thetwo.classList.remove('oneforty');
       changealldnf ? thednf.classList.add('oneforty') : thednf.classList.remove('oneforty');
@@ -432,12 +424,10 @@ function clickTable() { //set up row clicks on the time table
         morepop ? morepopup.classList.remove('inlineBlock') : morepopup.classList.add('inlineBlock');
         morepop = morepop ? false : true;
       }, false);
-      timepop = true;
     }
-    }, false);
-    rowID[i].addEventListener('touchmove', () => {touchMoved = true;}, false);
-    rowID[i].addEventListener('touchstart', () => {touchMoved = false;}, false);
-  }
+  }, false);
+  timebody.addEventListener('touchmove', () => {touchMoved = true;}, false);
+  timebody.addEventListener('touchstart', () => {touchMoved = false;}, false);
 }
 
 let mouseTouch = isMobile ? 'touchstart' : 'mousedown';
@@ -499,48 +489,94 @@ function makeDate() {
   return finaldate;
 }
 
-document.addEventListener('click', e => { //switch delay times
-  if (!e.target.matches('.delaytime')) return;
-  e.preventDefault();
-  for (let i = 0; i < delaytime.length; i++) {
-    delaytime[i].classList.remove('oneforty');
-  }
-  e.target.classList.add('oneforty');
-  startdelay = e.target.textContent.slice(0, -1)*1000;
-  localStorage.setItem('delaysave', JSON.stringify(startdelay));
-});
-
-function switchInspect(e) { //switch inspection times
-  e.preventDefault();
-  inspectTime = inspectTime ? false : true;
-  localStorage.setItem('inspectsave', JSON.stringify(inspectTime));
-  inspColor();
-}
 function inspColor() {
   inspectTime ? inspect15.classList.add('oneforty') : inspect15.classList.remove('oneforty');
   inspectTime ? inspectnone.classList.remove('oneforty') : inspectnone.classList.add('oneforty');
 }
-inspectnone.addEventListener('click', switchInspect, false);
-inspect15.addEventListener('click', switchInspect, false);
 
-document.addEventListener('click', e => { //switch cubes
-  if (!e.target.matches('.cubeselect')) return;
-  e.preventDefault();
-  for (let i = 0; i < cubeselect.length; i++) {
-    cubeselect[i].classList.remove('oneforty');
+document.addEventListener('click', e => { //switch sessions, delay, inspection, and cube; and time edits 
+  let t = e.target;
+  if (t.matches('#inspectnone') || t.matches('#inspect15')) { 
+    inspectTime = inspectTime ? false : true;
+    localStorage.setItem('inspectsave', JSON.stringify(inspectTime));
+    inspColor();
+    return;
   }
-  e.target.classList.add('oneforty');
-  if (cube !== e.target.textContent) {
-    cube = e.target.textContent;
-    cubeButton.textContent = cube;
-    localStorage.setItem('cubesave', JSON.stringify(cube));
-    scrambles.length = 0;
-    scrambleNum = 0;
-    localStorage.removeItem('scrambles');
-    localStorage.removeItem('scrambleNum');
-    scramNum.textContent = '1';
-    scramble();
+  else if (t.matches('.cubeselect')) {
+    for (let i = 0; i < cubeselect.length; i++) {
+      cubeselect[i].classList.remove('oneforty');
+    }
+    e.target.classList.add('oneforty');
+    if (cube !== e.target.textContent) {
+      cube = e.target.textContent;
+      cubeButton.textContent = cube;
+      localStorage.setItem('cubesave', JSON.stringify(cube));
+      scrambles.length = 0;
+      scrambleNum = 0;
+      localStorage.removeItem('scrambles');
+      localStorage.removeItem('scrambleNum');
+      scramNum.textContent = '1';
+      scramble();
+    }
+    return;
   }
+  else if (t.matches('.delaytime')) {
+    for (let i = 0; i < delaytime.length; i++) {
+      delaytime[i].classList.remove('oneforty');
+    }
+    e.target.classList.add('oneforty');
+    startdelay = e.target.textContent.slice(0, -1)*1000;
+    localStorage.setItem('delaysave', JSON.stringify(startdelay));
+    return;
+  }
+  else if (t.matches('.modtime')) {
+    let selection = e.target.textContent;
+    if (selection === '+2') {
+      allthistime.time = Math.trunc((changeallplus ? allthistime.time-2 : allthistime.time+2)*100)/100;
+      allthistime.plustwo = changeallplus ? false : true; 
+    }
+    if (selection === 'DNF') {
+      if (changealldnf) {
+        for (let i in moddedTimes) {
+          if (moddedTimes[i].date === allthistime.date) {
+            allthistime.time = moddedTimes[i].time;
+            moddedTimes.splice(i, 1);
+            localStorage.setItem('modded', JSON.stringify(moddedTimes));
+          }
+        }
+        allthistime.dnf = false;
+      }
+      else if (!changealldnf) {
+        moddedTimes.push(allthistime);
+        localStorage.setItem('modded', JSON.stringify(moddedTimes));
+        allthistime.time = 0;
+        allthistime.dnf = true;
+      }
+    }
+    if (selection === 'Delete') {
+        let conf = confirm('Remove this time?')
+        if(conf){
+          removed = [{time: alltimes.splice(tempallidx, 1)[0], index: tempallidx}];
+          sessionStorage.setItem('removed', JSON.stringify(removed));
+          deleted = true;
+        }
+    }
+    if (selection) {
+      localStorage.setItem('all', JSON.stringify(alltimes));
+      draw();
+      closeAll();
+    }
+    return;
+  }
+  else if (t.matches('.sesselect')) {
+    session = e.target.textContent;
+    localStorage.setItem('currses', JSON.stringify(session));
+    sesslc.textContent = session;
+    draw();
+    return;
+  }
+  else if (t.matches('#timeclose') || t.matches('#settingsClose')) { closeNdraw(); }
+  else if (t.matches('#infoclose') || t.matches('#timentercanc')) { closeAll(); }
 }, false);
 
 //Just a random move scrambler.
@@ -927,7 +963,6 @@ window.addEventListener('keyup', e => {
 
 touch.addEventListener('touchstart', touchdown, false);
 centerac.addEventListener('touchstart', touchdown, false);
-time.addEventListener('touchstart', touchdown, false);
 onlytime.addEventListener('touchstart', touchdown, false);
 
 touch.addEventListener('touchend', up, false);
@@ -978,6 +1013,7 @@ function closeAll() { //close everything
   for (let i = 0; i < popups.length; i++) {
     popups[i].classList.remove('inlineBlock');
   }
+  timepops.classList.remove('inlineBlock');
   shadow.classList.remove('initial');
   shadow.style.zIndex = '';
   
@@ -1003,56 +1039,8 @@ function closeAll() { //close everything
 
 infobtn.addEventListener('click', () => { showPop(infopopup); }, false);
 
-//close the time editing popup
-cancelbtn.addEventListener('click', closeNdraw, false);
-
-document.addEventListener('click', e => { //+2, DNF, and delete for individual times
-  if (!e.target.matches('.modtime')) return;
-  e.preventDefault();
-  let selection = e.target.textContent;
-
-  if (selection === '+2') {
-    allthistime.time = Math.trunc((changeallplus ? allthistime.time-2 : allthistime.time+2)*100)/100;
-    allthistime.plustwo = changeallplus ? false : true; 
-  }
-  if (selection === 'DNF') {
-    if (changealldnf) {
-      for (let i in moddedTimes) {
-        if (moddedTimes[i].date === allthistime.date) {
-          allthistime.time = moddedTimes[i].time;
-          moddedTimes.splice(i, 1);
-          localStorage.setItem('modded', JSON.stringify(moddedTimes));
-        }
-      }
-      allthistime.dnf = false;
-    }
-    else if (!changealldnf) {
-      moddedTimes.push(allthistime);
-      localStorage.setItem('modded', JSON.stringify(moddedTimes));
-      allthistime.time = 0;
-      allthistime.dnf = true;
-    }
-  }
-
-  if (selection === 'Delete') {
-      let conf = confirm('Remove this time?')
-      if(conf){
-        removed = [{time: alltimes.splice(tempallidx, 1)[0], index: tempallidx}];
-        sessionStorage.setItem('removed', JSON.stringify(removed));
-        deleted = true;
-      }
-  }
-
-  if (selection) {
-    localStorage.setItem('all', JSON.stringify(alltimes));
-    draw();
-    closeAll();
-  }
-}, false);
-
-checkmore.addEventListener('click', () => {
+checkmore.addEventListener('input', () => {
   morechecked = checkmore.checked;
-  alwaysmore = morechecked;
   localStorage.setItem('moretoggle', JSON.stringify(morechecked));
 }, false);
 
@@ -1266,17 +1254,6 @@ saveses.addEventListener('click', () => {
 
 undobtn.addEventListener('click', undo, false);
 
-//switch sessions
-document.addEventListener('click', e => {
-  if (!e.target.matches('.sesselect')) return;
-  session = e.target.textContent;
-  localStorage.setItem('currses', JSON.stringify(session));
-  sesslc.textContent = session;
-  draw();
-}, false);
-
-infoclose.addEventListener('click', closeAll, false);
-
 function timesInOut(e, swtch=true) {
   if (timein === swtch) {
     timetable.classList.remove('transXsixty');
@@ -1322,8 +1299,6 @@ settingsIcon.addEventListener('click', () => {
   showPop(setpopup);
   setpop = true;
 }, false);
-
-settingsClose.addEventListener('click', closeNdraw, false);
 
 timenter.addEventListener('click', () => {
   showPop(timenterpopup);
