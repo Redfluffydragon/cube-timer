@@ -299,7 +299,7 @@ function onStart() {
   scrambles = gotem('scrambles', []);
   scrambleNum = gotem('scrambleNum', 0);
 
-  if (isMobile) { window.addEventListener('orientationchange', multiScramPos, false); }
+  if (isMobile) { window.addEventListener('resize', multiScramPos, false); }
   
   timein = gotem('timein', false);
   timein ? outicon.classList.remove('none') : outicon.classList.add('none');
@@ -370,20 +370,22 @@ function draw() { //to redraw things after modifying
 }
 
 function multiScramPos() {
-  alert(screen.orientation.angle);
+  // alert(screen.orientation.angle);
   let timeHeight = time.offsetTop;
   multiScram.style.bottom = (window.innerHeight - timeHeight - 30) + 'px';
 }
 
 function afterLoad() {
+  alert('loaded');
   if (isMobile) { multiScramPos(); }
   sessionsdiv.classList.add('transOneSec');
   timetable.classList.add('transOneSec');
   scrambletxt.classList.add('transOneSec');
   forAutoplay = true;
-  if ('serviceWorker' in navigator) {
+  if (navigator.serviceWorker) {
     navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
-  }  
+  }
+  window.removeEventListener('load', afterLoad, false);
 }
 window.addEventListener('load', afterLoad, false);
 
