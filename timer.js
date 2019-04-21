@@ -844,7 +844,7 @@ function fin() { //finish timing, save result
   let whichScram = scrambles.length ? scrambles.join(';<br />') : fscramble;
   time.className = ('zone');
   time.textContent = toMinutes(counter);
-  insptime.classList.remove('aorange', 'blue', 'green', 'magenta')
+  insptime.classList.remove('orange', 'blue', 'green', 'magenta')
   onlytime.classList.remove('initial');
   timealert.classList.add('none');
   alltimes.push({number: null, time: counter+addTwo, ao5: '', ao12: '', cube: cube, session: session, scramble: whichScram, date: makeDate(), comment: '', dnf: dnf, plustwo: plustwo});
@@ -1261,7 +1261,7 @@ function timesInOut(e, swtch=true) {
     outicon.classList.add('none');
     settings.style.width = '';
     scrambletxt.style.width = '';
-    if (!isMobile || window.innerWidth > 420) {
+    if (window.innerWidth > 420) {
       requestAnimationFrame(() => {
         scrambletxt.style.left = '';
         let scLOffset = scrambletxt.offsetLeft;
@@ -1319,4 +1319,5 @@ dothenter.addEventListener('click', () => {
     for (let i in enterArr) { enterArr[i].value = null; }
     closeNdraw();
   }
+  else {alert("I don't recognize that time.");}
 }, false);

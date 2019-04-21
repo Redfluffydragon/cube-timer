@@ -686,14 +686,23 @@ button {
   #sesoptpopup button {width: 45vw;}
 }
 
-@media screen and (orientation: landscape) and (max-height: 420px) {
-  body {overflow: hidden;}
-  #time {top: 39vh; margin: 0;}
+@media all and (orientation: landscape) and (max-height: 420px) and (display-mode: standalone) {
+  #time {top: 39vh; margin-left: 20vw;}
   #insptime {top: 39vh;}
   #scrambletxt{top: 15vh; max-height: 24vh; left: 24vw; width: 70vw; overflow-y: scroll; -webkit-overflow-scrolling: touch;}
+  #multiScram {margin-left: 10vw;}
   #settings{width: 65vw;}
-  #timetable tbody {max-height: 80vh;}
+  #timetable tbody {max-height: calc(95vh - 55px);}
   #overtop {top: -70vh;}
+}
+
+@media all and (orientation: landscape) and (max-height: 420px) {
+  #time {top: 32vh;}
+  #insptime {top: 32vh;}
+  #multiScram {margin-left: 8vw;}
+  #timetable {max-height: 89vh;}
+  #scrambletxt {max-height: 24vh; left: 30vw;}
+  #settings {width: 67vw;}
 }
 
 @media all and (display-mode: standalone) and (orientation: portrait) {
