@@ -366,7 +366,10 @@ function draw() { //to redraw things after modifying
 }
 
 function multiScramPos() {
-  multiScram.style.bottom = (window.innerHeight - time.offsetTop - 30) + 'px';
+  if (window.innerHeight > window.innerWidth) {
+    multiScram.style.bottom = (window.innerHeight - time.offsetTop - 30) + 'px';
+  }
+  else {multiScram.style.bottom = '';}
 }
 
 function afterLoad() {
