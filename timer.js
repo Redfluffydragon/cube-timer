@@ -238,6 +238,7 @@ let popups = document.getElementsByClassName('popup');
 
 let isMobile = (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1);
 isMobile ? undobtn.classList.remove('none') : undobtn.classList.add('none');
+let standalone = window.matchMedia('(display-mode: standalone)').matches;
 
 function createTableRow() {
   let row = timebody.insertRow(0);
@@ -366,10 +367,12 @@ function draw() { //to redraw things after modifying
 }
 
 function multiScramPos() {
-  if (window.innerHeight > window.innerWidth) {
-    multiScram.style.bottom = (window.innerHeight - time.offsetTop - 30) + 'px';
+  if (!standalone) {
+    if (window.innerHeight > window.innerWidth) {
+      multiScram.style.bottom = (window.innerHeight - time.offsetTop - 30) + 'px';
+    }
+    else {multiScram.style.bottom = '';}
   }
-  else {multiScram.style.bottom = '';}
 }
 
 function afterLoad() {
