@@ -1261,7 +1261,7 @@ function timesInOut(e, swtch=true) {
     outicon.classList.add('none');
     settings.style.width = '';
     scrambletxt.style.width = '';
-    if (window.innerWidth > 420) {
+    if (!isMobile) {
       requestAnimationFrame(() => {
         scrambletxt.style.left = '';
         let scLOffset = scrambletxt.offsetLeft;
