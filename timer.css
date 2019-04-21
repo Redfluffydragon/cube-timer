@@ -1,3 +1,7 @@
+html {
+  overflow: hidden;
+}
+
 body {
   height: 95vh;
   width: 100vh;
