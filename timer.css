@@ -83,10 +83,15 @@ body {
   margin-top: 3px;
 }
 
-#multiScram p, a {
+#multiScram p {
   display: inline;
   color: black;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: calc(8px + .7vw);
+}
+
+#multiScram u {
+  cursor: pointer;
 }
 
 .rdropdown {

@@ -670,8 +670,7 @@ function scramble() {
   localStorage.setItem('scramble', JSON.stringify(fscramble));
 }
 
-nextScram.addEventListener('click', e => {
-  e.preventDefault();
+nextScram.addEventListener('click', () => {
   if (scrambleNum === 0) { scrambles.push(fscramble); }
   scrambleNum++;
   if (scrambleNum > scrambles.length-1) {
@@ -679,16 +678,15 @@ nextScram.addEventListener('click', e => {
     scrambles.push(fscramble);
     localStorage.setItem('scrambles', JSON.stringify(scrambles));
   }
-  else { scrambletxt.textContent = scrambles[scrambleNum]; }
+  else { scrambletxt.innerHTML = scrambles[scrambleNum]; }
   localStorage.setItem('scrambleNum', JSON.stringify(scrambleNum));
   scramNum.textContent = scrambleNum+1;
 }, false);
 
-firstScram.addEventListener('click', e => {
-  e.preventDefault();
+firstScram.addEventListener('click', () => {
   if (scrambles.length !== 0) {
     scrambleNum = 0;
-    scrambletxt.textContent = scrambles[scrambleNum];
+    scrambletxt.innerHTML = scrambles[scrambleNum];
     scramNum.textContent = scrambleNum+1;
     localStorage.setItem('scrambleNum', JSON.stringify(scrambleNum));
   }
