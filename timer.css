@@ -82,6 +82,7 @@ body {
   left: 0;
   z-index: 2;
   margin-top: 3px;
+  font-size: calc(8px + .7vw);
 }
 
 #multiScram p {
@@ -598,7 +599,7 @@ button {
   top: 4px;
   width: 70vw;
   height: 20vh;
-  transition: width .8s;
+  transition: width .3s linear;
 }
 
 #setpopup ul {

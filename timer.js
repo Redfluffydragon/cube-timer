@@ -2,11 +2,6 @@ if (navigator.serviceWorker) {
   navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
 }
 
-let cube;
-let inspectTime;
-let mode;
-let startdelay;
-let timein;
 let ctrl;
 let removed = [];
 let sesremoved = [];
@@ -21,10 +16,8 @@ let intstart;
 let started = false;
 let inspecting = false;
 
-let alltimes = [];
 let justTimes = []; //just the times - for best/worst
 let displaytimes = []; //just the times from current session - for display
-let moddedTimes = [];
 let tempallidx;
 let allthistime;
 let changealldnf;
@@ -84,13 +77,11 @@ for (let i = 0; i < lessfaces.length*2; i++) {
 let allmoves4 = moves3.concat(moves4);
 let allmoves6 = moves6.concat(allmoves4);
 let pyrpmoves = ['l', 'r', 'b', 'u'];
-let clocks = ['ALL', 'L', 'D', 'R', 'U', 'y2', 'ALL', 'L', 'D', 'R', 'U', 'UL', 'DL', 'DR', 'UR'];
 let clocksl4 = ['UL', 'DL', 'DR', 'UR'];
+let clocksf4 = ['ALL', 'L', 'D', 'R', 'U'];
+let clocks = clocksf4.concat('y2').concat(clocksf4).concat(clocksl4);
 
 let tscramble = [];
-let fscramble = [];
-let scrambles = [];
-let scrambleNum = 0;
 let tempmove;
 let pmove;
 let slen;
@@ -160,7 +151,6 @@ let thednf = document.getElementById('thednf');
 let comment = document.getElementById('comment');
 let checkmore = document.getElementById('checkmore');
 let morepopup = document.getElementById('morepopup');
-let morechecked = false;
 let seescramble = document.getElementById('seescramble');
 let seedate = document.getElementById('seedate');
 let seecube = document.getElementById('seecube');
@@ -177,9 +167,8 @@ let setpop;
 let popup;
 
 //session elements
-let sessions = [{name: 'Session 1', description: 'Default session'}];
-let session;
 let sesnames = [];
+let tempcrip;
 
 let sesslc = document.getElementById('sesslc');
 let newses = document.getElementById('newses');
@@ -230,25 +219,13 @@ let BWSesAll = document.getElementById('BWSesAll');
 let hideThings = document.getElementById('hideThings');
 let popSpot = document.getElementById('popSpot');
 let settingsSettings = [countAnnounce, showSettings, showBW, BWSesAll, hideThings, showMScram];
-let settingsArr; //defined in onStart
 
 let lighticon = document.getElementById('lighticon');
 let everything = document.getElementById('everything');
 let popups = document.getElementsByClassName('popup');
 
 let isMobile = (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1);
-isMobile ? undobtn.classList.remove('none') : undobtn.classList.add('none');
 let standalone = window.matchMedia('(display-mode: standalone)').matches;
-
-function createTableRow() {
-  let row = timebody.insertRow(0);
-  row.className = 'idAll';
-  for (let i = 0; i < 4; i++) {
-    let tempCell = row.insertCell(i);
-    tempCell.className = columnClass[i];
-    cellArrs[i].push(tempCell);
-  }
-}
 
 let gotem = (item, defalt, type=localStorage) => {
   let getthething = JSON.parse(type.getItem(item));
@@ -264,54 +241,63 @@ let colorIndicator = (array, value) => {
   }
 };
 
-function onStart() {
-  mode = gotem('mode', 'light');
-      runmode(true);
+//All the variables that need to be checked on reload
+let mode = gotem('mode', 'light');
+    runmode(true);
 
-  morechecked = gotem('moretoggle', false);
-      checkmore.checked = morechecked;
+let morechecked = gotem('moretoggle', false);
+    checkmore.checked = morechecked;
 
-  alltimes = gotem('all', []);
+let alltimes = gotem('all', []);
 
-  moddedTimes = gotem('modded', []);
+let moddedTimes = gotem('modded', []);
 
-  sessions = gotem('sessions', [{name: 'Session 1', description: 'Default session'}]);
-      for (let i in sessions) { sesnames.push(sessions[i].name); }
+let sessions = gotem('sessions', [{name: 'Session 1', description: 'Default session'}]);
+    for (let i in sessions) { sesnames.push(sessions[i].name); }
 
-  session = gotem('currses', sessions[0].name);
+let session = gotem('currses', sessions[0].name);
 
-  startdelay = gotem('delaysave', 300);
-      colorIndicator(delaytime, (startdelay/1000)+'s');
+let startdelay = gotem('delaysave', 300);
+    colorIndicator(delaytime, (startdelay/1000)+'s');
 
-  cube = gotem('cubesave', '3x3');
-      cubeButton.textContent = cube;
-      colorIndicator(cubeselect, cube);
+let cube = gotem('cubesave', '3x3');
+    cubeButton.textContent = cube;
+    colorIndicator(cubeselect, cube);
 
-  inspectTime = gotem('inspectsave', true);
-      inspColor();
-  
-  settingsArr = gotem('settings', [true, true, true, false, true, true]);
+let inspectTime = gotem('inspectsave', true);
+    inspColor();
 
-  fscramble = gotem('scramble', null);
-  scrambles = gotem('scrambles', []);
-  scrambleNum = gotem('scrambleNum', 0);
+let settingsArr = gotem('settings', [true, true, true, false, true, true]);
 
-  if (isMobile) {
-    window.addEventListener('resize', multiScramPos, false);
-    undobtn.addEventListener('click', undo, false);
-  }
-  
-  timein = gotem('timein', false);
-  timein ? outicon.classList.remove('none') : outicon.classList.add('none');
-  timesInOut(null, false);
-  
-  clickTable();
-  draw();
+let fscramble = gotem('scramble', null);
+let scrambles = gotem('scrambles', []);
+let scrambleNum = gotem('scrambleNum', 0);
+
+if (isMobile) {
+  undobtn.classList.remove('none');
+  undobtn.addEventListener('click', undo, false);
 }
-onStart();
+
+let mouseTouch = isMobile ? 'touchstart' : 'mousedown';
+
+let timein = gotem('timein', false);
+timesInOut(null, false);
+
+clickTable();
+draw();
+
+function createTableRow() {
+  let row = timebody.insertRow(0);
+  row.className = 'idAll';
+  for (let i = 0; i < 4; i++) {
+    let tempCell = row.insertCell(i);
+    tempCell.className = columnClass[i];
+    cellArrs[i].push(tempCell);
+  }
+}
 
 function draw() { //to redraw things after modifying
-  if (scrambles.length !== 0) { //multiple scrambles or not
+  if (scrambles.length) { //multiple scrambles or not
     scrambletxt.innerHTML = scrambles[scrambleNum];
     scramNum.textContent = scrambleNum+1;
   }
@@ -369,22 +355,11 @@ function draw() { //to redraw things after modifying
   sesslc.textContent = session;
 }
 
-function multiScramPos() {
-  if (!standalone) {
-    if (window.innerHeight > window.innerWidth) {
-      multiScram.style.bottom = (window.innerHeight - time.offsetTop - 30) + 'px';
-    }
-    else {multiScram.style.bottom = '';}
-  }
-}
-
 function afterLoad() {
-  if (isMobile) { multiScramPos(); }
   sessionsdiv.classList.add('transOneSec');
   timetable.classList.add('transOneSec');
   scrambletxt.classList.add('transOneSec');
   forAutoplay = true;
-  window.removeEventListener('load', afterLoad, false);
 }
 window.addEventListener('load', afterLoad, false);
 
@@ -439,7 +414,6 @@ function clickTable() { //clicks on the time table
   timebody.addEventListener('touchstart', () => {touchMoved = false;}, {passive: true});
 }
 
-let mouseTouch = isMobile ? 'touchstart' : 'mousedown';
 document.addEventListener(mouseTouch, e => { //close modals on click outside
   if (e.target.closest('.popup')) return;
   if (popup) { closeNdraw(); }
@@ -539,7 +513,7 @@ document.addEventListener('click', e => { //switch sessions, delay, inspection, 
     return;
   }
   else if (t.matches('.modtime')) {
-    let selection = e.target.textContent;
+    let selection = t.textContent;
     if (selection === '+2') {
       allthistime.time = Math.trunc((changeallplus ? allthistime.time-2 : allthistime.time+2)*100)/100;
       allthistime.plustwo = changeallplus ? false : true; 
@@ -561,6 +535,7 @@ document.addEventListener('click', e => { //switch sessions, delay, inspection, 
         allthistime.time = 0;
         allthistime.dnf = true;
       }
+      moddedTimes = gotem('modded');
     }
     if (selection === 'Delete') {
         let conf = confirm('Remove this time?')
@@ -615,7 +590,7 @@ function checkpyr1() { // turn the big corners for pyraminx
   else { tscramble.unshift(tempmove); }
 }
 
-function addfour(moveset, chancemod, apostrophe=true) { //turn 0-4 corners at the end - also for clock (pegs I think)
+function addfour(moveset, chancemod=.1, apostrophe=true) { //turn 0-4 corners at the end - also for clock (pegs I think)
   for (let i = 0; i < 4; i++) {
     let pointyn = Math.round(Math.random()+chancemod);
     if (pointyn) {
@@ -627,7 +602,7 @@ function addfour(moveset, chancemod, apostrophe=true) { //turn 0-4 corners at th
 }
 
 function checkpyrall() {
-  addfour(pyrpmoves, .1);
+  addfour(pyrpmoves);
   while (tscramble.length < 10) { checkpyr1(); }
 }
 
@@ -648,7 +623,7 @@ function checksqu() {//probably doesn't work. I don't know what moves aren't all
   let onerand = Math.round((Math.random()*11)-5);
   let tworand = Math.round((Math.random()*11)-5);
   let firstnum, secondnum;
-  if (tscramble.length !== 0) {
+  if (tscramble.length) {
     firstnum = tscramble[tscramble.length-1].charAt(1);
     secondnum = tscramble[tscramble.length-1].charAt(3);
   }
@@ -693,7 +668,7 @@ nextScram.addEventListener('click', () => {
 }, false);
 
 firstScram.addEventListener('click', () => {
-  if (scrambles.length !== 0) {
+  if (scrambles.length) {
     scrambleNum = 0;
     scrambletxt.innerHTML = scrambles[scrambleNum];
     scramNum.textContent = scrambleNum+1;
@@ -711,13 +686,15 @@ function average(startpoint, leng) {
     }
   }
 
+  for (let i in avgAll) { if (avgAll[i] === 0) {avgAll.splice(i, 1);}} //get rid of DNFs
+
   let maxindex = avgAll.indexOf(Math.max(...avgAll));
   avgAll.splice(maxindex, 1);
 
   let minindex = avgAll.indexOf(Math.min(...avgAll));
   avgAll.splice(minindex, 1);
 
-  if (avgAll.length !== 0) {
+  if (avgAll.length) {
     sum = avgAll.reduce((previous, current) => current += previous);
   }
 
@@ -1215,7 +1192,6 @@ exportallses.addEventListener('click', () => { createCsv(alltimes, 'Cube Timer -
 
 exportses.addEventListener('click', () => { createCsv(displaytimes, session); }, false);
 
-let tempcrip;
 sesopt.addEventListener('click', () => {
   showPop(sesoptpopup);
   changesesname.value = session;
@@ -1298,7 +1274,7 @@ function timesInOut(e, swtch=true) {
 }
 
 inicon.addEventListener('click', timesInOut, false);
-outicon.addEventListener('click', timesInOut, false);
+outicon.addEventListener('click', timesInOut, false);``
 scrambletxt.addEventListener('transitionend', () => {if(!timein) {scrambletxt.style.left = '';}}, false);
 
 settingsIcon.addEventListener('click', () => {
