@@ -296,7 +296,10 @@ function onStart() {
   scrambles = gotem('scrambles', []);
   scrambleNum = gotem('scrambleNum', 0);
 
-  if (isMobile) { window.addEventListener('resize', multiScramPos, false); }
+  if (isMobile) {
+    window.addEventListener('resize', multiScramPos, false);
+    undobtn.addEventListener('click', undo, false);
+  }
   
   timein = gotem('timein', false);
   timein ? outicon.classList.remove('none') : outicon.classList.add('none');
@@ -346,7 +349,7 @@ function draw() { //to redraw things after modifying
     alltimes[saveBack].ao12 = avgotwe;
   }
 
-  //settings
+  //apply settings
   let whichSpot = settingsArr[1] ? hsSpot : popSpot;
   whichSpot.appendChild(inspectSet);
   whichSpot.appendChild(delaySet);
@@ -1256,8 +1259,6 @@ saveses.addEventListener('click', () => {
   }
 }, false);
 
-undobtn.addEventListener('click', undo, false);
-
 function timesInOut(e, swtch=true) {
   if (timein === swtch) {
     timetable.classList.remove('transXsixty');
@@ -1290,8 +1291,10 @@ function timesInOut(e, swtch=true) {
       });
     });
   }
-  if (swtch) { timein = timein ? false : true; }
-  localStorage.setItem('timein', JSON.stringify(timein));
+  if (swtch) {
+    timein = timein ? false : true;
+    localStorage.setItem('timein', JSON.stringify(timein));
+  }
 }
 
 inicon.addEventListener('click', timesInOut, false);
