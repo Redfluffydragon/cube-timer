@@ -453,12 +453,11 @@ button {
 }
 
 
-#timepopup a {
+#timepopup p {
   font-size: calc(12px + .7vw);
-  color: black;
-  padding: .5vw 1vw .8vw;
-  text-decoration: none;
-  margin-bottom: .8vw;
+  padding: 5px 9px;
+  display: inline;
+  cursor: pointer;
 }
 
 #timepopup h3 {
@@ -468,7 +467,7 @@ button {
 
 #timepopup button {
   display: block;
-  margin: 9px auto 5px;
+  margin: 19px auto 5px;
 }
 
 #morepopup {

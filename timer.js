@@ -5,7 +5,6 @@ if (navigator.serviceWorker) {
 let ctrl;
 let removed = [];
 let sesremoved = [];
-let deleted;
 
 //for stopwatch
 let timer;
@@ -20,8 +19,6 @@ let justTimes = []; //just the times - for best/worst
 let displaytimes = []; //just the times from current session - for display
 let tempallidx;
 let allthistime;
-let changealldnf;
-let changeallplus;
 
 let cells0 = [];
 let cells1 = [];
@@ -260,12 +257,12 @@ let session = gotem('currses', sessions[0].name);
 let startdelay = gotem('delaysave', 300);
     colorIndicator(delaytime, (startdelay/1000)+'s');
 
+let inspectTime = gotem('inspectsave', true);
+    inspColor();
+
 let cube = gotem('cubesave', '3x3');
     cubeButton.textContent = cube;
     colorIndicator(cubeselect, cube);
-
-let inspectTime = gotem('inspectsave', true);
-    inspColor();
 
 let settingsArr = gotem('settings', [true, true, true, false, true, true]);
 
@@ -281,7 +278,7 @@ if (isMobile) {
 let mouseTouch = isMobile ? 'touchstart' : 'mousedown';
 
 let timein = gotem('timein', false);
-timesInOut(null, false);
+    timesInOut(null, false);
 
 clickTable();
 draw();
@@ -380,9 +377,6 @@ function clickTable() { //clicks on the time table
       tempallidx = alltimes.indexOf(findem);
       allthistime = alltimes[tempallidx];
 
-      changeallplus = allthistime.plustwo;
-      changealldnf = allthistime.dnf;
-
       timepops.classList.add('inlineBlock');
       showPop(timepopup);
       if (morechecked) {
@@ -391,9 +385,9 @@ function clickTable() { //clicks on the time table
       }
       timepop = true;
 
-      changeallplus ? thetwo.classList.add('oneforty') : thetwo.classList.remove('oneforty');
-      changealldnf ? thednf.classList.add('oneforty') : thednf.classList.remove('oneforty');
-      let timetoshine = changealldnf ? 'DNF' : toMinutes(allthistime.time);
+      allthistime.plustwo ? thetwo.classList.add('oneforty') : thetwo.classList.remove('oneforty');
+      allthistime.dnf ? thednf.classList.add('oneforty') : thednf.classList.remove('oneforty');
+      let timetoshine = allthistime.dnf ? 'DNF' : toMinutes(allthistime.time);
       timedit.innerHTML = `Edit time ${rvrsrow} (${timetoshine}) <span id='inmore'>[more]</span>`;
 
       //set up popup with correct data
@@ -515,11 +509,11 @@ document.addEventListener('click', e => { //switch sessions, delay, inspection, 
   else if (t.matches('.modtime')) {
     let selection = t.textContent;
     if (selection === '+2') {
-      allthistime.time = Math.trunc((changeallplus ? allthistime.time-2 : allthistime.time+2)*100)/100;
-      allthistime.plustwo = changeallplus ? false : true; 
+      allthistime.time = Math.trunc((allthistime.plustwo ? allthistime.time-2 : allthistime.time+2)*100)/100;
+      allthistime.plustwo = allthistime.plustwo ? false : true; 
     }
     if (selection === 'DNF') {
-      if (changealldnf) {
+      if (allthistime.dnf) {
         for (let i in moddedTimes) {
           if (moddedTimes[i].date === allthistime.date) {
             allthistime.time = moddedTimes[i].time;
@@ -529,7 +523,7 @@ document.addEventListener('click', e => { //switch sessions, delay, inspection, 
         }
         allthistime.dnf = false;
       }
-      else if (!changealldnf) {
+      else {
         moddedTimes.push(allthistime);
         localStorage.setItem('modded', JSON.stringify(moddedTimes));
         allthistime.time = 0;
@@ -542,7 +536,6 @@ document.addEventListener('click', e => { //switch sessions, delay, inspection, 
         if(conf){
           removed = [{time: alltimes.splice(tempallidx, 1)[0], index: tempallidx}];
           sessionStorage.setItem('removed', JSON.stringify(removed));
-          deleted = true;
         }
     }
     if (selection) {
@@ -936,8 +929,8 @@ window.addEventListener('keydown', e => {
     if (sespop) { newSession(); }
     else if (enterpop && timentertoo.value !== '') { closeNdraw(); }
   }
-  if (key === 50 && timepop && !morepop) { allthistime.plustwo = changeallplus ? false : true; closeNdraw();}
-  if (key === 68 && timepop && !morepop) { allthistime.dnf = changealldnf ? false : true; closeNdraw();}
+  if (key === 50 && timepop && !morepop) { allthistime.plustwo = allthistime.plustwo ? false : true; closeNdraw();}
+  if (key === 68 && timepop && !morepop) { allthistime.dnf = allthistime.dnf ? false : true; closeNdraw();}
 }, false);
 
 window.addEventListener('keyup', e => {
@@ -1001,7 +994,7 @@ function closeAll() { //close everything
   shadow.classList.remove('initial');
   shadow.style.zIndex = '';
   
-  if (timepop && !deleted) {
+  if (timepop) {
     allthistime.comment = comment.value;
   }
   localStorage.setItem('all', JSON.stringify(alltimes));
@@ -1018,7 +1011,6 @@ function closeAll() { //close everything
   sespop = false;
   setpop = false;
   popup = false;
-  deleted = false;
 }
 
 infobtn.addEventListener('click', () => { showPop(infopopup); }, false);
