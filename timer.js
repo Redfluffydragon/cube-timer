@@ -34,12 +34,9 @@ let onstart = false;
 //for inspection time countdown
 let timeou;
 let outime;
-let countime;
 let oto;
-let pause;
 let waiting;
 let itimer;
-let icounter;
 let inspectstart;
 let istart;
 let displayctdn;
@@ -238,9 +235,9 @@ let colorIndicator = (array, value) => {
   }
 };
 
-//All the variables that need to be checked on reload
-let mode = gotem('mode', 'light');
-    runmode(true);
+//All the variables that need to be gotten on reload/load
+let lmode = gotem('mode', true);
+    runmode(null, true);
 
 let morechecked = gotem('moretoggle', false);
     checkmore.checked = morechecked;
@@ -368,31 +365,37 @@ function clickTable() { //clicks on the time table
   timebody.addEventListener(clickTouch, e => {
     if ((!isMobile || !touchMoved) && e.target.parentNode.rowIndex >= 0) {
       let rvrsrow = displaytimes.length - e.target.parentNode.rowIndex+1; //reverse the row index
-      let findem;
       for(let i = 0; i < displaytimes.length; i++) {
         if (i+1 === rvrsrow) {
-          findem = displaytimes[i];
+          tempallidx = alltimes.indexOf(displaytimes[i]);
         }
       }
-      tempallidx = alltimes.indexOf(findem);
       allthistime = alltimes[tempallidx];
 
       timepops.classList.add('inlineBlock');
       showPop(timepopup);
+      timepop = true;
       if (morechecked) {
         morepopup.classList.add('inlineBlock');
         morepop = true;
       }
-      timepop = true;
 
+      let timetoshine;
+      if (allthistime.dnf) {
+        thednf.classList.add('oneforty');
+        thetwo.classList.add('disabled');
+        timetoshine = 'DNF';
+      }
+      else {
+        thednf.classList.remove('oneforty');
+        thetwo.classList.remove('disabled');
+        timetoshine = toMinutes(allthistime.time);
+      }
       allthistime.plustwo ? thetwo.classList.add('oneforty') : thetwo.classList.remove('oneforty');
-      allthistime.dnf ? thednf.classList.add('oneforty') : thednf.classList.remove('oneforty');
-      let timetoshine = allthistime.dnf ? 'DNF' : toMinutes(allthistime.time);
       timedit.innerHTML = `Edit time ${rvrsrow} (${timetoshine}) <span id='inmore'>[more]</span>`;
 
       //set up popup with correct data
-      let singPlur = allthistime.scramble.includes(';') ? 'Scrambles: ' : 'Scramble: ';
-      scramPlur.textContent = singPlur;
+      scramPlur.textContent = allthistime.scramble.includes(';') ? 'Scrambles: ' : 'Scramble: ';
       seescramble.innerHTML = allthistime.scramble;
       seedate.textContent = allthistime.date;
       seecube.textContent =  allthistime.cube;
@@ -507,23 +510,24 @@ document.addEventListener('click', e => { //switch sessions, delay, inspection, 
     return;
   }
   else if (t.matches('.modtime')) {
-    let selection = t.textContent;
-    if (selection === '+2') {
+    if (t.matches('#thetwo')) {
+      if (thetwo.classList.contains('disabled')) {return;}
       allthistime.time = Math.trunc((allthistime.plustwo ? allthistime.time-2 : allthistime.time+2)*100)/100;
       allthistime.plustwo = allthistime.plustwo ? false : true; 
     }
-    if (selection === 'DNF') {
+    if (t.matches('#thednf')) {
       if (allthistime.dnf) {
         for (let i in moddedTimes) {
           if (moddedTimes[i].date === allthistime.date) {
-            allthistime.time = moddedTimes[i].time;
-            moddedTimes.splice(i, 1);
+            thetwo.classList.remove('disabled');
+            alltimes[tempallidx] = moddedTimes.splice(i, 1)[0];
+            alltimes[tempallidx].dnf = false;
             localStorage.setItem('modded', JSON.stringify(moddedTimes));
           }
         }
-        allthistime.dnf = false;
       }
       else {
+        thetwo.classList.add('disabled');
         moddedTimes.push(allthistime);
         localStorage.setItem('modded', JSON.stringify(moddedTimes));
         allthistime.time = 0;
@@ -531,18 +535,16 @@ document.addEventListener('click', e => { //switch sessions, delay, inspection, 
       }
       moddedTimes = gotem('modded');
     }
-    if (selection === 'Delete') {
+    if (t.matches('#thedel')) {
         let conf = confirm('Remove this time?')
         if(conf){
           removed = [{time: alltimes.splice(tempallidx, 1)[0], index: tempallidx}];
           sessionStorage.setItem('removed', JSON.stringify(removed));
         }
     }
-    if (selection) {
-      localStorage.setItem('all', JSON.stringify(alltimes));
-      draw();
-      closeAll();
-    }
+    localStorage.setItem('all', JSON.stringify(alltimes));
+    draw();
+    closeAll();
     return;
   }
   else if (t.matches('.sesselect')) {
@@ -583,7 +585,7 @@ function checkpyr1() { // turn the big corners for pyraminx
   else { tscramble.unshift(tempmove); }
 }
 
-function addfour(moveset, chancemod=.1, apostrophe=true) { //turn 0-4 corners at the end - also for clock (pegs I think)
+function addfour(moveset, chancemod=.1, apostrophe=true) { //add up to four moves at the end (pyra and clock)
   for (let i = 0; i < 4; i++) {
     let pointyn = Math.round(Math.random()+chancemod);
     if (pointyn) {
@@ -594,21 +596,21 @@ function addfour(moveset, chancemod=.1, apostrophe=true) { //turn 0-4 corners at
   }
 }
 
-function checkpyrall() {
+function checkpyrall() { //combine pyraminx scramble bits
   addfour(pyrpmoves);
   while (tscramble.length < 10) { checkpyr1(); }
 }
 
-function checkmeg() {
+function checkmeg() { //megaminx
   for (let i = 0; i < slen/11; i++) {
     for (let j = 0; j < 10; j++) {
       let plusmin = Math.round(Math.random());
-      let rPush = () => {tscramble.push(plusmin ? 'R++' : 'R--')}
-      let dPush = () => {tscramble.push(plusmin ? 'D++' : 'D--')}
-      j%2 ? dPush() : rPush();
+      let moveMod = plusmin ? '++' : '--';
+      let move = j%2 ? 'D' : 'R';
+      tscramble.push(move+moveMod);
     }
     let uRightLeft = Math.round(Math.random());
-    uRightLeft ? tscramble.push('U<br />') : tscramble.push("U'<br />");
+    uRightLeft ? tscramble.push('U<br>') : tscramble.push("U'<br>");
   }
 }
 
@@ -712,26 +714,10 @@ function toMinutes(time) {
 }
 
 function inspection() {
-  clearInterval(intstart);
   itimer = new Date();
-  icounter = Math.trunc((itimer-istart)/1000);
-  displayctdn = countdown[icounter];
+  displayctdn = countdown[Math.trunc((itimer-istart)/1000)];
   insptime.textContent = displayctdn;
-  if (displayctdn === 'DNF') {
-    dnf = true;
-    plustwo = false;
-    clearInterval(oto);
-  }
-  if (displayctdn === undefined) {
-    time.textContent = '0.00';
-    counter = 0;
-    fin();
-  }
-  if (displayctdn === '+2') {
-    plustwo = true;
-    timealert.classList.add('none');
-  }
-  if (displayctdn === 7) {
+  if (displayctdn === 7) { //8 second alert
     timealert.classList.remove('none');
     timealert.textContent = '8s!';
     if (!played8 && settingsArr[0]) {
@@ -739,24 +725,27 @@ function inspection() {
       played8 = true;
     }
   }
-  if (displayctdn === 3) {
+  if (displayctdn === 3) { //twelve second alert
     timealert.textContent = '12s!';
     if (!played12 && settingsArr[0]) {
       twelveSecSound.play();
       played12 = true;
     }
   }
-}
-
-function runinspect() {
-  inspecting = true;
-  time.classList.add('none');
-  insptime.classList.remove('none');
-  if (settingsArr[4]) {
-    onlytime.classList.add('initial');
+  if (displayctdn === '+2') { //plus two by timeout
+    plustwo = true;
+    timealert.classList.add('none');
   }
-  inspectstart = setInterval(inspection, 10);
-  istart = new Date();
+  if (displayctdn === 'DNF') { //dnf by timeout
+    dnf = true;
+    plustwo = false;
+    clearInterval(oto); //stop the delay, if holding
+  }
+  if (displayctdn === undefined) { //reset the timer and finish
+    time.textContent = '0.00';
+    counter = 0;
+    fin();
+  }
 }
 
 function stopwatch() {
@@ -766,45 +755,19 @@ function stopwatch() {
   time.textContent = thetime;
 }
 
-function go() { //run stopwatch & stuff
-  start = new Date();
-  intstart = setInterval(stopwatch, 10); //actually start the stopwatch
-  if (settingsArr[4]) {
-    onlytime.classList.add('initial');
-  }
-  insptime.classList.add('none');
-  time.classList.remove('none');
-  time.classList.add('zfour');
-  timealert.classList.add('none');
-  clearInterval(inspectstart);
-  clearInterval(oto);
-  pause = false;
-  inspecting = false;
-  waiting = false;
-  started = true;
-}
-
-function ptimeout() { //add the holding delay, and colors
+function timeout() { //do the holding delay, and colors
   outime = new Date();
-  countime = outime-timeou;
 
-  if (countime <= startdelay) {
-    time.classList.add(mode === 'light' ? 'red' : 'cyan');
-    insptime.classList.add(mode === 'light' ? 'orange' : 'blue');
+  if ((outime-timeou) < startdelay) {
+    time.classList.add(lmode ? 'red' : 'cyan');
+    insptime.classList.add(lmode ? 'orange' : 'blue');
   }
-  else if (countime > startdelay) {
-    pause = false;
+  else {
     waiting = true;
-    time.classList.add(mode === 'light' ? 'green' : 'magenta');
+    time.classList.add(lmode ? 'green' : 'magenta');
     insptime.classList.remove('orange', 'blue');
-    insptime.classList.add(mode === 'light' ? 'green' : 'magenta');
+    insptime.classList.add(lmode ? 'green' : 'magenta');
   }
-}
-
-function otimeout() { //setInterval for ptimeout
-  pause = true;
-  timeou = new Date();
-  oto = setInterval(ptimeout, 10);
 }
 
 function fin() { //finish timing, save result
@@ -818,12 +781,12 @@ function fin() { //finish timing, save result
   clearInterval(inspectstart);
   
   let addTwo = plustwo ? 2 : null;
-  let whichScram = scrambles.length ? scrambles.join(';<br />') : fscramble;
-  time.className = ('zone');
-  time.textContent = toMinutes(counter);
-  insptime.classList.remove('orange', 'blue', 'green', 'magenta')
+  let whichScram = scrambles.length ? scrambles.join(';<br>') : fscramble;
+  time.className = ('zone'); //remove all other classes
+  time.textContent = toMinutes(counter); //show hundredths of a second
+  insptime.classList.remove('orange', 'blue', 'green', 'magenta');
   onlytime.classList.remove('initial');
-  timealert.classList.add('none');
+  timealert.classList.add('none'); //should only be showing at this point if they DNFed by timeout
   alltimes.push({number: null, time: counter+addTwo, ao5: '', ao12: '', cube: cube, session: session, scramble: whichScram, date: makeDate(), comment: '', dnf: dnf, plustwo: plustwo});
   localStorage.setItem('all', JSON.stringify(alltimes));
 
@@ -835,17 +798,18 @@ function fin() { //finish timing, save result
   localStorage.setItem('scrambleNum', JSON.stringify(scrambleNum));
   scramNum.textContent = '1';
 
-  scramble();
+  scramble(); //new scramble
   draw();
 }
 
 function down() {
-  if (!timepop && !sespop && !popup && !enterpop) {
+  if (!popup && !dnf) {
     if (!onstart && !started) {
-      if (!inspectTime || inspecting) { otimeout(); }
-      else if (inspectTime) {
-        time.classList.add(mode === 'light' ? 'green' : 'magenta');
+      if (!inspectTime || inspecting) { //start delay timer
+        timeou = new Date();
+        oto = setInterval(timeout, 10);
       }
+      else { time.classList.add(lmode ? 'green' : 'magenta'); }
       onstart = true;
     }
     else if(started) { fin(); }
@@ -855,15 +819,34 @@ function down() {
 function up () {
   time.classList.remove('red', 'green', 'cyan', 'magenta');
   insptime.classList.remove('orange', 'blue');
-  if (!timepop && !sespop && !enterpop && !popup && !dnf) {
-    if (!started && !waiting) {
+  if (!popup && !dnf) {
+    if (!started && !waiting) { //if delay hasn't run out yet
       clearInterval(oto); //reset the hold delay
       onstart = false;
     }
-
-    if (!keydown && !pause) {
-      if (inspectTime && !inspecting) { runinspect(); }
-      if (!inspectTime || waiting) { go(); }
+    if (!keydown) {
+      if (inspectTime && !inspecting) { //go! (start inspection time)
+        inspecting = true;
+        time.classList.add('none');
+        insptime.classList.remove('none');
+        if (settingsArr[4]) { onlytime.classList.add('initial'); } //check for hide all or not
+        istart = new Date();
+        inspectstart = setInterval(inspection, 10);
+      }
+      if ((!inspectTime && waiting) || waiting) { //go! (start the stopwatch)
+        start = new Date();
+        intstart = setInterval(stopwatch, 10); //actually start the stopwatch
+        if (settingsArr[4]) { onlytime.classList.add('initial'); }
+        insptime.classList.add('none');
+        time.classList.remove('none');
+        time.classList.add('zfour');
+        timealert.classList.add('none');
+        clearInterval(inspectstart);
+        clearInterval(oto);
+        inspecting = false;
+        waiting = false;
+        started = true;
+      }
     }
     else if (keydown) { keydown = false; }
   }
@@ -872,7 +855,7 @@ function up () {
 function touchdown(e) {
   e.preventDefault();
   closeAll();
-  if (forAutoplay && isMobile) {
+  if (forAutoplay && isMobile) { //pre-play sounds so they actually play when needed
     eightSecSound.play();
     eightSecSound.pause();
     twelveSecSound.play();
@@ -947,37 +930,29 @@ centerac.addEventListener('touchend', up, false);
 onlytime.addEventListener('touchend', up, false);
 
 //dark/light mode
-lighticon.addEventListener('click', () => {runmode(false)}, false);
-function darkmode() {
-  document.body.classList.add('backblack');
-  timealert.classList.add('reverse');
-  insptime.classList.add('cyan');
-
-  for (let i = 0; i < shadows.length; i++) {
-    shadows[i].classList.add('oneeighty');
-    shadows[i].classList.add('darkboxshadow');
+lighticon.addEventListener('click', runmode, false);
+function runmode(e, start=false) { // switch modes, and open in saved mode
+  if (start === lmode) {
+    document.body.classList.remove('backblack');
+    timealert.classList.remove('reverse');
+    insptime.classList.remove('cyan');
+    for (let i = 0; i < shadows.length; i++) {
+      shadows[i].classList.remove('oneeighty', 'darkboxshadow');
+    }
+    everything.classList.remove('reverse');
   }
-  everything.classList.add('reverse');
-}
-
-function lightmode() {
-  document.body.classList.remove('backblack');
-  timealert.classList.remove('reverse');
-  insptime.classList.remove('cyan');
-
-  for (let i = 0; i < shadows.length; i++) {
-    shadows[i].classList.remove('oneeighty');
-    shadows[i].classList.remove('darkboxshadow');
+  else {
+    document.body.classList.add('backblack');
+    timealert.classList.add('reverse');
+    insptime.classList.add('cyan');
+    for (let i = 0; i < shadows.length; i++) {
+      shadows[i].classList.add('oneeighty', 'darkboxshadow');
+    }
+    everything.classList.add('reverse');
   }
-  everything.classList.remove('reverse');
-}
-
-function runmode(start) { // switch modes, and open in saved mode
-  if (start) { mode === 'light' ? lightmode() : darkmode(); }
   if (!start) {
-    mode === 'light' ? darkmode() : lightmode();
-    mode = mode === 'light' ? 'dark' : 'light';
-    localStorage.setItem('mode', JSON.stringify(mode));
+    lmode = lmode ? false : true;
+    localStorage.setItem('mode', JSON.stringify(lmode));
   }
 }
 
@@ -996,15 +971,15 @@ function closeAll() { //close everything
   
   if (timepop) {
     allthistime.comment = comment.value;
+    localStorage.setItem('all', JSON.stringify(alltimes));
   }
-  localStorage.setItem('all', JSON.stringify(alltimes));
 
   if (setpop) {
     for (let i in settingsArr) { settingsArr[i] = settingsSettings[i].checked; }
     localStorage.setItem('settings', JSON.stringify(settingsArr));
   }
 
-  centerpop.classList.add('none');
+  centerpop.classList.add('none'); //for some reason it interferes at the top if displayed at all
   
   timepop = false;
   morepop = false;
@@ -1035,10 +1010,10 @@ sescancel.addEventListener('click', () => {
   sespop = false;
 }, false);
 
-function checkSession(name, alert) {
+function checkSession(name, alertElement) {
   for (let i in sessions) {
     if (name === sessions[i].name) {
-      alert.textContent = "You've already used that name.";
+      alertElement.textContent = "You've already used that name.";
       sesname.value = null;
       return false; 
     }
@@ -1266,7 +1241,7 @@ function timesInOut(e, swtch=true) {
 }
 
 inicon.addEventListener('click', timesInOut, false);
-outicon.addEventListener('click', timesInOut, false);``
+outicon.addEventListener('click', timesInOut, false);
 scrambletxt.addEventListener('transitionend', () => {if(!timein) {scrambletxt.style.left = '';}}, false);
 
 settingsIcon.addEventListener('click', () => {
