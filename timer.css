@@ -32,7 +32,7 @@ body {
 }
 
 #onlytime {
-  background-color: white;
+  background: white;
   z-index: 4;
 }
 
@@ -104,7 +104,7 @@ body {
 .rdropcontent {
   display: none;
   position: absolute;
-  background-color: rgb(180, 180, 180);
+  background: rgb(180, 180, 180);
   z-index: 3;
   margin-left: 4px;
 }
@@ -125,7 +125,7 @@ body {
   border: none;
   font-size: calc(12px + .7vw);
   padding: 5px 12px 5px 12px;
-  background-color: rgb(215, 215, 215);
+  background: rgb(215, 215, 215);
   font-family: Arial, Helvetica, sans-serif;
   margin-left: .3vmax;
   margin-bottom: .3vmax;
@@ -137,7 +137,7 @@ body {
 }
 
 .rdropcontent p:hover {
-  background-color: rgb(150, 150, 150);
+  background: rgb(150, 150, 150);
 }
 
 #timetable {
@@ -183,7 +183,7 @@ body {
 
 #blank {
   width: 2.1vw;
-  background-color: rgb(215, 215, 215);
+  background: rgb(215, 215, 215);
 }
 
 #timetable tbody {
@@ -199,17 +199,17 @@ body {
 
 #timetable tbody::-webkit-scrollbar { width: 0 }
 
-.idAll:nth-child(odd) {background-color: #f2f2f2;}
+.idAll:nth-child(odd) {background: #f2f2f2;}
 
 .idAll:hover {
   cursor: pointer;
-  background-color: #AAAAAA;
+  background: #AAAAAA;
 }
 
 .header {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-family: Arial, Helvetica, sans-serif;
-  background-color: rgb(215, 215, 215);
+  background: rgb(215, 215, 215);
   padding: 5px 3px;
   text-align: center;
   width: 5.8vw;
@@ -246,7 +246,7 @@ body {
 .sesedit {
   display: inline-block;
   font-size: calc(8px + .7vw);
-  background-color: rgb(215, 215, 215);
+  background: rgb(215, 215, 215);
   font-family: Arial, Helvetica, sans-serif;
   padding: 5px;
   padding-right: 12px;
@@ -264,7 +264,7 @@ body {
 
 .dropupcontent {
   display: none;
-  background-color: rgb(180, 180, 180);
+  background: rgb(180, 180, 180);
   position: relative;
   bottom: 4px;
 }
@@ -280,7 +280,7 @@ body {
 
 #sesdrop p:hover {
   cursor: pointer;
-  background-color: rgb(150, 150, 150);
+  background: rgb(150, 150, 150);
 }
 
 #sespopup button{
@@ -315,13 +315,13 @@ body {
 
 #sescancel {
   margin-right: 2vw;
-  background-color: transparent;
+  background: transparent;
 }
 
 #changesesname {
   font-size: calc(14px + .7vw);
   border-radius: 5px;
-  background-color: transparent;
+  background: transparent;
   border: 1px solid black;
   text-align: center;
 }
@@ -341,15 +341,15 @@ body {
 }
 
 .deletebtn {
-  background-color: #FF000060;
+  background: #FF000060;
 }
 
 .clearbtn {
-  background-color: #FF990060;
+  background: #FF990060;
 }
 
 .exportbtn {
-  background-color: rgba(0, 100, 255, 0.376);
+  background: rgba(0, 100, 255, 0.376);
 }
 
 .csv {
@@ -395,7 +395,7 @@ body {
 }
 
 button {
-  background-color: rgb(215, 215, 215);
+  background: rgb(215, 215, 215);
   border: none;
   font-family: Arial, Helvetica, sans-serif;
   font-size: calc(12px + .7vw);
@@ -405,7 +405,7 @@ button {
 }
 
 #shadow {
-  background-color: rgba(255, 255, 255, .8);
+  background: rgba(255, 255, 255, .8);
   z-index: 5;
 }
 
@@ -416,7 +416,7 @@ button {
   top: 0;
   left: 0;
   right: 0;
-  background-color: white;
+  background: white;
   z-index: 0;
 }
 
@@ -437,7 +437,7 @@ button {
 .popup {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   display: none;
-  background-color: rgb(180, 180, 180);
+  background: rgb(180, 180, 180);
   margin: 5px;
   font-size: calc(12px + .7vw);
   box-shadow: 5px 5px 5px gray;
@@ -452,12 +452,13 @@ button {
   display: none;
 }
 
+.modtime {cursor: pointer;}
 
 #timepopup p {
   font-size: calc(12px + .7vw);
   padding: 5px 9px;
   display: inline;
-  cursor: pointer;
+  /* cursor: pointer; */
 }
 
 #timepopup h3 {
@@ -573,7 +574,7 @@ button {
   color: rgb(255, 255, 255);
   top: 45vh;
   border-radius: 10px;
-  background-color: rgb(100, 100, 100);
+  background: rgb(100, 100, 100);
 }
 
 #undotxt {
@@ -606,7 +607,7 @@ button {
   text-align: left;
   margin: 5px;
   position: relative;
-  left: -20px;
+  padding-left: 0;
 }
 
 #setpopup button {
@@ -627,6 +628,10 @@ button {
   height: calc(21px + 1vw);
   float: right;
   cursor: pointer;
+}
+
+#icons {
+  float: right;
 }
 
 @media screen and (min-width: 600px) {
@@ -727,13 +732,13 @@ button {
 
 .none { display: none; }
 
-.oneeighty { background-color: rgb(180, 180, 180); }
+.oneeighty { background: rgb(180, 180, 180); }
 
-.oneforty { background-color: rgb(140, 140, 140); }
+.oneforty { background: rgb(140, 140, 140); }
 
-.twotwenty { background-color: rgb(220, 220, 220) }
+.twotwenty { background: rgb(220, 220, 220) }
 
-.backblack { background-color: black; }
+.backblack { background: black; }
 
 .white { color: white; }
 
@@ -764,3 +769,5 @@ button {
 .opzero { opacity: 0; }
 
 .reverse { filter: invert(100%); }
+
+.disabled {cursor: not-allowed; color: rgb(80, 80, 80);}
