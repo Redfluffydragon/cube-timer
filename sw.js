@@ -8,7 +8,7 @@ let URLS = [
   '/cube-timer/',
   '/cube-timer/index.html',
   '/cube-timer/timer.css',
-  '/cube-timer/timer.js',
+  '/cube-timer/timer-min.js',
   '/cube-timer/icon16x16.png',
   '/cube-timer/undoicon.png',
   '/cube-timer/settingsicon.png',
