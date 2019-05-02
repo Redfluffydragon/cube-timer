@@ -994,6 +994,9 @@ infobtn.addEventListener('click', () => { showPop(infopopup); }, false);
 checkmore.addEventListener('input', () => {
   morechecked = checkmore.checked;
   localStorage.setItem('moretoggle', JSON.stringify(morechecked));
+  alert(morechecked);
+  morechecked = gotem('moretoggle', 'what');
+  alert(morechecked);
 }, false);
 
 //open the new session popup
