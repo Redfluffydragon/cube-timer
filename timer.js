@@ -354,6 +354,7 @@ function afterLoad() {
   timetable.classList.add('transOneSec');
   scrambletxt.classList.add('transOneSec');
   forAutoplay = true;
+  alert('morechecked: '+ morechecked);
 }
 window.addEventListener('load', afterLoad, false);
 
