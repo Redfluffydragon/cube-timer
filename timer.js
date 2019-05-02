@@ -991,7 +991,7 @@ function closeAll() { //close everything
 
 infobtn.addEventListener('click', () => { showPop(infopopup); }, false);
 
-checkmore.addEventListener('input', () => {
+checkmore.addEventListener('click', () => {
   morechecked = checkmore.checked;
   localStorage.setItem('moretoggle', JSON.stringify(morechecked));
   alert(morechecked);
