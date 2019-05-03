@@ -218,16 +218,19 @@ let lighticon = document.getElementById('lighticon');
 let everything = document.getElementById('everything');
 let popups = document.getElementsByClassName('popup');
 
+let rcorners = document.getElementById('rcorners');
+let scorners = document.getElementById('scorners');
+
 let isMobile = (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1);
 let standalone = window.matchMedia('(display-mode: standalone)').matches;
 
-let gotem = (item, defalt, type=localStorage) => {
+function gotem(item, defalt, type=localStorage) {
   let getthething = JSON.parse(type.getItem(item));
   if (getthething === null || getthething === undefined) { return defalt; }
   else { return getthething; }
 };
 
-let colorIndicator = (array, value) => {
+function colorIndicator(array, value) {
   for (let i in array) {
     if (array[i].textContent === value) {
       array[i].classList.add('oneforty');
@@ -238,6 +241,9 @@ let colorIndicator = (array, value) => {
 //All the variables that need to be gotten on reload/load
 let lmode = gotem('mode', true);
     runmode(null, true);
+
+let cornerStyle = gotem('cornerStyle', 'r');
+    changeCorners(null, cornerStyle);
 
 let morechecked = gotem('moretoggle', false);
     checkmore.checked = morechecked;
@@ -956,6 +962,18 @@ function runmode(e, start=false) { // switch modes, and open in saved mode
   }
 }
 
+//corner style
+function changeCorners(e, forStart) {
+  cornerStyle = e ? e.target.id.charAt(0) : forStart;
+  whichStyle = cornerStyle === 'r' ? true : false;
+  document.body.setAttribute('round', whichStyle);
+  localStorage.setItem('cornerStyle', JSON.stringify(cornerStyle));
+}
+
+rcorners.addEventListener('click', changeCorners, false);
+scorners.addEventListener('click', changeCorners, false);
+
+
 function closeAll() { //close everything
   cubeDrop.classList.remove('block');
   inspectDrop.classList.remove('block');
@@ -1246,6 +1264,7 @@ scrambletxt.addEventListener('transitionend', () => {if(!timein) {scrambletxt.st
 
 settingsIcon.addEventListener('click', () => {
   for (let i in settingsSettings) { settingsSettings[i].checked = settingsArr[i]; }
+  rcorners.id.charAt(0) === cornerStyle ? rcorners.checked = true : scorners.checked = true;
   showPop(setpopup);
   setpop = true;
 }, false);

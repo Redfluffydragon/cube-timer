@@ -404,6 +404,8 @@ button {
   margin: 4px;
 }
 
+input, textarea { padding: 4px; border: .5px solid rgb(150, 150, 150);}
+
 #shadow {
   background: rgba(255, 255, 255, .8);
   z-index: 5;
@@ -424,7 +426,6 @@ button {
   position: relative;
   text-align: center;
   z-index: 6;
-  /* display: none; */
 }
 
 #overtop {
@@ -441,6 +442,7 @@ button {
   margin: 5px;
   font-size: calc(12px + .7vw);
   box-shadow: 5px 5px 5px gray;
+  padding: 5px;
 }
 
 .coverall {
@@ -458,7 +460,6 @@ button {
   font-size: calc(12px + .7vw);
   padding: 5px 9px;
   display: inline;
-  /* cursor: pointer; */
 }
 
 #timepopup h3 {
@@ -486,7 +487,7 @@ button {
 }
 
 #comment {
-  width: 37vw;
+  width: 96%;
   height: 12vh;
   resize: none;
   vertical-align: top;
@@ -642,6 +643,10 @@ button {
   #scrambletxt {top: 15vh; font-size: calc(6px + 1.6vmax); width: 50vw;}
 }
 
+@media screen and (max-width: 1051px) {
+  #sesoptpopup button {width: 25vw;}
+}
+
 @media screen and (max-width: 1000px) { 
   #timeclose{right: 50vw;}
   #sesoptpopup button {width: 25vw;}
@@ -651,7 +656,7 @@ button {
 }
 
 @media screen and (max-width: 800px) {
-  #morepopup {width: 97%;}
+  #morepopup {width: 94%;}
   #comment {width: 90%;}
 }
 
@@ -661,7 +666,7 @@ button {
   #insptime {top: 57vh;}
 }
 
-@media screen and (max-width: 650px) { /* if viewport width is at most 650px */
+@media screen and (max-width: 650px) {
   #insptime {top: 57vh;}
   #scrambletxt {top: 12vh; width: 60vw;}
   #settings{width: 60vw;}
@@ -704,6 +709,7 @@ button {
   #timetable {max-height: 89vh;}
   #scrambletxt {max-height: 24vh; left: 30vw; top: 17vh; overflow-y: scroll; -webkit-overflow-scrolling: touch;}
   #settings {width: 67vw;}
+  #cubeDrop {max-height: 80vh; overflow-y: scroll; -webkit-overflow-scrolling: touch;}
 }
 
 @media all and (orientation: landscape) and (max-height: 420px) and (display-mode: standalone) {
@@ -771,3 +777,13 @@ button {
 .reverse { filter: invert(100%); }
 
 .disabled {cursor: not-allowed; color: rgb(80, 80, 80);}
+
+body[round = true] #timetable td, #inicon, #outicon {
+  border-radius: 2px;
+}
+body[round = true] .popup, input, textarea {
+  border-radius: 5px;
+}
+body[round = true] button, .rdropcontent {
+  border-radius: 4px;
+}
