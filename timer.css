@@ -4,6 +4,7 @@ body {
   top: 0;
   left: 0;
   overflow: hidden;
+  background: white;
 }
 
 #everything {
@@ -742,13 +743,9 @@ input, textarea { padding: 4px; border: .5px solid rgb(150, 150, 150);}
 
 .none { display: none; }
 
-.oneeighty { background: rgb(180, 180, 180); }
-
 .oneforty { background: rgb(140, 140, 140); }
 
 .twotwenty { background: rgb(220, 220, 220) }
-
-.backblack { background: black; }
 
 .white { color: white; }
 
@@ -762,10 +759,6 @@ input, textarea { padding: 4px; border: .5px solid rgb(150, 150, 150);}
 
 .orange { color: orange; }
 
-.blue { color: rgb(0, 90, 255); }
-
-.darkboxshadow { box-shadow: 5px 5px 10px #E6E6E6; }
-
 .transXsixty { transform: translateX(-60vw); }
 
 .transXhundred { transform: translateX(-100vw); }
@@ -778,9 +771,24 @@ input, textarea { padding: 4px; border: .5px solid rgb(150, 150, 150);}
 
 .opzero { opacity: 0; }
 
-.reverse { filter: invert(100%); }
-
 .disabled {cursor: not-allowed; color: rgb(80, 80, 80);}
+
+body[lmode = false] {
+  background: black;
+}
+body[lmode = false] #everything {
+  filter: invert(100%); 
+}
+body[lmode = false] #insptime {
+  filter: invert(100%);
+}
+body[lmode = false] #timealert {
+  color: cyan;
+}
+body[lmode = false] .popup {
+  background: rgb(180, 180, 180);
+  box-shadow: 5px 5px 10px #E6E6E6;
+}
 
 body[round = true] #timetable td, #inicon, #outicon {
   border-radius: 2px;
@@ -788,6 +796,14 @@ body[round = true] #timetable td, #inicon, #outicon {
 body[round = true] .popup, input, textarea {
   border-radius: 5px;
 }
-body[round = true] button, .rdropcontent {
+body[round = true] button, .rdropcontent, .pointer {
   border-radius: 4px;
+}
+body[round = true] .top {
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+body[round = true] .bottom {
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
 }

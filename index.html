@@ -9,7 +9,7 @@
     <link rel="canonical" href="https://redfluffydragon.github.io/cube-timer/"/>
     <link rel="manifest" href="manifest.json"/>
     <link rel="stylesheet" type="text/css" href="timer.css" async/>
-    <script src="timer-min.js" type="text/javascript" async></script>
+    <script src="timer.js" type="text/javascript" async></script>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black" media="(orientation: portrait)"/>
     <link rel="apple-touch-icon" sizes="144x144" href="apple-touch-icon.png"/>
@@ -69,7 +69,7 @@
       <div class="rdropdown">
         <button class="rdropbtn" id="cubeButton" title="Switch cube">Cube</button>
         <div class="rdropcontent" id="cubeDrop">
-          <p class="cubeselect">2x2</p>
+          <p class="cubeselect top">2x2</p>
           <p class="cubeselect">3x3</p>
           <p class="cubeselect">4x4</p>
           <p class="cubeselect">5x5</p>
@@ -79,7 +79,7 @@
           <p class="cubeselect">Pyraminx</p>
           <p class="cubeselect">Skewb</p>
           <p class="cubeselect">Square-1</p>
-          <p class="cubeselect">Clock</p>
+          <p class="cubeselect bottom">Clock</p>
         </div>
       </div>
       
@@ -87,18 +87,18 @@
         <div id="inspectSet" class="rdropdown">
           <button class="rdropbtn" id="inspectButton">Inspection</button>
           <div class="rdropcontent" id="inspectDrop">
-            <p id="inspectnone">None</p>
-            <p id="inspect15">15s (WCA)</p>
+            <p id="inspectnone" class="top">None</p>
+            <p id="inspect15" class="bottom">15s (WCA)</p>
           </div>
         </div>
 
         <div id="delaySet" class="rdropdown">
           <button class= "rdropbtn" id="delayButton" title="how long you have to hold the spacebar to start">Delay time</button>
           <div class="rdropcontent" id="delayDrop">
-            <p class="delaytime">0s</p>
+            <p class="delaytime top">0s</p>
             <p class="delaytime">0.3s</p>
             <p class="delaytime">0.55s</p>
-            <p class="delaytime">1s</p>
+            <p class="delaytime bottom">1s</p>
           </div>
         </div>
       </div>

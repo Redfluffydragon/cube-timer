@@ -139,7 +139,6 @@ let timedit = document.getElementById('timedit');
 let timepopup = document.getElementById('timepopup');
 let timepops = document.getElementById('timepops');
 let shadow = document.getElementById('shadow');
-let shadows = document.getElementsByClassName('popup');
 let thetwo = document.getElementById('thetwo');
 let thednf = document.getElementById('thednf'); 
 let comment = document.getElementById('comment');
@@ -240,7 +239,7 @@ function colorIndicator(array, value) {
 
 //All the variables that need to be gotten on reload/load
 let lmode = gotem('mode', true);
-    runmode(null, true);
+    runmode(false);
 
 let cornerStyle = gotem('cornerStyle', 'r');
     changeCorners(null, cornerStyle);
@@ -253,7 +252,7 @@ let alltimes = gotem('all', []);
 let moddedTimes = gotem('modded', []);
 
 let sessions = gotem('sessions', [{name: 'Session 1', description: 'Default session'}]);
-    for (let i in sessions) { sesnames.push(sessions[i].name); }
+    sessions.forEach(e => { sesnames.push(e.name); });
 
 let session = gotem('currses', sessions[0].name);
 
@@ -283,17 +282,16 @@ let mouseTouch = isMobile ? 'touchstart' : 'mousedown';
 let timein = gotem('timein', false);
     timesInOut(null, false);
 
-clickTable();
 draw();
 
 function createTableRow() {
   let row = timebody.insertRow(0);
   row.className = 'idAll';
-  for (let i = 0; i < 4; i++) {
+  cellArrs.forEach((e, i) => {
     let tempCell = row.insertCell(i);
     tempCell.className = columnClass[i];
-    cellArrs[i].push(tempCell);
-  }
+    e.push(tempCell);
+  });
 }
 
 function draw() { //to redraw things after modifying
@@ -304,36 +302,33 @@ function draw() { //to redraw things after modifying
   else { fscramble === null ? scramble() : scrambletxt.innerHTML = fscramble; }
 
   displaytimes.length = 0;
-  for (let i in alltimes) {
-    if (alltimes[i].session === session) {
-      displaytimes.push(alltimes[i]);
+  alltimes.forEach(e => {
+    if (e.session === session) {
+      displaytimes.push(e);
     }
-  }
+  });
   
   //clear the table
   timebody.innerHTML = '';
-  for (let i in cellArrs) { cellArrs[i].length = 0; }
-  for (let i = 0; i < displaytimes.length; i++) { //fill the table
+  cellArrs.forEach(e => { e.length = 0; });
+  displaytimes.forEach((e, i) => {
     createTableRow();
-    displaytimes[i].number = i+1;
-    let commentYN = displaytimes[i].comment ? '*' : null;
+    e.number = i+1;
+    let commentYN = e.comment ? '*' : null;
     cells0[i].textContent = i+1 + commentYN;
-    cells1[i].textContent = displaytimes[i].dnf ?
-    'DNF' : 
-    displaytimes[i].plustwo ? 
-    toMinutes(displaytimes[i].time)+'+' : 
-    toMinutes(displaytimes[i].time);
+    cells1[i].textContent = e.dnf ? 'DNF' : //check dnf first
+    e.plustwo ? toMinutes(e.time)+'+' : toMinutes(e.time); //then check +2
 
     let avgofiv = average(i+1, 5);
     let avgotwe = average(i+1, 12);
-    displaytimes[i].ao5 = avgofiv;
-    displaytimes[i].ao12 = avgotwe;
+    e.ao5 = avgofiv;
+    e.ao12 = avgotwe;
     cells2[i].textContent = avgofiv;
     cells3[i].textContent = avgotwe;
-    let saveBack = alltimes.indexOf(displaytimes[i]);
+    let saveBack = alltimes.indexOf(e);
     alltimes[saveBack].ao5 = avgofiv;
     alltimes[saveBack].ao12 = avgotwe;
-  }
+  });
 
   //apply settings
   let whichSpot = settingsArr[1] ? hsSpot : popSpot;
@@ -345,13 +340,13 @@ function draw() { //to redraw things after modifying
 
   //sessions
   sesdrop.innerHTML = '';
-  for(let i in sessions) {
+  sessions.forEach(e => {
     let sesnode = document.createElement('p');
-    let sesnodename = document.createTextNode(sessions[i].name);
+    let sesnodename = document.createTextNode(e.name);
     sesnode.appendChild(sesnodename);
     sesnode.classList.add('sesselect');
     sesdrop.appendChild(sesnode);
-  }
+  });
   sesslc.textContent = session;
 }
 
@@ -365,57 +360,52 @@ window.addEventListener('load', afterLoad, false);
 
 function closeNdraw() { closeAll(); draw(); }
 
-function clickTable() { //clicks on the time table
-  let clickTouch = isMobile ? 'touchend' : 'click';
-  let touchMoved;
-  timebody.addEventListener(clickTouch, e => {
-    if ((!isMobile || !touchMoved) && e.target.parentNode.rowIndex >= 0) {
-      let rvrsrow = displaytimes.length - e.target.parentNode.rowIndex+1; //reverse the row index
-      for(let i = 0; i < displaytimes.length; i++) {
-        if (i+1 === rvrsrow) {
-          tempallidx = alltimes.indexOf(displaytimes[i]);
-        }
-      }
-      allthistime = alltimes[tempallidx];
+let clickTouch = isMobile ? 'touchend' : 'click';
+let touchMoved;
+timebody.addEventListener(clickTouch, e => { //clicks on the time table
+  if ((!isMobile || !touchMoved) && e.target.parentNode.rowIndex >= 0) {
+    let rvrsrow = displaytimes.length - e.target.parentNode.rowIndex+1; //reverse the row index
+    tempallidx = alltimes.indexOf(displaytimes[rvrsrow-1]);
+    allthistime = alltimes[tempallidx];
 
-      timepops.classList.add('inlineBlock');
-      showPop(timepopup);
-      timepop = true;
-      if (morechecked) {
-        morepopup.classList.add('inlineBlock');
-        morepop = true;
-      }
-
-      let timetoshine;
-      if (allthistime.dnf) {
-        thednf.classList.add('oneforty');
-        thetwo.classList.add('disabled');
-        timetoshine = 'DNF';
-      }
-      else {
-        thednf.classList.remove('oneforty');
-        thetwo.classList.remove('disabled');
-        timetoshine = toMinutes(allthistime.time);
-      }
-      allthistime.plustwo ? thetwo.classList.add('oneforty') : thetwo.classList.remove('oneforty');
-      timedit.innerHTML = `Edit time ${rvrsrow} (${timetoshine}) <span id='inmore'>[more]</span>`;
-
-      //set up popup with correct data
-      scramPlur.textContent = allthistime.scramble.includes(';') ? 'Scrambles: ' : 'Scramble: ';
-      seescramble.innerHTML = allthistime.scramble;
-      seedate.textContent = allthistime.date;
-      seecube.textContent =  allthistime.cube;
-      if (allthistime.comment !== undefined) { comment.value = allthistime.comment; }
-
-      document.getElementById('inmore').addEventListener('click', () => {
-        morepop ? morepopup.classList.remove('inlineBlock') : morepopup.classList.add('inlineBlock');
-        morepop = morepop ? false : true;
-      }, false);
+    timepops.classList.add('inlineBlock');
+    showPop(timepopup);
+    timepop = true;
+    if (morechecked) {
+      morepopup.classList.add('inlineBlock');
+      morepop = true;
     }
-  }, false);
-  timebody.addEventListener('touchmove', () => {touchMoved = true;}, {passive: true});
-  timebody.addEventListener('touchstart', () => {touchMoved = false;}, {passive: true});
-}
+
+    let timetoshine;
+    if (allthistime.dnf) {
+      thednf.classList.add('oneforty');
+      thetwo.classList.add('disabled');
+      timetoshine = 'DNF';
+    }
+    else {
+      thednf.classList.remove('oneforty');
+      thetwo.classList.remove('disabled');
+      timetoshine = toMinutes(allthistime.time);
+    }
+    allthistime.plustwo ? thetwo.classList.add('oneforty') : thetwo.classList.remove('oneforty');
+    timedit.innerHTML = `Edit time ${rvrsrow} (${timetoshine}) <span id='inmore'>[more]</span>`;
+
+    //set up popup with correct data
+    scramPlur.textContent = allthistime.scramble.includes(';') ? 'Scrambles: ' : 'Scramble: ';
+    seescramble.innerHTML = allthistime.scramble;
+    seedate.textContent = allthistime.date;
+    seecube.textContent =  allthistime.cube;
+    if (allthistime.comment !== undefined) { comment.value = allthistime.comment; }
+
+    document.getElementById('inmore').addEventListener('click', () => {
+      morepop ? morepopup.classList.remove('inlineBlock') : morepopup.classList.add('inlineBlock');
+      morepop = morepop ? false : true;
+    }, false);
+  }
+}, false);
+timebody.addEventListener('touchmove', () => {touchMoved = true;}, {passive: true});
+timebody.addEventListener('touchstart', () => {touchMoved = false;}, {passive: true});
+
 
 document.addEventListener(mouseTouch, e => { //close modals on click outside
   if (e.target.closest('.popup')) return;
@@ -424,9 +414,9 @@ document.addEventListener(mouseTouch, e => { //close modals on click outside
 
 function bestworst(array) {
   justTimes.length = 0;
-  for (let i in array) {
-    if (array[i].time) { justTimes.push(array[i].time); }
-  }
+  array.forEach(e => {
+    if (e.time) { justTimes.push(e.time); }
+  })
   let worstTime = Math.max(...justTimes);
   let bestTime = Math.min(...justTimes);
   best.textContent = !isNaN(JSON.stringify(bestTime)) ? toMinutes(bestTime) : '--';
@@ -523,14 +513,14 @@ document.addEventListener('click', e => { //switch sessions, delay, inspection, 
     }
     if (t.matches('#thednf')) {
       if (allthistime.dnf) {
-        for (let i in moddedTimes) {
-          if (moddedTimes[i].date === allthistime.date) {
+        moddedTimes.find((e, i) => {
+          if (e.date === allthistime.date) {
             thetwo.classList.remove('disabled');
             alltimes[tempallidx] = moddedTimes.splice(i, 1)[0];
             alltimes[tempallidx].dnf = false;
             localStorage.setItem('modded', JSON.stringify(moddedTimes));
           }
-        }
+        });
       }
       else {
         thetwo.classList.add('disabled');
@@ -637,12 +627,12 @@ function checksqu() {//probably doesn't work. I don't know what moves aren't all
 
 function checkclo() {
   addfour(clocksl4, 0, false);
-  for (let i = 0; i < clocks.length; i++) {
+  clocks.forEach(e => {
     let clockrand = Math.round((Math.random()*11)-5);
     let clkstr = JSON.stringify(clockrand);
     let rvrsclock = clkstr.length > 1 ? clkstr.charAt(1)+clkstr.charAt(0) : clkstr.charAt(0)+'+'; 
-    clocks[i] !== 'y2' ? tscramble.unshift(clocks[i]+rvrsclock) : tscramble.unshift(clocks[i]);
-  }
+    e !== 'y2' ? tscramble.unshift(e+rvrsclock) : tscramble.unshift(e);
+  });
 }
 
 function scramble() {
@@ -682,12 +672,12 @@ function average(startpoint, leng) {
 
   avgAll.length = 0;
   if (startpoint > (leng-1)) {
-    for (let i = 1; i < (leng+1); i++) {
+    for (let i = 1; i < leng+1; i++) {
       avgAll.push(displaytimes[startpoint-i].time);
     }
   }
 
-  for (let i in avgAll) { if (avgAll[i] === 0) {avgAll.splice(i, 1);}} //get rid of DNFs
+  avgAll.forEach((e, i) => { if (e === 0) { avgAll.splice(i, 1); }}); //get rid of DNFs
 
   let maxindex = avgAll.indexOf(Math.max(...avgAll));
   avgAll.splice(maxindex, 1);
@@ -766,13 +756,13 @@ function timeout() { //do the holding delay, and colors
 
   if ((outime-timeou) < startdelay) {
     time.classList.add(lmode ? 'red' : 'cyan');
-    insptime.classList.add(lmode ? 'orange' : 'blue');
+    insptime.classList.add('orange');
   }
   else {
     waiting = true;
     time.classList.add(lmode ? 'green' : 'magenta');
-    insptime.classList.remove('orange', 'blue');
-    insptime.classList.add(lmode ? 'green' : 'magenta');
+    insptime.classList.remove('orange');
+    insptime.classList.add('green');
   }
 }
 
@@ -790,7 +780,7 @@ function fin() { //finish timing, save result
   let whichScram = scrambles.length ? scrambles.join(';<br>') : fscramble;
   time.className = ('zone'); //remove all other classes
   time.textContent = toMinutes(counter); //show hundredths of a second
-  insptime.classList.remove('orange', 'blue', 'green', 'magenta');
+  insptime.classList.remove('orange', 'green');
   onlytime.classList.remove('initial');
   timealert.classList.add('none'); //should only be showing at this point if they DNFed by timeout
   alltimes.push({number: null, time: counter+addTwo, ao5: '', ao12: '', cube: cube, session: session, scramble: whichScram, date: makeDate(), comment: '', dnf: dnf, plustwo: plustwo});
@@ -824,7 +814,7 @@ function down() {
   
 function up () {
   time.classList.remove('red', 'green', 'cyan', 'magenta');
-  insptime.classList.remove('orange', 'blue');
+  insptime.classList.remove('orange');
   if (!popup && !dnf) {
     if (!started && !waiting) { //if delay hasn't run out yet
       clearInterval(oto); //reset the hold delay
@@ -877,21 +867,21 @@ function undo() {
   sesremoved = gotem('sesremoved', [], sessionStorage);
   if (removed.length) {
     let getIdx = removed[0].index;
-    for (let i in removed) {
-      alltimes[getIdx] === undefined ? alltimes.push(removed[i].time) : alltimes.splice(getIdx, 0, removed[i].time); 
+    removed.forEach(e => {
+      alltimes[getIdx] === undefined ? alltimes.push(e.time) : alltimes.splice(getIdx, 0, e.time); 
       localStorage.setItem('all', JSON.stringify(alltimes));      
-    }
+    });
     removed.length = 0;
     sessionStorage.removeItem('removed');
     msg = 'Undone!'
   }
   if (sesremoved.length) {
-    for (let i in sesremoved) {
-      if (!sessions.includes(sesremoved[i])) {
-        sessions.push({name: sesremoved[i].name, description: sesremoved[i].description});
+    sesremoved.forEach(e => {
+      if (!sessions.includes(e)) { // fix duplicating sessions with one (not all)
+        sessions.push({name: e.name, description: e.description});
         localStorage.setItem('sessions', JSON.stringify(sessions));
       }
-    }
+    });
     session = sesremoved[sesremoved.length-1].name;
     sesremoved.length = 0;
     sessionStorage.removeItem('sesremoved');
@@ -937,29 +927,12 @@ onlytime.addEventListener('touchend', up, false);
 
 //dark/light mode
 lighticon.addEventListener('click', runmode, false);
-function runmode(e, start=false) { // switch modes, and open in saved mode
-  if (start === lmode) {
-    document.body.classList.remove('backblack');
-    timealert.classList.remove('reverse');
-    insptime.classList.remove('cyan');
-    for (let i = 0; i < shadows.length; i++) {
-      shadows[i].classList.remove('oneeighty', 'darkboxshadow');
-    }
-    everything.classList.remove('reverse');
-  }
-  else {
-    document.body.classList.add('backblack');
-    timealert.classList.add('reverse');
-    insptime.classList.add('cyan');
-    for (let i = 0; i < shadows.length; i++) {
-      shadows[i].classList.add('oneeighty', 'darkboxshadow');
-    }
-    everything.classList.add('reverse');
-  }
-  if (!start) {
+function runmode(notstart) { // switch modes, and open in saved mode
+  if (notstart) {
     lmode = lmode ? false : true;
     localStorage.setItem('mode', JSON.stringify(lmode));
   }
+  document.body.setAttribute('lmode', lmode);
 }
 
 //corner style
@@ -993,7 +966,7 @@ function closeAll() { //close everything
   }
 
   if (setpop) {
-    for (let i in settingsArr) { settingsArr[i] = settingsSettings[i].checked; }
+    settingsArr.forEach((e, i) => { settingsArr[i] = settingsSettings[i].checked; });
     localStorage.setItem('settings', JSON.stringify(settingsArr));
   }
 
@@ -1056,20 +1029,18 @@ sescreate.addEventListener('click', newSession, false);
 
 function justAsession() { //get just the current session
   let sesremoves = [];
-  for (let i = 0; i < alltimes.length; i++) {
-    if (alltimes[i].session === session) {
-      sesremoves.push(alltimes[i]);
-    }
-  }
-  for (let i = 0; i < sesremoves.length; i++) {
-    let rmvidx = alltimes.indexOf(sesremoves[i]);
+  alltimes.forEach(e => { //get the times
+    if (e.session === session) { sesremoves.push(e); }
+  });
+  sesremoves.forEach(e => { //then remove them
+    let rmvidx = alltimes.indexOf(e);
     removed.push({time: alltimes.splice(rmvidx, 1)[0], index: rmvidx, session: session});
-  }
+  });
   sessionStorage.setItem('removed', JSON.stringify(removed));
 }
 
 function justAll() { //get everything
-  for (let i in alltimes) { removed.push({time: alltimes[i], index: i}); }
+  alltimes.forEach((e, i) => { removed.push({time: e, index: i}); });
   sessionStorage.setItem('removed', JSON.stringify(removed));
   alltimes.length = 0;
   sessions.length = 0;
@@ -1081,27 +1052,27 @@ function createArray(array) { //create array of arrays from array of objects, wi
   let returnarray = [];
   let columnNames = [];
   let getKeys = Object.keys(array[0]);
-  for (let i in getKeys) {
-    let titleCase = getKeys[i].charAt(0).toUpperCase() + getKeys[i].slice(1);
+  getKeys.forEach(e => {
+    let titleCase = e.charAt(0).toUpperCase() + e.slice(1);
     columnNames.push(titleCase);
-  }
+  });
   returnarray.push(columnNames);
-  for (let i in array) {
+  array.forEach(e => {;
     let temparray = [];
-    for (let j in getKeys) {
-      temparray.push('"'+array[i][getKeys[j]].toString()+'"');
-    }
+    getKeys.forEach(e2 => {
+      temparray.push('"'+e[e2].toString()+'"');
+    });
     returnarray.push(temparray);
-  }
+  });
   return returnarray;
 }
 
 function createCsv(array, name) {
   let makeIntoArray = createArray(array);
   let csvFile = 'data:text/csv;charset=utf-8,';
-  for (let i in makeIntoArray) {
-    csvFile += makeIntoArray[i] + '\n';
-  }
+  makeIntoArray.forEach(e => {
+    csvFile += e + '\n';
+  });
   let encoded = encodeURI(csvFile);
   let linkDownload = document.createElement('a');
   linkDownload.setAttribute('href', encoded);
@@ -1131,8 +1102,8 @@ deleteses.addEventListener('click', () => {
   let deletesessionconf = confirm('Delete this session?');
   if (deletesessionconf) {
     justAsession();
-    for (let i = 0; i < sessions.length; i++) {
-      if (sessions[i].name === session) {
+    sessions.find((e, i) => {
+      if (e.name === session) {
         sesremoved.length = 0;
         sesremoved.push(sessions.splice(i, 1)[0]);
         sessionStorage.setItem('sesremoved', JSON.stringify(sesremoved));
@@ -1147,7 +1118,7 @@ deleteses.addEventListener('click', () => {
           session = sessions[0].name;
         }
       }
-    }
+    });
     sesslc.textContent = session;
     localStorage.setItem('all', JSON.stringify(alltimes));
     localStorage.setItem('sessions', JSON.stringify(sessions));
@@ -1180,11 +1151,11 @@ exportses.addEventListener('click', () => { createCsv(displaytimes, session); },
 sesopt.addEventListener('click', () => {
   showPop(sesoptpopup);
   changesesname.value = session;
-  for (let i = 0; i < sessions.length; i++) {
-    if (sessions[i].name === session) {
-      tempcrip = sessions[i];
+  sessions.find(e => {
+    if (e.name === session) {
+      tempcrip = e;
     }
-  }
+  });
   seesescrip.value = tempcrip.description;
 }, false);
 
@@ -1196,19 +1167,19 @@ saveses.addEventListener('click', () => {
     closeNdraw();
   }
   else if (checkSession(changesesname.value, sameAlertAgain)) {
-    for (let i = 0; i < alltimes.length; i++) {
-      if (alltimes[i].session === session) {
-        alltimes[i].session = changesesname.value;
+    alltimes.forEach(e => {
+      if (e.session === session) {
+        e.session = changesesname.value;
       }
-    }
-    for (let i = 0; i < sessions.length; i++) {
-      if (sessions[i].name === session) {
-        sessions[i].name = changesesname.value;
-        sessions[i].description = seesescrip.value;
+    });
+    sessions.find(e => {
+      if (e.name === session) {
+        e.name = changesesname.value;
+        e.description = seesescrip.value;
         sesslc.textContent = changesesname.value;
         localStorage.setItem('sessions', JSON.stringify(sessions));
       }
-    }
+    });
     for (let i = 0; i < sesselect.length; i++) {
       if (sesselect[i] === session) {
         sesselect[i].textContent = changesesname.value;
@@ -1263,7 +1234,7 @@ outicon.addEventListener('click', timesInOut, false);
 scrambletxt.addEventListener('transitionend', () => {if(!timein) {scrambletxt.style.left = '';}}, false);
 
 settingsIcon.addEventListener('click', () => {
-  for (let i in settingsSettings) { settingsSettings[i].checked = settingsArr[i]; }
+  settingsSettings.forEach((e, i) => { settingsSettings[i].checked = settingsArr[i]; });
   rcorners.id.charAt(0) === cornerStyle ? rcorners.checked = true : scorners.checked = true;
   showPop(setpopup);
   setpop = true;
@@ -1285,7 +1256,7 @@ function checkTime(time) {
 dothenter.addEventListener('click', () => {
   if (timentertoo.value !== '' && checkTime(timentertoo.value) !== undefined) {
     alltimes.push({number: '', time: checkTime(timentertoo.value), ao5: '', ao12: '', cube: cubenter.value, session: session, scramble: scramenter.value, date: datenter.value, comment: commenter.value, dnf: false, plustwo: false});
-    for (let i in enterArr) { enterArr[i].value = null; }
+    enterArr.forEach(e => { e.value = null; });
     closeNdraw();
   }
   else {alert("I don't recognize that time.");}
