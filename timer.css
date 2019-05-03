@@ -615,6 +615,10 @@ input, textarea { padding: 4px; border: .5px solid rgb(150, 150, 150);}
   margin: 4px;
 }
 
+.indented {
+  margin-left: 10px;
+}
+
 #popSpot {
   display: inline-block;
 }
