@@ -1,6 +1,6 @@
 let APP_PREFIX = 'cube-timer_';
 
-let VERSION = '1.0.2.1';
+let VERSION = '1.0.2.2';
 
 let CACHE_NAME = APP_PREFIX + VERSION;
 
@@ -9,13 +9,15 @@ let URLS = [
   '/cube-timer/index.html',
   '/cube-timer/timer.css',
   '/cube-timer/timer-min.js',
-  '/cube-timer/icon16x16.png',
-  '/cube-timer/undoicon.png',
-  '/cube-timer/settingsicon.png',
-  '/cube-timer/lightmode.png',
-  '/cube-timer/inicon.png',
-  '/cube-timer/outicon.png',
-  '/cube-timer/infoicon.png'
+  '/cube-timer/img/icon16x16.png',
+  '/cube-timer/img/undoicon.png',
+  '/cube-timer/img/settingsicon.png',
+  '/cube-timer/img/lightmode.png',
+  '/cube-timer/img/inicon.png',
+  '/cube-timer/img/outicon.png',
+  '/cube-timer/img/infoicon.png',
+  '/cube-timer/sound/eight.mp3',
+  '/cube-timer/sound/twelve.mp3'
 ];
 
 self.addEventListener('fetch', e => {
