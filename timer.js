@@ -2,8 +2,8 @@ if (navigator.serviceWorker) {
   navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
 }
 
-let removed = [];
-let sesremoved = [];
+let removed = []; //removed times
+let sesremoved = []; //removed sessions
 
 //for stopwatch
 let timer;
@@ -23,8 +23,8 @@ let cells0 = [];
 let cells1 = [];
 let cells2 = [];
 let cells3 = [];
-let cellArrs = [cells0, cells1, cells2, cells3];
-let columnClass = ['number', 'times', 'avgofive', 'avgotwelve'];
+const cellArrs = [cells0, cells1, cells2, cells3];
+const columnClass = ['number', 'times', 'avgofive', 'avgotwelve'];
 let avgAll = [];
 
 let keydown = false;
@@ -39,23 +39,23 @@ let itimer;
 let inspectstart;
 let istart;
 let displayctdn;
-let countdown = [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, '+2', '+2', 'DNF'];
+const countdown = [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, '+2', '+2', 'DNF'];
 let dnf = false;
 let plustwo = false;
-let eightSecSound = document.getElementById('eightSecSound');
-let twelveSecSound = document.getElementById('twelveSecSound');
+const eightSecSound = document.getElementById('eightSecSound');
+const twelveSecSound = document.getElementById('twelveSecSound');
 let played8 = false;
 let played12 = false;
 let forAutoplay = false;
 
 //scramble generator variables
-let faces = ['F', 'U', 'L', 'R', 'D', 'B'];
-let lessfaces = ['L', 'R', 'B', 'U'];
-let mods = ['', "'", '2'];
-let moves3 = [];
-let moves4 = [];
-let moves6 = [];
-let pyrsmoves = [];
+const faces = ['F', 'U', 'L', 'R', 'D', 'B'];
+const lessfaces = ['L', 'R', 'B', 'U'];
+const mods = ['', "'", '2'];
+const moves3 = [];
+const moves4 = [];
+const moves6 = [];
+const pyrsmoves = [];
 
 for (let i = 0; i < faces.length*mods.length; i++) {
   moves3.push(faces[Math.trunc(i/3)]+mods[i%3]);
@@ -67,19 +67,19 @@ for (let i = 0; i < lessfaces.length*2; i++) {
   pyrsmoves.push(lessfaces[Math.trunc(i/2)]+mods[i%2]);
 }
 
-let allmoves4 = moves3.concat(moves4);
-let allmoves6 = moves6.concat(allmoves4);
-let pyrpmoves = ['l', 'r', 'b', 'u'];
-let clocksl4 = ['UL', 'DL', 'DR', 'UR'];
-let clocksf4 = ['ALL', 'L', 'D', 'R', 'U'];
-let clocks = clocksf4.concat('y2').concat(clocksf4).concat(clocksl4);
+const allmoves4 = moves3.concat(moves4);
+const allmoves6 = moves6.concat(allmoves4);
+const pyrpmoves = ['l', 'r', 'b', 'u'];
+const clocksl4 = ['UL', 'DL', 'DR', 'UR'];
+const clocksf4 = ['ALL', 'L', 'D', 'R', 'U'];
+const clocks = clocksf4.concat('y2').concat(clocksf4).concat(clocksl4);
 
 let tscramble = [];
 let tempmove;
 let pmove;
 let slen;
 
-let scramblers = { //object with all the scrambler functions in it
+const scramblers = { //object with all the scrambler functions in it
   '2x2': () => {slen = 10; checknxn(moves3);},
   '3x3': () => {slen = 20; checknxn(moves3);},
   '4x4': () => {slen = 45; checknxn(allmoves4);},
@@ -93,142 +93,131 @@ let scramblers = { //object with all the scrambler functions in it
   'Clock': () => {slen = 0; checkclo();},
 }
 
-let scrambletxt = document.getElementById('scrambletxt');
-let nextScram = document.getElementById('nextScram');
-let firstScram = document.getElementById('firstScram');
-let scramNum = document.getElementById('scramNum');
-let scramPlur = document.getElementById('scramPlur');
-let multiScram = document.getElementById('multiScram');
-
-//dropdowns
-let cubeButton = document.getElementById('cubeButton');
-let cubeDrop = document.getElementById('cubeDrop');
-let cubeselect = document.getElementsByClassName('cubeselect');
-
-let inspectSet = document.getElementById('inspectSet');
-let inspectButton = document.getElementById('inspectButton');
-let inspectDrop = document.getElementById('inspectDrop');
-let inspectnone = document.getElementById('inspectnone');
-let inspect15 = document.getElementById('inspect15');
-
-let delaySet = document.getElementById('delaySet');
-let delayButton = document.getElementById('delayButton');
-let delayDrop = document.getElementById('delayDrop');
-let delaytime = document.getElementsByClassName('delaytime');
-
-let settings = document.getElementById('settings');
-let hsSpot = document.getElementById('hsSpot');
-
-//other elements
-let timebody = document.getElementById('timetable').getElementsByTagName('tbody')[0];
-let timetable = document.getElementById('timetable');
-let inicon = document.getElementById('inicon');
-let outicon = document.getElementById('outicon');
-
-let time = document.getElementById('time');
-let insptime = document.getElementById('insptime');
-let timealert = document.getElementById('timealert');
-let onlytime = document.getElementById('onlytime');
-let centerac = document.getElementById('centerac');
-
-let touch = document.getElementById('touch');
-
-//modals
-let timedit = document.getElementById('timedit');
-let timepopup = document.getElementById('timepopup');
-let timepops = document.getElementById('timepops');
-let shadow = document.getElementById('shadow');
-let thetwo = document.getElementById('thetwo');
-let thednf = document.getElementById('thednf'); 
-let comment = document.getElementById('comment');
-let checkmore = document.getElementById('checkmore');
-let morepopup = document.getElementById('morepopup');
-let seescramble = document.getElementById('seescramble');
-let seedate = document.getElementById('seedate');
-let seecube = document.getElementById('seecube');
-
-let best = document.getElementById('best');
-let worst = document.getElementById('worst');
-let BWdiv = document.getElementById('bestworst');
-
 let timepop; //modals open or closed
 let morepop;
 let sespop;
 let enterpop;
 let setpop;
 let popup;
+let closing;
 
 //session elements
 let sesnames = [];
 let tempcrip;
 
-let sesslc = document.getElementById('sesslc');
-let newses = document.getElementById('newses');
-let deleteses = document.getElementById('deleteses');
-let sesdrop = document.getElementById('sesdrop');
-let sespopup = document.getElementById('sespopup');
-let sescancel = document.getElementById('sescancel');
-let sescreate = document.getElementById('sescreate');
-let sameAlert = document.getElementById('sameAlert');
-let sameAlertAgain = document.getElementById('sameAlertAgain');
-let sesname = document.getElementById('sesname');
-let sescrip = document.getElementById('sescrip');
-let sesopt = document.getElementById('sesopt');
-let sesoptpopup = document.getElementById('sesoptpopup');
-let sesselect = document.getElementsByClassName('sesselect');
-let deleteallses = document.getElementById('deleteallses');
-let exportallses = document.getElementById('exportallses');
-let clearallses = document.getElementById('clearallses');
-let saveses = document.getElementById('saveses');
-let clearses = document.getElementById('clearses');
-let exportses = document.getElementById('exportses');
-let changesesname = document.getElementById('changesesname');
-let seesescrip = document.getElementById('seesescrip');
-let sessionsdiv = document.getElementById('sessions');
-let undobtn = document.getElementById('undobtn');
-let timenter = document.getElementById('timenter');
-let timenterpopup = document.getElementById('timenterpopup');
-let timentertoo = document.getElementById('timentertoo');
-let cubenter = document.getElementById('cubenter');
-let scramenter = document.getElementById('scramenter');
-let datenter = document.getElementById('datenter');
-let commenter = document.getElementById('commenter');
-let showMScram = document.getElementById('showMScram');
-let dothenter = document.getElementById('dothenter');
-let enterArr = [timentertoo, cubenter, scramenter, datenter, commenter];
+//elements
+//for scrambles
+const scrambletxt = document.getElementById('scrambletxt');
+const scramNum = document.getElementById('scramNum');
+const scramPlur = document.getElementById('scramPlur');
+const multiScram = document.getElementById('multiScram');
 
-let infobtn = document.getElementById('infobtn');
-let infopopup = document.getElementById('infopopup');
+//dropdowns
+const cubeButton = document.getElementById('cubeButton');
+const cubeDrop = document.getElementById('cubeDrop');
+const cubeselect = document.getElementsByClassName('cubeselect');
 
-let undone = document.getElementById('undone');
-let undotxt = document.getElementById('undotxt');
+const inspectSet = document.getElementById('inspectSet');
+const inspectButton = document.getElementById('inspectButton');
+const inspectDrop = document.getElementById('inspectDrop');
+const inspectnone = document.getElementById('inspectnone');
+const inspect15 = document.getElementById('inspect15');
 
-let setpopup = document.getElementById('setpopup')
-let countAnnounce = document.getElementById('countAnnounce');
-let showSettings = document.getElementById('showSettings');
-let showBW = document.getElementById('showBW');
-let BWSesAll = document.getElementById('BWSesAll');
-let hideThings = document.getElementById('hideThings');
-let popSpot = document.getElementById('popSpot');
-let settingsSettings = [countAnnounce, showSettings, showBW, BWSesAll, hideThings, showMScram];
+const delaySet = document.getElementById('delaySet');
+const delayButton = document.getElementById('delayButton');
+const delayDrop = document.getElementById('delayDrop');
+const delaytime = document.getElementsByClassName('delaytime');
 
-let lighticon = document.getElementById('lighticon');
-let everything = document.getElementById('everything');
-let popups = document.getElementsByClassName('popup');
+const settings = document.getElementById('settings');
+const hsSpot = document.getElementById('hsSpot');
 
-let rcorners = document.getElementById('rcorners');
-let scorners = document.getElementById('scorners');
+//timetable
+const timebody = document.getElementById('timebody');
+const timetable = document.getElementById('timetable');
+const outicon = document.getElementById('outicon');
 
-let isMobile = (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1);
-let standalone = window.matchMedia('(display-mode: standalone)').matches;
+//time
+const time = document.getElementById('time');
+const insptime = document.getElementById('insptime');
+const timealert = document.getElementById('timealert');
+const onlytime = document.getElementById('onlytime');
+const centerac = document.getElementById('centerac');
 
+const touch = document.getElementById('touch');
+
+//modals
+const timedit = document.getElementById('timedit');
+const timepopup = document.getElementById('timepopup');
+const timepops = document.getElementById('timepops');
+const shadow = document.getElementById('shadow');
+const thetwo = document.getElementById('thetwo');
+const thednf = document.getElementById('thednf'); 
+const comment = document.getElementById('comment');
+const checkmore = document.getElementById('checkmore');
+const morepopup = document.getElementById('morepopup');
+const seescramble = document.getElementById('seescramble');
+const seedate = document.getElementById('seedate');
+const seecube = document.getElementById('seecube');
+
+const best = document.getElementById('best');
+const worst = document.getElementById('worst');
+const BWdiv = document.getElementById('bestworst');
+
+//sessions and new times and sessions
+const sesslc = document.getElementById('sesslc');
+const sesdrop = document.getElementById('sesdrop');
+const sespopup = document.getElementById('sespopup');
+const sameAlert = document.getElementById('sameAlert');
+const sameAlertAgain = document.getElementById('sameAlertAgain');
+const sesname = document.getElementById('sesname');
+const sescrip = document.getElementById('sescrip');
+const sesoptpopup = document.getElementById('sesoptpopup');
+const sesselect = document.getElementsByClassName('sesselect');
+const changesesname = document.getElementById('changesesname');
+const seesescrip = document.getElementById('seesescrip');
+const sessionsdiv = document.getElementById('sessions');
+const undobtn = document.getElementById('undobtn');
+const timenterpopup = document.getElementById('timenterpopup');
+const timentertoo = document.getElementById('timentertoo');
+const cubenter = document.getElementById('cubenter');
+const scramenter = document.getElementById('scramenter');
+const datenter = document.getElementById('datenter');
+const commenter = document.getElementById('commenter');
+const showMScram = document.getElementById('showMScram');
+const enterArr = [timentertoo, cubenter, scramenter, datenter, commenter];
+
+const infopopup = document.getElementById('infopopup');
+
+const undone = document.getElementById('undone');
+const undotxt = document.getElementById('undotxt');
+
+//settings
+const setpopup = document.getElementById('setpopup')
+const countAnnounce = document.getElementById('countAnnounce');
+const showSettings = document.getElementById('showSettings');
+const showBW = document.getElementById('showBW');
+const BWSesAll = document.getElementById('BWSesAll');
+const hideThings = document.getElementById('hideThings');
+const popSpot = document.getElementById('popSpot');
+const settingsSettings = [countAnnounce, showSettings, showBW, BWSesAll, hideThings, showMScram];
+
+const everything = document.getElementById('everything');
+const popups = document.getElementsByClassName('popup');
+
+const rcorners = document.getElementById('rcorners');
+const scorners = document.getElementById('scorners');
+
+const isMobile = (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1);
+const standalone = window.matchMedia('(display-mode: standalone)').matches;
+
+//wrapper for getting stuff from localStorage
 function gotem(item, defalt, type=localStorage) {
   let getthething = JSON.parse(type.getItem(item));
   if (getthething === null || getthething === undefined) { return defalt; }
   else { return getthething; }
 };
 
-function colorIndicator(array, value) {
+function colorIndicator(array, value) { //mark selection in dropdowns
   for (let i in array) {
     if (array[i].textContent === value) {
       array[i].classList.add('oneforty');
@@ -276,14 +265,12 @@ if (isMobile) {
   undobtn.addEventListener('click', undo, false);
 }
 
-let mouseTouch = isMobile ? 'touchstart' : 'mousedown';
-
 let timein = gotem('timein', false);
-    timesInOut(null, false);
+    timesInOut(false);
 
 draw();
 
-function createTableRow() {
+function createTableRow() { //create one row in the time table
   let row = timebody.insertRow(0);
   row.className = 'idAll';
   cellArrs.forEach((e, i) => {
@@ -357,12 +344,12 @@ function afterLoad() {
 }
 window.addEventListener('load', afterLoad, false);
 
-function closeNdraw() { closeAll(); draw(); }
+function closeNdraw() { closeAll(); draw(); } //just put them in one function
 
-let clickTouch = isMobile ? 'touchend' : 'click';
+//for clicks on the time table
 let touchMoved;
-timebody.addEventListener(clickTouch, e => { //clicks on the time table
-  if ((!isMobile || !touchMoved) && e.target.parentNode.rowIndex >= 0) {
+function timeClicks(e) {
+  if ((!isMobile || !touchMoved) && e.target.parentNode.rowIndex >= 0 && !closing) {
     let rvrsrow = displaytimes.length - e.target.parentNode.rowIndex+1; //reverse the row index
     tempallidx = alltimes.indexOf(displaytimes[rvrsrow-1]);
     allthistime = alltimes[tempallidx];
@@ -395,23 +382,15 @@ timebody.addEventListener(clickTouch, e => { //clicks on the time table
     seedate.textContent = allthistime.date;
     seecube.textContent =  allthistime.cube;
     if (allthistime.comment !== undefined) { comment.value = allthistime.comment; }
-
-    document.getElementById('inmore').addEventListener('click', () => {
-      morepop ? morepopup.classList.remove('inlineBlock') : morepopup.classList.add('inlineBlock');
-      morepop = morepop ? false : true;
-    }, false);
   }
-}, false);
-timebody.addEventListener('touchmove', () => {touchMoved = true;}, {passive: true});
-timebody.addEventListener('touchstart', () => {touchMoved = false;}, {passive: true});
+}
 
-
-document.addEventListener(mouseTouch, e => { //close modals on click outside
+function closeModal(e) { //close modals
   if (e.target.closest('.popup')) return;
-  if (popup) { closeNdraw(); }
-}, false);
+  if (popup) { closing = true; closeNdraw(); }
+}
 
-function bestworst(array) {
+function bestworst(array) { //get the best and worst times, not indluding dnfs
   justTimes.length = 0;
   array.forEach(e => {
     if (e.time) { justTimes.push(e.time); }
@@ -422,29 +401,14 @@ function bestworst(array) {
   worst.textContent = !isNaN(JSON.stringify(worstTime)) ? toMinutes(worstTime) : '--';
 }
 
-function dropDown (button, content) { //toggle dropdowns 
-  document.addEventListener('click', e => {
-    if (e.target === button) {
-      content.classList.toggle('block');
-      return;
-    }
-    content.classList.remove('block');
-  }, false);
-}
-
-dropDown(cubeButton, cubeDrop);
-dropDown(inspectButton, inspectDrop);
-dropDown(delayButton, delayDrop);
-dropDown(sesslc, sesdrop);
-
-function showPop(div) {
+function showPop(div) { //open a modal
   centerpop.classList.remove('none');
   div.classList.add('inlineBlock');
   shadow.classList.add('initial');
   popup = true;
 }
 
-function makeDate() {
+function makeDate() { //the right date format
   let thedate = new Date();
   let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -464,20 +428,43 @@ function makeDate() {
   return finaldate;
 }
 
-function inspColor() {
+function inspColor() { //mark inspection dropdown
   inspectTime ? inspect15.classList.add('oneforty') : inspect15.classList.remove('oneforty');
   inspectTime ? inspectnone.classList.remove('oneforty') : inspectnone.classList.add('oneforty');
 }
 
-document.addEventListener('click', e => { //switch sessions, delay, inspection, and cube; and time edits 
-  let t = e.target;
-  if (t.matches('#inspectnone') || t.matches('#inspect15')) { 
+function dropDown (e, button, content) { //toggle dropdowns 
+  if (e.target === button) {
+    content.classList.toggle('block');
+    return;
+  }
+  content.classList.remove('block');
+}
+
+function match(e, t) { //outside match function, with multiple inputs
+  let many = t.split(' ');
+  for (let i in many) {
+    if (e.target.matches(many[i])) {
+      return true
+    }
+  }
+  return false
+}
+
+//event listeners
+document.addEventListener('click', e => {
+  const match = t => e.target.matches(t);
+  closing = false;
+  if (e.target.closest('#timebody')) {
+    timeClicks(e);
+  }
+  else if (match('#inspectnone') || match('#inspect15')) { 
     inspectTime = inspectTime ? false : true;
     localStorage.setItem('inspectsave', JSON.stringify(inspectTime));
     inspColor();
     return;
   }
-  else if (t.matches('.cubeselect')) {
+  else if (match('.cubeselect')) {
     for (let i = 0; i < cubeselect.length; i++) {
       cubeselect[i].classList.remove('oneforty');
     }
@@ -495,7 +482,7 @@ document.addEventListener('click', e => { //switch sessions, delay, inspection, 
     }
     return;
   }
-  else if (t.matches('.delaytime')) {
+  else if (match('.delaytime')) {
     for (let i = 0; i < delaytime.length; i++) {
       delaytime[i].classList.remove('oneforty');
     }
@@ -504,13 +491,13 @@ document.addEventListener('click', e => { //switch sessions, delay, inspection, 
     localStorage.setItem('delaysave', JSON.stringify(startdelay));
     return;
   }
-  else if (t.matches('.modtime')) {
-    if (t.matches('#thetwo')) {
+  else if (match('.modtime')) {
+    if (match('#thetwo')) {
       if (thetwo.classList.contains('disabled')) {return;}
       allthistime.time = Math.trunc((allthistime.plustwo ? allthistime.time-2 : allthistime.time+2)*100)/100;
       allthistime.plustwo = allthistime.plustwo ? false : true; 
     }
-    if (t.matches('#thednf')) {
+    if (match('#thednf')) {
       if (allthistime.dnf) {
         moddedTimes.find((e, i) => {
           if (e.date === allthistime.date) {
@@ -530,7 +517,7 @@ document.addEventListener('click', e => { //switch sessions, delay, inspection, 
       }
       moddedTimes = gotem('modded');
     }
-    if (t.matches('#thedel')) {
+    if (match('#thedel')) {
         let conf = confirm('Remove this time?')
         if(conf){
           removed = [{time: alltimes.splice(tempallidx, 1)[0], index: tempallidx}];
@@ -542,16 +529,223 @@ document.addEventListener('click', e => { //switch sessions, delay, inspection, 
     closeAll();
     return;
   }
-  else if (t.matches('.sesselect')) {
+  else if (match('.sesselect')) {
     session = e.target.textContent;
     localStorage.setItem('currses', JSON.stringify(session));
     sesslc.textContent = session;
     draw();
     return;
   }
-  else if (t.matches('#timeclose') || t.matches('#settingsClose')) { closeNdraw(); }
-  else if (t.matches('#infoclose') || t.matches('#timentercanc')) { closeAll(); }
+  else if(match('#nextScram')) {
+    if (scrambleNum === 0) { scrambles.push(fscramble); }
+    scrambleNum++;
+    if (scrambleNum > scrambles.length-1) {
+      scramble();
+      scrambles.push(fscramble);
+      localStorage.setItem('scrambles', JSON.stringify(scrambles));
+    }
+    else { scrambletxt.innerHTML = scrambles[scrambleNum]; }
+    localStorage.setItem('scrambleNum', JSON.stringify(scrambleNum));
+    scramNum.textContent = scrambleNum+1;
+  }
+  else if(match('#firstScram')) {
+    if (scrambles.length) {
+      scrambleNum = 0;
+      scrambletxt.innerHTML = scrambles[scrambleNum];
+      scramNum.textContent = scrambleNum+1;
+      localStorage.setItem('scrambleNum', JSON.stringify(scrambleNum));
+    }
+  }
+  else if(match('#checkmore')) {
+    morechecked = checkmore.checked;
+    localStorage.setItem('moretoggle', JSON.stringify(morechecked));
+  }
+  else if(match('#newses')) {
+    showPop(sespopup);
+    sesname.focus();
+    shadow.style.zIndex = '7';
+    sespop = true;
+  }
+  else if(match('#sescancel')) {
+    sespopup.classList.remove('inlineBlock');
+    shadow.style.zIndex = '';
+    sespop = false;
+  }
+  else if(match('#timenter')) {
+    showPop(timenterpopup);
+    timentertoo.focus();
+    enterpop = true;
+  }
+  else if(match('#settingsIcon')) {
+    settingsSettings.forEach((e, i) => { settingsSettings[i].checked = settingsArr[i]; });
+    rcorners.id.charAt(0) === cornerStyle ? rcorners.checked = true : scorners.checked = true;
+    showPop(setpopup);
+    setpop = true;
+  }
+  else if(match('#deleteallses')) {
+    let deleteallconf = confirm('Delete all sessions?');
+    if (deleteallconf) {
+      justAll();
+      sesremoved = sessions;
+      sessionStorage.setItem('sesremoved', JSON.stringify(sesremoved));
+      sessions = [{name: 'Session 1', description: 'Default session'}];
+      session = sessions[0].name;
+      sesslc.textContent = session;  
+      localStorage.setItem('sessions', JSON.stringify(sessions));
+      localStorage.setItem('currses', JSON.stringify(session));
+      closeNdraw();
+    }
+  }
+  else if(match('#deleteses')) {
+    let deletesessionconf = confirm('Delete this session?');
+    if (deletesessionconf) {
+      justAsession();
+      sessions.find((e, i) => {
+        if (e.name === session) {
+          sesremoved.length = 0;
+          sesremoved.push(sessions.splice(i, 1)[0]);
+          sessionStorage.setItem('sesremoved', JSON.stringify(sesremoved));
+          let neyes = i-1; //switch to next available session after deleting the current one
+          let peyes = i+1;
+          if (neyes !== -1) { session = sessions[neyes].name; }
+          else if (neyes === -1 && sessions[peyes] !== undefined) { session = sessions[peyes].name; }
+          else {
+            sessions.length = 0;
+            alltimes.length = 0;
+            sessions.push({name: 'Session 1', description: 'Default session'});
+            session = sessions[0].name;
+          }
+        }
+      });
+      sesslc.textContent = session;
+      localStorage.setItem('all', JSON.stringify(alltimes));
+      localStorage.setItem('sessions', JSON.stringify(sessions));
+      localStorage.setItem('currses', JSON.stringify(session));
+      sessionStorage.setItem('removed', JSON.stringify(removed));
+      closeNdraw();
+    }
+  }
+  else if(match('#clearallses')) {
+    let firm = confirm('Do you want to clear all times?');
+    if (firm) {
+      justAll();
+      closeNdraw();
+    }
+  }
+  else if(match('#clearses')) {
+    let clearsessionconf = confirm('Clear this session?');
+    if (clearsessionconf) {
+      justAsession();
+      closeNdraw();
+    }
+  }
+  else if(match('#exportallses')) {
+    createCsv(alltimes, 'Cube Timer - all times');
+  }
+  else if(match('#exportses')) {
+    createCsv(displaytimes, session);
+  }
+  else if(match('#sesopt')) {
+    showPop(sesoptpopup);
+    changesesname.value = session;
+    sessions.find(e => {
+      if (e.name === session) {
+        tempcrip = e;
+      }
+    });
+    seesescrip.value = tempcrip.description;
+  }
+  else if(match('#dothenter')) {
+    if (timentertoo.value !== '' && checkTime(timentertoo.value) !== undefined) {
+      alltimes.push({number: '', time: checkTime(timentertoo.value), ao5: '', ao12: '', cube: cubenter.value, session: session, scramble: scramenter.value, date: datenter.value, comment: commenter.value, dnf: false, plustwo: false});
+      enterArr.forEach(e => { e.value = null; });
+      closeNdraw();
+    }
+    else {alert("I don't recognize that time.");}
+  }
+  else if(match('#inmore')) {
+    morepop ? morepopup.classList.remove('inlineBlock') : morepopup.classList.add('inlineBlock');
+    morepop = morepop ? false : true;
+  }
+  else if(match('#saveses')) {
+    if (changesesname.value === session) {
+      let sesidx = sessions.indexOf(tempcrip);
+      sessions[sesidx].description = seesescrip.value;
+      localStorage.setItem('sessions', JSON.stringify(sessions));
+      closeNdraw();
+    }
+    else if (checkSession(changesesname.value, sameAlertAgain)) {
+      alltimes.forEach(e => {
+        if (e.session === session) {
+          e.session = changesesname.value;
+        }
+      });
+      sessions.find(e => {
+        if (e.name === session) {
+          e.name = changesesname.value;
+          e.description = seesescrip.value;
+          sesslc.textContent = changesesname.value;
+          localStorage.setItem('sessions', JSON.stringify(sessions));
+        }
+      });
+      for (let i = 0; i < sesselect.length; i++) {
+        if (sesselect[i] === session) {
+          sesselect[i].textContent = changesesname.value;
+        }
+      }
+      session = changesesname.value;
+      localStorage.setItem('currses', JSON.stringify(session));
+      closeNdraw();
+    }
+  }
+  else if(match('#lighticon')) {runmode(true);}
+  else if(match('#sescreate')) { newSession(); }
+  else if(match('#infobtn')) { showPop(infopopup); }
+  else if(match('#outicon') || match('#inicon')) { timesInOut(); }
+  else if(match('#rcorners') || match('#scorners')) { changeCorners(); }
+  else if(match('#timeclose') || match('#settingsClose')) { closeNdraw(); }
+  else if(match('#infoclose') || match('#timentercanc')) { closeAll(); }
+  dropDown(e, cubeButton, cubeDrop);
+  dropDown(e, inspectButton, inspectDrop);
+  dropDown(e, delayButton, delayDrop);
+  dropDown(e, sesslc, sesdrop);
 }, false);
+
+document.addEventListener('mousedown', closeModal, false);
+
+window.addEventListener('keydown', e => {
+  let key = e.keyCode;
+  if (key === 32) { down(); } //space
+  if (key === 27) { closeAll(); } //esc
+  if (key === 90 && e.ctrlKey && !popup) { undo(); } //z
+  if (key === 13) { //enter
+    if (sespop) { newSession(); }
+    else if (enterpop && timentertoo.value !== '') { closeNdraw(); }
+  }
+  //2 and d
+  if (key === 50 && timepop && !morepop) { allthistime.plustwo = allthistime.plustwo ? false : true; closeNdraw();}
+  if (key === 68 && timepop && !morepop) { allthistime.dnf = allthistime.dnf ? false : true; closeNdraw();}
+}, false);
+
+window.addEventListener('keyup', e => {
+  if (e.keyCode === 32) { up(); }
+}, false);
+
+document.addEventListener('touchstart', e => {
+  if (match(e, '#touch #time #insptime #onlytime')) { touchdown(e); }
+  else if(e.target.closest('#timebody')) { touchMoved = false; }
+  closeModal(e);
+}, {passive: false, useCapture: false});
+
+document.addEventListener('touchend', e => {
+  closing = false;
+  if (match(e, '#touch #time #insptime #onlytime')) { up(); }
+  else if(e.target.closest('#timebody')) { timeClicks(e); }
+}, {passive: false, useCapture: false});
+
+timebody.addEventListener('touchmove', () => {touchMoved = true;}, {passive: true});
+
+scrambletxt.addEventListener('transitionend', () => {if(!timein) {scrambletxt.style.left = '';}}, false);
 
 //Just a random move scrambler.
 function checknxn(moveset) { //for nxnxn cubes
@@ -624,7 +818,7 @@ function checksqu() {//probably doesn't work. I don't know what moves aren't all
   else {tscramble.push( `(${onerand},${tworand})` )}
 }
 
-function checkclo() {
+function checkclo() { //clock
   addfour(clocksl4, 0, false);
   clocks.forEach(e => {
     let clockrand = Math.round((Math.random()*11)-5);
@@ -634,7 +828,7 @@ function checkclo() {
   });
 }
 
-function scramble() {
+function scramble() { //do the scrambles
   tscramble.length = 0;
   do { scramblers[cube](); }
   while (tscramble.length < slen)
@@ -643,28 +837,6 @@ function scramble() {
   scrambletxt.innerHTML = fscramble;
   localStorage.setItem('scramble', JSON.stringify(fscramble));
 }
-
-nextScram.addEventListener('click', () => {
-  if (scrambleNum === 0) { scrambles.push(fscramble); }
-  scrambleNum++;
-  if (scrambleNum > scrambles.length-1) {
-    scramble();
-    scrambles.push(fscramble);
-    localStorage.setItem('scrambles', JSON.stringify(scrambles));
-  }
-  else { scrambletxt.innerHTML = scrambles[scrambleNum]; }
-  localStorage.setItem('scrambleNum', JSON.stringify(scrambleNum));
-  scramNum.textContent = scrambleNum+1;
-}, false);
-
-firstScram.addEventListener('click', () => {
-  if (scrambles.length) {
-    scrambleNum = 0;
-    scrambletxt.innerHTML = scrambles[scrambleNum];
-    scramNum.textContent = scrambleNum+1;
-    localStorage.setItem('scrambleNum', JSON.stringify(scrambleNum));
-  }
-}, false);
 
 function average(startpoint, leng) {
   let sum;
@@ -692,8 +864,7 @@ function average(startpoint, leng) {
   return isNaN(avg) ? '' : toMinutes(avg);
 }
 
-//display inspection countdown, as well as 8s, 12s, +2, and DNF by timeout
-function toMinutes(time) {
+function toMinutes(time) { //seconds to colon format
   if (time < 60) {
     return time.toFixed(2);
   }
@@ -708,6 +879,7 @@ function toMinutes(time) {
   else { return "You're slow"; }
 }
 
+//display inspection countdown, as well as 8s, 12s, +2, and DNF by timeout
 function inspection() {
   itimer = new Date();
   displayctdn = countdown[Math.trunc((itimer-istart)/1000)];
@@ -743,7 +915,7 @@ function inspection() {
   }
 }
 
-function stopwatch() {
+function stopwatch() { //counts time
   timer = new Date();
   counter = (Math.trunc((timer - start)/10)/100);
   thetime = toMinutes(counter).toString().slice(0, -1);
@@ -811,7 +983,7 @@ function down() {
   }
 }
   
-function up () {
+function up() {
   time.classList.remove('red', 'green', 'cyan', 'magenta');
   insptime.classList.remove('orange');
   if (!popup && !dnf) {
@@ -847,7 +1019,7 @@ function up () {
   }
 }
 
-function touchdown(e) {
+function touchdown(e) { //preventDefault for touch, and play sounds for later
   e.preventDefault();
   closeAll();
   if (forAutoplay && isMobile) { //pre-play sounds so they actually play when needed
@@ -860,7 +1032,7 @@ function touchdown(e) {
   down();
 }
 
-function undo() {
+function undo() { //undo the last-done deletion
   let msg = 'Nothing to undo';
   removed = gotem('removed', [], sessionStorage);
   sesremoved = gotem('sesremoved', [], sessionStorage);
@@ -897,35 +1069,7 @@ function undo() {
   draw();
 }
 
-window.addEventListener('keydown', e => {
-  let key = e.keyCode;
-  if (key === 32) { down(); } //space
-  if (key === 27) { closeAll(); } //esc
-  if (key === 90 && e.ctrlKey && !popup) { undo(); } //z
-  if (key === 13) { //enter
-    if (sespop) { newSession(); }
-    else if (enterpop && timentertoo.value !== '') { closeNdraw(); }
-  }
-  //2 and d
-  if (key === 50 && timepop && !morepop) { allthistime.plustwo = allthistime.plustwo ? false : true; closeNdraw();}
-  if (key === 68 && timepop && !morepop) { allthistime.dnf = allthistime.dnf ? false : true; closeNdraw();}
-}, false);
-
-window.addEventListener('keyup', e => {
-  if (e.keyCode === 32) { up(); }
-}, false);
-
-touch.addEventListener('touchstart', touchdown, false);
-centerac.addEventListener('touchstart', touchdown, false);
-onlytime.addEventListener('touchstart', touchdown, false);
-
-touch.addEventListener('touchend', up, false);
-centerac.addEventListener('touchend', up, false);
-onlytime.addEventListener('touchend', up, false);
-
-//dark/light mode
-lighticon.addEventListener('click', runmode, false);
-function runmode(notstart) { // switch modes, and open in saved mode
+function runmode(notstart) { // switch d/l mode
   if (notstart) {
     lmode = lmode ? false : true;
     localStorage.setItem('mode', JSON.stringify(lmode));
@@ -933,17 +1077,12 @@ function runmode(notstart) { // switch modes, and open in saved mode
   document.body.setAttribute('lmode', lmode);
 }
 
-//corner style
-function changeCorners(e, forStart) {
+function changeCorners(e, forStart) { //corner style
   cornerStyle = e ? e.target.id.charAt(0) : forStart;
   whichStyle = cornerStyle === 'r' ? true : false;
   document.body.setAttribute('round', whichStyle);
   localStorage.setItem('cornerStyle', JSON.stringify(cornerStyle));
 }
-
-rcorners.addEventListener('click', changeCorners, false);
-scorners.addEventListener('click', changeCorners, false);
-
 
 function closeAll() { //close everything
   cubeDrop.classList.remove('block');
@@ -977,29 +1116,7 @@ function closeAll() { //close everything
   popup = false;
 }
 
-infobtn.addEventListener('click', () => { showPop(infopopup); }, false);
-
-checkmore.addEventListener('click', () => {
-  morechecked = checkmore.checked;
-  localStorage.setItem('moretoggle', JSON.stringify(morechecked));
-}, false);
-
-//open the new session popup
-newses.addEventListener('click', () => {
-  showPop(sespopup);
-  sesname.focus();
-  shadow.style.zIndex = '7';
-  sespop = true;
-}, false);
-
-//close the new session popup
-sescancel.addEventListener('click', () => {
-  sespopup.classList.remove('inlineBlock');
-  shadow.style.zIndex = '';
-  sespop = false;
-}, false);
-
-function checkSession(name, alertElement) {
+function checkSession(name, alertElement) { //check for duplicate names
   for (let i in sessions) {
     if (name === sessions[i].name) {
       alertElement.textContent = "You've already used that name.";
@@ -1010,7 +1127,7 @@ function checkSession(name, alertElement) {
   return true;
 }
 
-function newSession() {
+function newSession() { //create a new session
   if (sesname.value !== '' && checkSession(sesname.value, sameAlert)) {
     sessions.push({name: sesname.value, description: sescrip.value});
     localStorage.setItem('sessions', JSON.stringify(sessions));
@@ -1022,8 +1139,6 @@ function newSession() {
     closeNdraw();
   }
 }
-
-sescreate.addEventListener('click', newSession, false);
 
 function justAsession() { //get just the current session
   let sesremoves = [];
@@ -1065,7 +1180,7 @@ function createArray(array) { //create array of arrays from array of objects, wi
   return returnarray;
 }
 
-function createCsv(array, name) {
+function createCsv(array, name) { //create csv file from 2d array
   let makeIntoArray = createArray(array);
   let csvFile = 'data:text/csv;charset=utf-8,';
   makeIntoArray.forEach(e => {
@@ -1081,115 +1196,7 @@ function createCsv(array, name) {
   closeAll();
 }
 
-deleteallses.addEventListener('click', () => {
-  let deleteallconf = confirm('Delete all sessions?');
-  if (deleteallconf) {
-    justAll();
-    sesremoved = sessions;
-    sessionStorage.setItem('sesremoved', JSON.stringify(sesremoved));
-    sessions = [{name: 'Session 1', description: 'Default session'}];
-    session = sessions[0].name;
-    sesslc.textContent = session;  
-    localStorage.setItem('sessions', JSON.stringify(sessions));
-    localStorage.setItem('currses', JSON.stringify(session));
-    closeNdraw();
-  }
-}, false);
-
-deleteses.addEventListener('click', () => {
-  let deletesessionconf = confirm('Delete this session?');
-  if (deletesessionconf) {
-    justAsession();
-    sessions.find((e, i) => {
-      if (e.name === session) {
-        sesremoved.length = 0;
-        sesremoved.push(sessions.splice(i, 1)[0]);
-        sessionStorage.setItem('sesremoved', JSON.stringify(sesremoved));
-        let neyes = i-1; //switch to next available session after deleting the current one
-        let peyes = i+1;
-        if (neyes !== -1) { session = sessions[neyes].name; }
-        else if (neyes === -1 && sessions[peyes] !== undefined) { session = sessions[peyes].name; }
-        else {
-          sessions.length = 0;
-          alltimes.length = 0;
-          sessions.push({name: 'Session 1', description: 'Default session'});
-          session = sessions[0].name;
-        }
-      }
-    });
-    sesslc.textContent = session;
-    localStorage.setItem('all', JSON.stringify(alltimes));
-    localStorage.setItem('sessions', JSON.stringify(sessions));
-    localStorage.setItem('currses', JSON.stringify(session));
-    sessionStorage.setItem('removed', JSON.stringify(removed));
-    closeNdraw();
-  }
-}, false);
-
-clearallses.addEventListener('click', () => {
-  let firm = confirm('Do you want to clear all times?');
-  if (firm) {
-    justAll();
-    closeNdraw();
-  }
-}, false);
-
-clearses.addEventListener('click', () => {
-  let clearsessionconf = confirm('Clear this session?');
-  if (clearsessionconf) {
-    justAsession();
-    closeNdraw();
-  }
-}, false);
-
-exportallses.addEventListener('click', () => { createCsv(alltimes, 'Cube Timer - all times'); }, false);
-
-exportses.addEventListener('click', () => { createCsv(displaytimes, session); }, false);
-
-sesopt.addEventListener('click', () => {
-  showPop(sesoptpopup);
-  changesesname.value = session;
-  sessions.find(e => {
-    if (e.name === session) {
-      tempcrip = e;
-    }
-  });
-  seesescrip.value = tempcrip.description;
-}, false);
-
-saveses.addEventListener('click', () => {
-  if (changesesname.value === session) {
-    let sesidx = sessions.indexOf(tempcrip);
-    sessions[sesidx].description = seesescrip.value;
-    localStorage.setItem('sessions', JSON.stringify(sessions));
-    closeNdraw();
-  }
-  else if (checkSession(changesesname.value, sameAlertAgain)) {
-    alltimes.forEach(e => {
-      if (e.session === session) {
-        e.session = changesesname.value;
-      }
-    });
-    sessions.find(e => {
-      if (e.name === session) {
-        e.name = changesesname.value;
-        e.description = seesescrip.value;
-        sesslc.textContent = changesesname.value;
-        localStorage.setItem('sessions', JSON.stringify(sessions));
-      }
-    });
-    for (let i = 0; i < sesselect.length; i++) {
-      if (sesselect[i] === session) {
-        sesselect[i].textContent = changesesname.value;
-      }
-    }
-    session = changesesname.value;
-    localStorage.setItem('currses', JSON.stringify(session));
-    closeNdraw();
-  }
-}, false);
-
-function timesInOut(e, swtch=true) {
+function timesInOut(swtch=true) { //move the time table in and out, and associated transitions
   if (timein === swtch) {
     timetable.classList.remove('transXsixty');
     sessionsdiv.classList.remove('transXhundred');
@@ -1227,35 +1234,9 @@ function timesInOut(e, swtch=true) {
   }
 }
 
-inicon.addEventListener('click', timesInOut, false);
-outicon.addEventListener('click', timesInOut, false);
-scrambletxt.addEventListener('transitionend', () => {if(!timein) {scrambletxt.style.left = '';}}, false);
-
-settingsIcon.addEventListener('click', () => {
-  settingsSettings.forEach((e, i) => { settingsSettings[i].checked = settingsArr[i]; });
-  rcorners.id.charAt(0) === cornerStyle ? rcorners.checked = true : scorners.checked = true;
-  showPop(setpopup);
-  setpop = true;
-}, false);
-
-timenter.addEventListener('click', () => {
-  showPop(timenterpopup);
-  timentertoo.focus();
-  enterpop = true;
-}, false);
-
-function checkTime(time) {
+function checkTime(time) { //check if a time is valid, and return it in seconds
   let colonCount = time.split(':');
   if (time < 60) { return parseFloat(time); }
   else if (colonCount.length === 2) { return (parseInt(colonCount[0])*60 + parseFloat(colonCount[1])); }
   else { return undefined; }
 }
-
-dothenter.addEventListener('click', () => {
-  if (timentertoo.value !== '' && checkTime(timentertoo.value) !== undefined) {
-    alltimes.push({number: '', time: checkTime(timentertoo.value), ao5: '', ao12: '', cube: cubenter.value, session: session, scramble: scramenter.value, date: datenter.value, comment: commenter.value, dnf: false, plustwo: false});
-    enterArr.forEach(e => { e.value = null; });
-    closeNdraw();
-  }
-  else {alert("I don't recognize that time.");}
-}, false);
