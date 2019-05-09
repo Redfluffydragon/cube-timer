@@ -2,7 +2,6 @@ if (navigator.serviceWorker) {
   navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
 }
 
-let ctrl;
 let removed = [];
 let sesremoved = [];
 
@@ -900,21 +899,20 @@ function undo() {
 
 window.addEventListener('keydown', e => {
   let key = e.keyCode;
-  if (key === 32) { down(); }
-  if (key === 27) { closeAll(); }
-  if (key === 17) {ctrl = true;}
-  if (key === 90 && ctrl && !timepop && !sespop && !enterpop && !popup) { undo(); }
-  if (key === 13) {
+  if (key === 32) { down(); } //space
+  if (key === 27) { closeAll(); } //esc
+  if (key === 90 && e.ctrlKey && !popup) { undo(); } //z
+  if (key === 13) { //enter
     if (sespop) { newSession(); }
     else if (enterpop && timentertoo.value !== '') { closeNdraw(); }
   }
+  //2 and d
   if (key === 50 && timepop && !morepop) { allthistime.plustwo = allthistime.plustwo ? false : true; closeNdraw();}
   if (key === 68 && timepop && !morepop) { allthistime.dnf = allthistime.dnf ? false : true; closeNdraw();}
 }, false);
 
 window.addEventListener('keyup', e => {
   if (e.keyCode === 32) { up(); }
-  if (e.keyCode=== 17) {ctrl = false;}
 }, false);
 
 touch.addEventListener('touchstart', touchdown, false);
