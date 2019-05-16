@@ -213,8 +213,8 @@ const standalone = window.matchMedia('(display-mode: standalone)').matches;
 //wrapper for getting stuff from localStorage
 function gotem(item, defalt, type=localStorage) {
   let getthething = JSON.parse(type.getItem(item));
-  if (getthething === null || getthething === undefined) { return defalt; }
-  else { return getthething; }
+  if (getthething === null || getthething === undefined) return defalt; 
+  return getthething;
 };
 
 function colorIndicator(array, value) { //mark selection in dropdowns
@@ -381,19 +381,19 @@ function timeClicks(e) {
     seescramble.innerHTML = allthistime.scramble;
     seedate.textContent = allthistime.date;
     seecube.textContent =  allthistime.cube;
-    if (allthistime.comment !== undefined) { comment.value = allthistime.comment; }
+    if (allthistime.comment !== undefined) comment.value = allthistime.comment;
   }
 }
 
 function closeModal(e) { //close modals
   if (e.target.closest('.popup')) return;
-  if (popup) { closing = true; closeNdraw(); }
+  if (popup) closing = true; closeNdraw();
 }
 
 function bestworst(array) { //get the best and worst times, not indluding dnfs
   justTimes.length = 0;
   array.forEach(e => {
-    if (e.time) { justTimes.push(e.time); }
+    if (e.time) justTimes.push(e.time);
   })
   let worstTime = Math.max(...justTimes);
   let bestTime = Math.min(...justTimes);
@@ -537,7 +537,7 @@ document.addEventListener('click', e => {
     return;
   }
   else if(match('#nextScram')) {
-    if (scrambleNum === 0) { scrambles.push(fscramble); }
+    if (scrambleNum === 0) scrambles.push(fscramble);
     scrambleNum++;
     if (scrambleNum > scrambles.length-1) {
       scramble();
@@ -607,8 +607,8 @@ document.addEventListener('click', e => {
           sessionStorage.setItem('sesremoved', JSON.stringify(sesremoved));
           let neyes = i-1; //switch to next available session after deleting the current one
           let peyes = i+1;
-          if (neyes !== -1) { session = sessions[neyes].name; }
-          else if (neyes === -1 && sessions[peyes] !== undefined) { session = sessions[peyes].name; }
+          if (neyes !== -1) session = sessions[neyes].name; 
+          else if (neyes === -1 && sessions[peyes] !== undefined) session = sessions[peyes].name;
           else {
             sessions.length = 0;
             alltimes.length = 0;
@@ -699,12 +699,12 @@ document.addEventListener('click', e => {
     }
   }
   else if(match('#lighticon')) {runmode(true);}
-  else if(match('#sescreate')) { newSession(); }
-  else if(match('#infobtn')) { showPop(infopopup); }
-  else if(match('#outicon') || match('#inicon')) { timesInOut(); }
-  else if(match('#rcorners') || match('#scorners')) { changeCorners(); }
-  else if(match('#timeclose') || match('#settingsClose')) { closeNdraw(); }
-  else if(match('#infoclose') || match('#timentercanc')) { closeAll(); }
+  else if(match('#sescreate')) newSession();
+  else if(match('#infobtn')) showPop(infopopup);
+  else if(match('#outicon') || match('#inicon')) timesInOut();
+  else if(match('#rcorners') || match('#scorners')) changeCorners();
+  else if(match('#timeclose') || match('#settingsClose')) closeNdraw();
+  else if(match('#infoclose') || match('#timentercanc')) closeAll();
   dropDown(e, cubeButton, cubeDrop);
   dropDown(e, inspectButton, inspectDrop);
   dropDown(e, delayButton, delayDrop);
@@ -715,12 +715,12 @@ document.addEventListener('mousedown', closeModal, false);
 
 window.addEventListener('keydown', e => {
   let key = e.keyCode;
-  if (key === 32) { down(); } //space
-  if (key === 27) { closeAll(); } //esc
-  if (key === 90 && e.ctrlKey && !popup) { undo(); } //z
+  if (key === 32) down(); //space
+  if (key === 27) closeAll(); //esc
+  if (key === 90 && e.ctrlKey && !popup) undo(); //z
   if (key === 13) { //enter
-    if (sespop) { newSession(); }
-    else if (enterpop && timentertoo.value !== '') { closeNdraw(); }
+    if (sespop) newSession();
+    else if (enterpop && timentertoo.value !== '') closeNdraw();
   }
   //2 and d
   if (key === 50 && timepop && !morepop) { allthistime.plustwo = allthistime.plustwo ? false : true; closeNdraw();}
@@ -728,19 +728,19 @@ window.addEventListener('keydown', e => {
 }, false);
 
 window.addEventListener('keyup', e => {
-  if (e.keyCode === 32) { up(); }
+  if (e.keyCode === 32) up();
 }, false);
 
 document.addEventListener('touchstart', e => {
-  if (match(e, '#touch #time #insptime #onlytime')) { touchdown(e); }
-  else if(e.target.closest('#timebody')) { touchMoved = false; }
+  if (match(e, '#touch #time #insptime #onlytime')) touchdown(e);
+  else if(e.target.closest('#timebody')) touchMoved = false;
   closeModal(e);
 }, {passive: false, useCapture: false});
 
 document.addEventListener('touchend', e => {
   closing = false;
-  if (match(e, '#touch #time #insptime #onlytime')) { up(); }
-  else if(e.target.closest('#timebody')) { timeClicks(e); }
+  if (match(e, '#touch #time #insptime #onlytime')) up();
+  else if(e.target.closest('#timebody')) timeClicks(e);
 }, {passive: false, useCapture: false});
 
 timebody.addEventListener('touchmove', () => {touchMoved = true;}, {passive: true});
@@ -769,9 +769,9 @@ function checkpyr1() { // turn the big corners for pyraminx
   pmove = tscramble[0];
   let charonet = tempmove.charAt(0);
   let charonep;
-  if (pmove !== undefined) { charonep = pmove.charAt(0); }
-  if (charonet === charonep) { return; }
-  else { tscramble.unshift(tempmove); }
+  if (pmove !== undefined) charonep = pmove.charAt(0);
+  if (charonet === charonep) return;
+  else tscramble.unshift(tempmove);
 }
 
 function addfour(moveset, chancemod=.1, apostrophe=true) { //add up to four moves at the end (pyra and clock)
@@ -779,7 +779,7 @@ function addfour(moveset, chancemod=.1, apostrophe=true) { //add up to four move
     let pointyn = Math.round(Math.random()+chancemod);
     if (pointyn) {
       let pointdir = Math.round(Math.random());
-      if (pointdir || !apostrophe) { tscramble.unshift(moveset[i]); }
+      if (pointdir || !apostrophe) tscramble.unshift(moveset[i]);
       else { tscramble.unshift(moveset[i] + "'"); }
     }
   }
@@ -787,7 +787,7 @@ function addfour(moveset, chancemod=.1, apostrophe=true) { //add up to four move
 
 function checkpyrall() { //combine pyraminx scramble bits
   addfour(pyrpmoves);
-  while (tscramble.length < 10) { checkpyr1(); }
+  while (tscramble.length < 10) checkpyr1();
 }
 
 function checkmeg() { //megaminx
@@ -848,7 +848,7 @@ function average(startpoint, leng) {
     }
   }
 
-  avgAll.forEach((e, i) => { if (e === 0) { avgAll.splice(i, 1); }}); //get rid of DNFs
+  avgAll.forEach((e, i) => { if (e === 0) avgAll.splice(i, 1); }); //get rid of DNFs
 
   let maxindex = avgAll.indexOf(Math.max(...avgAll));
   avgAll.splice(maxindex, 1);
@@ -979,7 +979,7 @@ function down() {
       else { time.classList.add(lmode ? 'green' : 'magenta'); }
       onstart = true;
     }
-    else if(started) { fin(); }
+    else if(started) fin();
   }
 }
   
@@ -996,14 +996,14 @@ function up() {
         inspecting = true;
         time.classList.add('none');
         insptime.classList.remove('none');
-        if (settingsArr[4]) { onlytime.classList.add('initial'); } //check for hide all or not
+        if (settingsArr[4]) onlytime.classList.add('initial'); //check for hide all or not
         istart = new Date();
         inspectstart = setInterval(inspection, 10);
       }
       if ((!inspectTime && waiting) || waiting) { //go! (start the stopwatch)
         start = new Date();
         intstart = setInterval(stopwatch, 10); //actually start the stopwatch
-        if (settingsArr[4]) { onlytime.classList.add('initial'); }
+        if (settingsArr[4]) onlytime.classList.add('initial');
         insptime.classList.add('none');
         time.classList.remove('none');
         time.classList.add('zfour');
@@ -1015,7 +1015,7 @@ function up() {
         started = true;
       }
     }
-    else if (keydown) { keydown = false; }
+    else if (keydown) keydown = false;
   }
 }
 
@@ -1143,7 +1143,7 @@ function newSession() { //create a new session
 function justAsession() { //get just the current session
   let sesremoves = [];
   alltimes.forEach(e => { //get the times
-    if (e.session === session) { sesremoves.push(e); }
+    if (e.session === session) sesremoves.push(e);
   });
   sesremoves.forEach(e => { //then remove them
     let rmvidx = alltimes.indexOf(e);
@@ -1236,7 +1236,7 @@ function timesInOut(swtch=true) { //move the time table in and out, and associat
 
 function checkTime(time) { //check if a time is valid, and return it in seconds
   let colonCount = time.split(':');
-  if (time < 60) { return parseFloat(time); }
-  else if (colonCount.length === 2) { return (parseInt(colonCount[0])*60 + parseFloat(colonCount[1])); }
-  else { return undefined; }
+  if (time < 60) return parseFloat(time);
+  else if (colonCount.length === 2) return (parseInt(colonCount[0])*60 + parseFloat(colonCount[1]));
+  else return undefined;
 }
