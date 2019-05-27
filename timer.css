@@ -796,7 +796,7 @@ body[round = true] #timetable td, #inicon, #outicon {
 body[round = true] .popup, input, textarea {
   border-radius: 5px;
 }
-body[round = true] button, .rdropcontent, .pointer {
+body[round = true] button, .rdropcontent, .pointer, .dropupcontent {
   border-radius: 4px;
 }
 body[round = true] .top {

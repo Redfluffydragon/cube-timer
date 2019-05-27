@@ -129,7 +129,6 @@ const delayDrop = document.getElementById('delayDrop');
 const delaytime = document.getElementsByClassName('delaytime');
 
 const settings = document.getElementById('settings');
-const hsSpot = document.getElementById('hsSpot');
 
 //timetable
 const timebody = document.getElementById('timebody');
@@ -198,7 +197,6 @@ const showSettings = document.getElementById('showSettings');
 const showBW = document.getElementById('showBW');
 const BWSesAll = document.getElementById('BWSesAll');
 const hideThings = document.getElementById('hideThings');
-const popSpot = document.getElementById('popSpot');
 const settingsSettings = [countAnnounce, showSettings, showBW, BWSesAll, hideThings, showMScram];
 
 const everything = document.getElementById('everything');
@@ -210,7 +208,7 @@ const scorners = document.getElementById('scorners');
 const isMobile = (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1);
 const standalone = window.matchMedia('(display-mode: standalone)').matches;
 
-//wrapper for getting stuff from localStorage
+//little wrapper for getting stuff from localStorage
 function gotem(item, defalt, type=localStorage) {
   let getthething = JSON.parse(type.getItem(item));
   if (getthething === null || getthething === undefined) return defalt; 
@@ -240,7 +238,7 @@ let alltimes = gotem('all', []);
 let moddedTimes = gotem('modded', []);
 
 let sessions = gotem('sessions', [{name: 'Session 1', description: 'Default session'}]);
-    sessions.forEach(e => { sesnames.push(e.name); });
+    sessions.forEach(e => sesnames.push(e.name));
 
 let session = gotem('currses', sessions[0].name);
 
@@ -296,7 +294,7 @@ function draw() { //to redraw things after modifying
   
   //clear the table
   timebody.innerHTML = '';
-  cellArrs.forEach(e => { e.length = 0; });
+  cellArrs.forEach(e =>  e.length = 0);
   displaytimes.forEach((e, i) => {
     createTableRow();
     e.number = i+1;
@@ -317,9 +315,9 @@ function draw() { //to redraw things after modifying
   });
 
   //apply settings
-  let whichSpot = settingsArr[1] ? hsSpot : popSpot;
-  whichSpot.appendChild(inspectSet);
-  whichSpot.appendChild(delaySet);
+  const whichSpot = settingsArr[1] ? document.getElementById('hsSpot') : document.getElementById('popSpot');
+  // whichSpot.appendChild(inspectSet);
+  // whichSpot.appendChild(delaySet);
   settingsArr[2] ? BWdiv.classList.remove('none') : BWdiv.classList.add('none');
   bestworst(settingsArr[3] ? displaytimes : alltimes);
   settingsArr[5] ? multiScram.classList.remove('none'): multiScram.classList.add('none');
@@ -387,7 +385,10 @@ function timeClicks(e) {
 
 function closeModal(e) { //close modals
   if (e.target.closest('.popup')) return;
-  if (popup) closing = true; closeNdraw();
+  if (popup) {
+    closing = true;
+    closeNdraw();
+  }
 }
 
 function bestworst(array) { //get the best and worst times, not indluding dnfs
@@ -433,14 +434,6 @@ function inspColor() { //mark inspection dropdown
   inspectTime ? inspectnone.classList.remove('oneforty') : inspectnone.classList.add('oneforty');
 }
 
-function dropDown (e, button, content) { //toggle dropdowns 
-  if (e.target === button) {
-    content.classList.toggle('block');
-    return;
-  }
-  content.classList.remove('block');
-}
-
 function match(e, t) { //outside match function, with multiple inputs
   let many = t.split(' ');
   for (let i in many) {
@@ -451,8 +444,13 @@ function match(e, t) { //outside match function, with multiple inputs
   return false
 }
 
+function dropDown (button, content, e) { //toggle dropdowns 
+  e.target === button ? content.classList.toggle('block') : content.classList.remove('block');
+  console.log(content.classList);
+}
+
 //event listeners
-document.addEventListener('click', e => {
+document.documentElement.addEventListener('click', e => {
   const match = t => e.target.matches(t);
   closing = false;
   if (e.target.closest('#timebody')) {
@@ -698,17 +696,18 @@ document.addEventListener('click', e => {
       closeNdraw();
     }
   }
-  else if(match('#lighticon')) {runmode(true);}
+  else if(match('#lighticon')) runmode(true);
   else if(match('#sescreate')) newSession();
   else if(match('#infobtn')) showPop(infopopup);
   else if(match('#outicon') || match('#inicon')) timesInOut();
   else if(match('#rcorners') || match('#scorners')) changeCorners();
   else if(match('#timeclose') || match('#settingsClose')) closeNdraw();
   else if(match('#infoclose') || match('#timentercanc')) closeAll();
-  dropDown(e, cubeButton, cubeDrop);
-  dropDown(e, inspectButton, inspectDrop);
-  dropDown(e, delayButton, delayDrop);
-  dropDown(e, sesslc, sesdrop);
+  //have to call all of them all the time for clicks outside, I think
+  dropDown(cubeButton, cubeDrop, e);
+  dropDown(inspectButton, inspectDrop, e);
+  dropDown(delayButton, delayDrop, e);
+  dropDown(sesslc, sesdrop, e);
 }, false);
 
 document.addEventListener('mousedown', closeModal, false);
@@ -722,7 +721,7 @@ window.addEventListener('keydown', e => {
     if (sespop) newSession();
     else if (enterpop && timentertoo.value !== '') closeNdraw();
   }
-  //2 and d
+  //2 and d, for +2 and DNF (only while timedit modal is open)
   if (key === 50 && timepop && !morepop) { allthistime.plustwo = allthistime.plustwo ? false : true; closeNdraw();}
   if (key === 68 && timepop && !morepop) { allthistime.dnf = allthistime.dnf ? false : true; closeNdraw();}
 }, false);
@@ -1085,11 +1084,6 @@ function changeCorners(e, forStart) { //corner style
 }
 
 function closeAll() { //close everything
-  cubeDrop.classList.remove('block');
-  inspectDrop.classList.remove('block');
-  delayDrop.classList.remove('block');
-  sesdrop.classList.remove('block');
-
   for (let i = 0; i < popups.length; i++) {
     popups[i].classList.remove('inlineBlock');
   }
@@ -1164,30 +1158,29 @@ function justAll() { //get everything
 function createArray(array) { //create array of arrays from array of objects, with headers from keys 
   let returnarray = [];
   let columnNames = [];
+   //get the keys from the first element in the array (this assumes the keys are the same for all the elements in the array)
   let getKeys = Object.keys(array[0]);
-  getKeys.forEach(e => {
+  getKeys.forEach(e => { //capitalize the keys, for column titles
     let titleCase = e.charAt(0).toUpperCase() + e.slice(1);
     columnNames.push(titleCase);
   });
   returnarray.push(columnNames);
-  array.forEach(e => {;
-    let temparray = [];
-    getKeys.forEach(e2 => {
-      temparray.push('"'+e[e2].toString()+'"');
-    });
-    returnarray.push(temparray);
+  array.forEach(e => { //for each element in the array
+    let temparray = []; //initialize a temporary array (I'm not sure why it has to be initialized here, but it does)
+    //push the value from each key in the current element to the temporary array
+    getKeys.forEach(e2 => temparray.push('"'+e[e2].toString()+'"') );
+    returnarray.push(temparray); //push the temporary array to the final array
   });
   return returnarray;
 }
 
 function createCsv(array, name) { //create csv file from 2d array
-  let makeIntoArray = createArray(array);
+  let makeIntoArray = createArray(array); //get 2d array from array of objects
   let csvFile = 'data:text/csv;charset=utf-8,';
-  makeIntoArray.forEach(e => {
-    csvFile += e + '\n';
-  });
+  //concatenate each smaller array onto the csv file, andnadd a newline after each
+  makeIntoArray.forEach(e => csvFile += e + '\n' );
   let encoded = encodeURI(csvFile);
-  let linkDownload = document.createElement('a');
+  let linkDownload = document.createElement('a'); //create a download link, and simulate a click on it
   linkDownload.setAttribute('href', encoded);
   linkDownload.setAttribute('download', name+'.csv');
   document.body.appendChild(linkDownload);
@@ -1205,11 +1198,11 @@ function timesInOut(swtch=true) { //move the time table in and out, and associat
     scrambletxt.style.width = '';
     if (!isMobile) {
       requestAnimationFrame(() => {
-        scrambletxt.style.left = '';
-        let scLOffset = scrambletxt.offsetLeft;
-        scrambletxt.style.left = '5vw';
+        scrambletxt.style.left = ''; //set it to the original position
+        let scLOffset = scrambletxt.offsetLeft; //to get offsetLeft in pixels from it
+        scrambletxt.style.left = '5vw'; //put back to the leftmost position
         requestAnimationFrame(() => {
-          scrambletxt.style.left = scLOffset+'px';
+          scrambletxt.style.left = scLOffset+'px'; //transition it back to the original position
         });
       });
     }
@@ -1222,7 +1215,7 @@ function timesInOut(swtch=true) { //move the time table in and out, and associat
     settings.style.width = '90vw';
     scrambletxt.style.width = '90vw';
     requestAnimationFrame(() => {
-      scrambletxt.style.left = scrambletxt.offsetLeft+'px';
+      scrambletxt.style.left = scrambletxt.offsetLeft+'px'; //set it to its own position, but in px, so it transitions
       requestAnimationFrame(() => {
         scrambletxt.style.left = '5vw';
       });
