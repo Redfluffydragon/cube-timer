@@ -58,28 +58,28 @@ const moves6 = [];
 const pyrsmoves = [];
 
 for (let i = 0; i < faces.length*mods.length; i++) {
-  moves3.push(faces[Math.trunc(i/3)]+mods[i%3]);
-  moves4.push(faces[Math.trunc(i/3)]+'w'+mods[i%3]);
-  moves6.push('3'+faces[Math.trunc(i/3)]+'w'+mods[i%3]);
+  moves3.push(faces[Math.trunc(i/3)] + mods[i%3]); //run through and push all permutations of the faces and mods arrays
+  moves4.push(faces[Math.trunc(i/3)] + 'w' + mods[i%3]); //only the new ones for 4x4 and 5x5
+  moves6.push('3' + faces[Math.trunc(i/3)] + 'w' + mods[i%3]); //only the new ones for 6x6 and 7x7
 }
 
 for (let i = 0; i < lessfaces.length*2; i++) {
-  pyrsmoves.push(lessfaces[Math.trunc(i/2)]+mods[i%2]);
+  pyrsmoves.push(lessfaces[Math.trunc(i/2)]+mods[i%2]); //same for pyraminx
 }
 
 const allmoves4 = moves3.concat(moves4);
 const allmoves6 = moves6.concat(allmoves4);
-const pyrpmoves = ['l', 'r', 'b', 'u'];
-const clocksl4 = ['UL', 'DL', 'DR', 'UR'];
-const clocksf4 = ['ALL', 'L', 'D', 'R', 'U'];
-const clocks = clocksf4.concat('y2').concat(clocksf4).concat(clocksl4);
+const pyrpmoves = ['l', 'r', 'b', 'u']; //the corner turns for pyraminx
+const clocksl4 = ['UL', 'DL', 'DR', 'UR']; //last four moves for clock
+const clocksf4 = ['ALL', 'L', 'D', 'R', 'U']; //repeating series in clock scramble
+const clocks = clocksf4.concat('y2').concat(clocksf4).concat(clocksl4); //concat all together
 
 let tscramble = [];
 let tempmove;
 let pmove;
 let slen;
 
-const scramblers = { //object with all the scrambler functions in it
+const scramblers = { //object with all the scrambler functions in it, to replace a giant switch
   '2x2': () => {slen = 10; checknxn(moves3);},
   '3x3': () => {slen = 20; checknxn(moves3);},
   '4x4': () => {slen = 45; checknxn(allmoves4);},
@@ -120,8 +120,7 @@ const cubeselect = document.getElementsByClassName('cubeselect');
 const inspectSet = document.getElementById('inspectSet');
 const inspectButton = document.getElementById('inspectButton');
 const inspectDrop = document.getElementById('inspectDrop');
-const inspectnone = document.getElementById('inspectnone');
-const inspect15 = document.getElementById('inspect15');
+const inspselect = document.getElementsByClassName('inspselect');
 
 const delaySet = document.getElementById('delaySet');
 const delayButton = document.getElementById('delayButton');
@@ -142,6 +141,7 @@ const timealert = document.getElementById('timealert');
 const onlytime = document.getElementById('onlytime');
 const centerac = document.getElementById('centerac');
 
+//touch div, for touchscreens
 const touch = document.getElementById('touch');
 
 //modals
@@ -216,14 +216,14 @@ function gotem(item, defalt, type=localStorage) {
 };
 
 function colorIndicator(array, value) { //mark selection in dropdowns
-  for (let i in array) {
-    if (array[i].textContent === value) {
-      array[i].classList.add('oneforty');
-    }
+  for (let i = 0; i < array.length; i++) {
+    array[i].textContent === value ? 
+      array[i].classList.add('oneforty') : //mark the right one
+      array[i].classList.remove('oneforty'); //unmark all the other ones
   }
 };
 
-//All the variables that need to be gotten on reload/load
+//All the variables that need to be gotten on reload/load, and associated functions
 let lmode = gotem('mode', true);
     runmode(false);
 
@@ -246,7 +246,7 @@ let startdelay = gotem('delaysave', 300);
     colorIndicator(delaytime, (startdelay/1000)+'s');
 
 let inspectTime = gotem('inspectsave', true);
-    inspColor();
+    colorIndicator(inspselect, inspectTime ? '15s (WCA)' : 'None');
 
 let cube = gotem('cubesave', '3x3');
     cubeButton.textContent = cube;
@@ -316,8 +316,8 @@ function draw() { //to redraw things after modifying
 
   //apply settings
   const whichSpot = settingsArr[1] ? document.getElementById('hsSpot') : document.getElementById('popSpot');
-  // whichSpot.appendChild(inspectSet);
-  // whichSpot.appendChild(delaySet);
+  whichSpot.appendChild(inspectSet);
+  whichSpot.appendChild(delaySet);
   settingsArr[2] ? BWdiv.classList.remove('none') : BWdiv.classList.add('none');
   bestworst(settingsArr[3] ? displaytimes : alltimes);
   settingsArr[5] ? multiScram.classList.remove('none'): multiScram.classList.add('none');
@@ -429,11 +429,6 @@ function makeDate() { //the right date format
   return finaldate;
 }
 
-function inspColor() { //mark inspection dropdown
-  inspectTime ? inspect15.classList.add('oneforty') : inspect15.classList.remove('oneforty');
-  inspectTime ? inspectnone.classList.remove('oneforty') : inspectnone.classList.add('oneforty');
-}
-
 function match(e, t) { //outside match function, with multiple inputs
   let many = t.split(' ');
   for (let i in many) {
@@ -446,27 +441,21 @@ function match(e, t) { //outside match function, with multiple inputs
 
 function dropDown (button, content, e) { //toggle dropdowns 
   e.target === button ? content.classList.toggle('block') : content.classList.remove('block');
-  console.log(content.classList);
 }
 
 //event listeners
-document.documentElement.addEventListener('click', e => {
-  const match = t => e.target.matches(t);
-  closing = false;
+document.addEventListener('click', e => {
+  const match = t => e.target.matches(t); //shorter match function
+  closing = false; //for touch, trying to prevent opening things when closing modals and such. Does not work.
   if (e.target.closest('#timebody')) {
     timeClicks(e);
   }
-  else if (match('#inspectnone') || match('#inspect15')) { 
-    inspectTime = inspectTime ? false : true;
+  else if (match('.inspselect')) { 
+    inspectTime = e.target.textContent === 'None' ? false : true;
     localStorage.setItem('inspectsave', JSON.stringify(inspectTime));
-    inspColor();
-    return;
+    colorIndicator(inspselect, e.target.textContent);
   }
   else if (match('.cubeselect')) {
-    for (let i = 0; i < cubeselect.length; i++) {
-      cubeselect[i].classList.remove('oneforty');
-    }
-    e.target.classList.add('oneforty');
     if (cube !== e.target.textContent) {
       cube = e.target.textContent;
       cubeButton.textContent = cube;
@@ -478,20 +467,17 @@ document.documentElement.addEventListener('click', e => {
       scramNum.textContent = '1';
       scramble();
     }
-    return;
+    colorIndicator(cubeselect, cube);
+
   }
   else if (match('.delaytime')) {
-    for (let i = 0; i < delaytime.length; i++) {
-      delaytime[i].classList.remove('oneforty');
-    }
-    e.target.classList.add('oneforty');
     startdelay = e.target.textContent.slice(0, -1)*1000;
     localStorage.setItem('delaysave', JSON.stringify(startdelay));
-    return;
+    colorIndicator(delaytime, e.target.textContent);
   }
   else if (match('.modtime')) {
     if (match('#thetwo')) {
-      if (thetwo.classList.contains('disabled')) {return;}
+      if (thetwo.classList.contains('disabled')) return;
       allthistime.time = Math.trunc((allthistime.plustwo ? allthistime.time-2 : allthistime.time+2)*100)/100;
       allthistime.plustwo = allthistime.plustwo ? false : true; 
     }
@@ -525,7 +511,6 @@ document.documentElement.addEventListener('click', e => {
     localStorage.setItem('all', JSON.stringify(alltimes));
     draw();
     closeAll();
-    return;
   }
   else if (match('.sesselect')) {
     session = e.target.textContent;
@@ -744,7 +729,7 @@ document.addEventListener('touchend', e => {
 
 timebody.addEventListener('touchmove', () => {touchMoved = true;}, {passive: true});
 
-scrambletxt.addEventListener('transitionend', () => {if(!timein) {scrambletxt.style.left = '';}}, false);
+scrambletxt.addEventListener('transitionend', () => {if(!timein) scrambletxt.style.left = '';}, false);
 
 //Just a random move scrambler.
 function checknxn(moveset) { //for nxnxn cubes
@@ -773,7 +758,7 @@ function checkpyr1() { // turn the big corners for pyraminx
   else tscramble.unshift(tempmove);
 }
 
-function addfour(moveset, chancemod=.1, apostrophe=true) { //add up to four moves at the end (pyra and clock)
+function addfour(moveset, chancemod=.1, apostrophe=true) { //add zero to four moves at the end (pyra and clock)
   for (let i = 0; i < 4; i++) {
     let pointyn = Math.round(Math.random()+chancemod);
     if (pointyn) {
@@ -968,7 +953,7 @@ function fin() { //finish timing, save result
   draw();
 }
 
-function down() {
+function down() { //spacebar down
   if (!popup && !dnf) {
     if (!onstart && !started) {
       if (!inspectTime || inspecting) { //start delay timer
@@ -982,7 +967,7 @@ function down() {
   }
 }
   
-function up() {
+function up() { //spacebar up
   time.classList.remove('red', 'green', 'cyan', 'magenta');
   insptime.classList.remove('orange');
   if (!popup && !dnf) {
@@ -1018,7 +1003,7 @@ function up() {
   }
 }
 
-function touchdown(e) { //preventDefault for touch, and play sounds for later
+function touchdown(e) { //preventDefault() for touch, and play sounds for later (mobile won't let you otherwise)
   e.preventDefault();
   closeAll();
   if (forAutoplay && isMobile) { //pre-play sounds so they actually play when needed

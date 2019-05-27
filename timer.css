@@ -640,6 +640,11 @@ input, textarea { padding: 4px; border: .5px solid rgb(150, 150, 150);}
   float: right;
 }
 
+#hsSpot {
+  float: right;
+  /* display: inline-block; */
+}
+
 @media screen and (min-width: 600px) {
   #morepopup {width: 40vw;}
 }
