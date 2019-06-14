@@ -685,7 +685,7 @@ document.addEventListener('click', e => {
   else if(match('#sescreate')) newSession();
   else if(match('#infobtn')) showPop(infopopup);
   else if(match('#outicon') || match('#inicon')) timesInOut();
-  else if(match('#rcorners') || match('#scorners')) changeCorners();
+  else if(match('#rcorners') || match('#scorners')) changeCorners(e);
   else if(match('#timeclose') || match('#settingsClose')) closeNdraw();
   else if(match('#infoclose') || match('#timentercanc')) closeAll();
   //have to call all of them all the time for clicks outside, I think
@@ -1063,6 +1063,8 @@ function runmode(notstart) { // switch d/l mode
 
 function changeCorners(e, forStart) { //corner style
   cornerStyle = e ? e.target.id.charAt(0) : forStart;
+  console.log()
+  console.log(cornerStyle);
   whichStyle = cornerStyle === 'r' ? true : false;
   document.body.setAttribute('round', whichStyle);
   localStorage.setItem('cornerStyle', JSON.stringify(cornerStyle));
