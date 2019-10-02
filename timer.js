@@ -76,8 +76,17 @@ const clocks = clocksf4.concat('y2').concat(clocksf4).concat(clocksl4); //concat
 
 let tscramble = [];
 let tempmove;
-let pmove;
+let pmove, twobackmove;
 let slen;
+
+const oppositeSides = {//opposite sides for nxnxn cubes
+  R: 'L',
+  L: 'R',
+  U: 'D',
+  D: 'U',
+  F: 'B',
+  B: 'F'
+}
 
 const scramblers = { //object with all the scrambler functions in it, to replace a giant switch
   '2x2': () => {slen = 10; checknxn(moves3);},
@@ -733,17 +742,25 @@ scrambletxt.addEventListener('transitionend', () => {if(!timein) scrambletxt.sty
 
 //Just a random move scrambler.
 function checknxn(moveset) { //for nxnxn cubes
+  //p is for previous move, t is for temporary move (the one this is checking)
   let random = Math.trunc(Math.random()*(moveset.length));
   tempmove = moveset[random];
   pmove = tscramble[tscramble.length-1];
-  let twocharp, charonep;
-  let twochart = tempmove.substring(0, 2);
-  let charonet = tempmove.charAt(0);
+  twoBackMove = tscramble[tscramble.length-2];
+
+  let charOneTwoBack;
+  let twoCharP, charOneP;
+
+  let twoCharT = tempmove.substring(0, 2);
+  let charOneT = tempmove.charAt(0);
   if (pmove !== undefined) {
-    charonep = pmove.charAt(0);
-    twocharp = pmove.substring(0, 2);
+    charOneP = pmove.charAt(0);
+    twoCharP = pmove.substring(0, 2);
   }
-  if (twochart === twocharp || charonep === charonet) {return;}
+  if (twoBackMove !== undefined) {
+    charOneTwoBack = twoBackMove.charAt(0);
+  }
+  if (twoCharT === twoCharP || charOneP === charOneT || (charOneTwoBack === charOneT && oppositeSides[charOneT] === charOneP)) {return;}
   else { tscramble.push(tempmove); }
 }
 
@@ -751,10 +768,10 @@ function checkpyr1() { // turn the big corners for pyraminx
   let random = Math.round(Math.random()*7);
   tempmove = pyrsmoves[random];
   pmove = tscramble[0];
-  let charonet = tempmove.charAt(0);
-  let charonep;
-  if (pmove !== undefined) charonep = pmove.charAt(0);
-  if (charonet === charonep) return;
+  let charOneT = tempmove.charAt(0);
+  let charOneP;
+  if (pmove !== undefined) charOneP = pmove.charAt(0);
+  if (charOneT === charOneP) return;
   else tscramble.unshift(tempmove);
 }
 
@@ -1063,8 +1080,6 @@ function runmode(notstart) { // switch d/l mode
 
 function changeCorners(e, forStart) { //corner style
   cornerStyle = e ? e.target.id.charAt(0) : forStart;
-  console.log()
-  console.log(cornerStyle);
   whichStyle = cornerStyle === 'r' ? true : false;
   document.body.setAttribute('round', whichStyle);
   localStorage.setItem('cornerStyle', JSON.stringify(cornerStyle));
