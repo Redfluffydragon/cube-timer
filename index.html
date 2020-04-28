@@ -2,20 +2,19 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
     <title>Cube Timer</title>
     <link rel="icon" href="img/icon16x16.png" type="image/png"/>
     <link rel="canonical" href="https://redfluffydragon.github.io/cube-timer/"/>
     <link rel="manifest" href="manifest.json"/>
     <link rel="stylesheet" type="text/css" href="timer.css" async/>
-    <script src="timer-min.js" type="text/javascript" async></script>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black" media="(orientation: portrait)"/>
     <link rel="apple-touch-icon" sizes="144x144" href="img/apple-touch-icon.png"/>
-    <link rel="apple-touch-startup-image" href="img/splashscreen320x568.png"/>
+    <link rel="apple-touch-startup-image" sizes="320x568" href="img/splashscreen320x568.png"/>
     <meta name="theme-color" content="#b70909"/>
     <meta name="description" content="A simple cube timer. Supports all WCA puzzles."/>
+    <script src="timer.js" type="text/javascript" defer></script>
   </head>
 
   <body>
@@ -242,7 +241,7 @@
 
     <div id="sessions">
       <div class="dropup">
-          <div id="sesdrop" class="dropupcontent">Session 1</div>
+        <div id="sesdrop" class="dropupcontent">Session 1</div>
         <button id="sesslc" class="sesedit dropupbtn" title="current session">Session 1 </button>
       </div>
       <button id="sesopt"class="sesedit" title="session options">Options</button>
