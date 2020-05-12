@@ -120,6 +120,10 @@ let closing;
 let sesnames = [];
 let tempcrip;
 
+//for the date of a solve
+const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
 //elements
 //for scrambles
 const scrambletxt = document.getElementById('scrambletxt');
@@ -160,7 +164,7 @@ const centerac = document.getElementById('centerac');
 const touch = document.getElementById('touch');
 
 //modals
-const timedit = document.getElementById('timedit');
+const showEditTime = document.getElementById('showEditTime');
 const timepopup = document.getElementById('timepopup');
 const timepops = document.getElementById('timepops');
 const shadow = document.getElementById('shadow');
@@ -232,6 +236,7 @@ let cornerStyle = gotem('cornerStyle', 'r');
 
 let morechecked = gotem('moretoggle', false);
     checkmore.checked = morechecked;
+    morechecked && (inmore.textContent = '[less]');
 
 let alltimes = gotem('all', []);
 
@@ -351,15 +356,15 @@ document.addEventListener('click', e => {
       scrambles.push(fscramble);
       localStorage.setItem('scrambles', JSON.stringify(scrambles));
     }
-    else { scrambletxt.innerHTML = scrambles[scrambleNum]; }
+    else { scrambletxt.textContent = scrambles[scrambleNum]; }
     localStorage.setItem('scrambleNum', JSON.stringify(scrambleNum));
-    scramNum.textContent = scrambleNum+1;
+    scramNum.textContent = scrambleNum + 1;
   }
   else if(match('#firstScram')) {
     if (scrambles.length) {
       scrambleNum = 0;
-      scrambletxt.innerHTML = scrambles[scrambleNum];
-      scramNum.textContent = scrambleNum+1;
+      scrambletxt.textContent = scrambles[scrambleNum];
+      scramNum.textContent = scrambleNum + 1;
       localStorage.setItem('scrambleNum', JSON.stringify(scrambleNum));
     }
   }
@@ -472,7 +477,8 @@ document.addEventListener('click', e => {
   }
   else if(match('#inmore')) {
     morepop ? morepopup.classList.remove('inlineBlock') : morepopup.classList.add('inlineBlock');
-    morepop = morepop ? false : true;
+    morepop = !morepop;
+    inmore.textContent = inmore.textContent === '[more]' ? '[less]' : '[more]';
   }
   else if(match('#saveses')) {
     if (changesesname.value === session) {
@@ -537,12 +543,12 @@ window.addEventListener('keydown', e => {
   let key = e.keyCode;
   if (key === 32) down(); //space
   if (key === 27) closeAll(); //esc
-  if (key === 90 && e.ctrlKey && !popup) undo(); //z
+  if (key === 90 && e.ctrlKey && !popup) { undo(); } //z to undo
   if (key === 13) { //enter
-    if (sespop) newSession();
-    else if (enterpop && timentertoo.value !== '') closeNdraw();
+    if (sespop) { newSession(); }
+    else if (enterpop && timentertoo.value !== '') { closeNdraw(); }
   }
-  //2 and d, for +2 and DNF (only while timedit modal is open)
+  //2 and d, for +2 and DNF (only while time editing modal is open)
   if (key === 50 && timepop && !morepop) { allthistime.plustwo = allthistime.plustwo ? false : true; closeNdraw();}
   if (key === 68 && timepop && !morepop) { allthistime.dnf = allthistime.dnf ? false : true; closeNdraw();}
 }, false);
@@ -584,11 +590,11 @@ function createTableRow() { //create one row in the time table
 
 function draw() { //to redraw things after modifying
   if (scrambles.length) { //multiple scrambles or not
-    scrambletxt.innerHTML = scrambles[scrambleNum];
-    scramNum.textContent = scrambleNum+1;
+    scrambletxt.textContent = scrambles[scrambleNum];
+    scramNum.textContent = scrambleNum + 1;
   }
   else {
-    fscramble === null ? scramble() : scrambletxt.innerHTML = fscramble;
+    fscramble === null ? scramble() : scrambletxt.textContent = fscramble;
   }
 
   displaytimes.length = 0;
@@ -606,18 +612,18 @@ function draw() { //to redraw things after modifying
   for (let [i, e] of displaytimes.entries()) {
     createTableRow();
     e.number = i+1;
-    let commentYN = e.comment ? '*' : null;
+    const commentYN = e.comment ? '*' : null;
     cells0[i].textContent = i+1 + commentYN;
     cells1[i].textContent = e.dnf ? 'DNF' : //check dnf first
     e.plustwo ? toMinutes(e.time)+'+' : toMinutes(e.time); //then check +2
 
-    let avgofiv = average(i+1, 5);
-    let avgotwe = average(i+1, 12);
+    const avgofiv = average(i+1, 5);
+    const avgotwe = average(i+1, 12);
     e.ao5 = avgofiv;
     e.ao12 = avgotwe;
     cells2[i].textContent = avgofiv;
     cells3[i].textContent = avgotwe;
-    let saveBack = alltimes.indexOf(e);
+    const saveBack = alltimes.indexOf(e);
     alltimes[saveBack].ao5 = avgofiv;
     alltimes[saveBack].ao12 = avgotwe;
   }
@@ -640,6 +646,9 @@ function draw() { //to redraw things after modifying
     sesdrop.appendChild(sesnode);
   }
   sesslc.textContent = session;
+  sesslc.style.minWidth = sesdrop.offsetWidth + 'px';
+  document.querySelector('#sesdrop p:nth-child(1)').classList.add('top');
+  document.querySelector('#sesdrop p:last-child').classList.add('bottom');
 }
 
 function afterLoad() {
@@ -664,6 +673,7 @@ function timeClicks(e) {
 
     timepops.classList.add('inlineBlock');
     showPop(timepopup);
+    inmore.textContent = morechecked ? '[less]' : '[more]';
     timepop = true;
     if (morechecked) {
       morepopup.classList.add('inlineBlock');
@@ -682,11 +692,11 @@ function timeClicks(e) {
       timetoshine = toMinutes(allthistime.time);
     }
     allthistime.plustwo ? thetwo.classList.add('oneforty') : thetwo.classList.remove('oneforty');
-    timedit.innerHTML = `Edit time ${rvrsrow} (${timetoshine}) <span id='inmore'>[more]</span>`;
+    showEditTime.textContent = `${rvrsrow} (${timetoshine})`;
 
     //set up popup with correct data
     scramPlur.textContent = allthistime.scramble.includes(';') ? 'Scrambles: ' : 'Scramble: ';
-    seescramble.innerHTML = allthistime.scramble;
+    seescramble.textContent = allthistime.scramble;
     seedate.textContent = allthistime.date;
     seecube.textContent =  allthistime.cube;
     allthistime.comment !== undefined && (comment.value = allthistime.comment);
@@ -704,7 +714,7 @@ function closeModal(e) { //close modals
 function bestworst(array) { //get the best and worst times, not indluding dnfs
   justTimes.length = 0;
   for (let i of array) {
-    if (i.time) justTimes.push(i.time);
+    if (i.time) { justTimes.push(i.time); }
   }
   const worstTime = Math.max(...justTimes);
   const bestTime = Math.min(...justTimes);
@@ -721,8 +731,6 @@ function showPop(div) { //open a modal
 
 function makeDate() { //the right date format
   const thedate = new Date();
-  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const year = thedate.getFullYear();
   const month = thedate.getMonth();
   const day = thedate.getDay();
@@ -811,7 +819,7 @@ function checkmeg() { //megaminx
       const move = j%2 ? 'D' : 'R';
       tscramble.push(move + moveMod);
     }
-    Math.round(Math.random()) ? tscramble.push('U<br>') : tscramble.push("U'<br>");
+    Math.round(Math.random()) ? tscramble.push('U\r\n') : tscramble.push("U'\r\n");
   }
 }
 
@@ -847,7 +855,7 @@ function scramble() { //do the scrambles
   while (tscramble.length < slen)
   
   fscramble = tscramble.join(' ');
-  scrambletxt.innerHTML = fscramble;
+  scrambletxt.textContent = fscramble;
   localStorage.setItem('scramble', JSON.stringify(fscramble));
 }
 
@@ -958,7 +966,7 @@ function fin() { //finish timing, save result
   clearInterval(inspectstart);
   
   const addTwo = plustwo ? 2 : null;
-  const whichScram = scrambles.length ? scrambles.join(';<br>') : fscramble;
+  const whichScram = scrambles.length ? scrambles.join(';\r\n') : fscramble;
   time.className = ('zone'); //remove all other classes
   time.textContent = toMinutes(counter); //show hundredths of a second
   insptime.classList.remove('orange', 'green');
