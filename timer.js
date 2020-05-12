@@ -216,7 +216,15 @@ const showSettings = document.getElementById('showSettings');
 const showBW = document.getElementById('showBW');
 const BWSesAll = document.getElementById('BWSesAll');
 const hideThings = document.getElementById('hideThings');
-const settingsSettings = [countAnnounce, showSettings, showBW, BWSesAll, hideThings, showMScram];
+const settingsSettings = {
+  announce: countAnnounce,
+  delayAndInspect: showSettings,
+  showBW: showBW,
+  BWperSess: BWSesAll,
+  hideWhileTiming: hideThings,
+  multiScram: showMScram,
+};
+const settingsKeys = Object.keys(settingsSettings);
 
 const everything = document.getElementById('everything');
 const popups = document.getElementsByClassName('popup');
@@ -257,7 +265,14 @@ let cube = gotem('cubesave', '3x3');
     cubeButton.textContent = cube;
     colorIndicator(cubeselect, cube);
 
-let settingsArr = gotem('settings', [true, true, true, false, true, true]);
+const storeSettings = gotem('settings', {
+  announce: true,
+  delayAndInspect: true,
+  showBW: true,
+  BWperSess: false,
+  hideWhileTiming: true,
+  multiScram: true,
+});
 
 let fscramble = gotem('scramble', null);
 let scrambles = gotem('scrambles', []);
@@ -389,7 +404,9 @@ document.addEventListener('click', e => {
     enterpop = true;
   }
   else if(match('#settingsIcon')) {
-    settingsSettings.forEach((e, i) => { settingsSettings[i].checked = settingsArr[i]; });
+    for (let i of settingsKeys) {
+      settingsSettings[i].checked = storeSettings[i];
+    }
     rcorners.id.charAt(0) === cornerStyle ? rcorners.checked = true : scorners.checked = true;
     showPop(setpopup);
     setpop = true;
@@ -629,12 +646,12 @@ function draw() { //to redraw things after modifying
   }
 
   //apply settings
-  const whichSpot = settingsArr[1] ? document.getElementById('hsSpot') : document.getElementById('popSpot');
+  const whichSpot = storeSettings.delayAndInspect ? document.getElementById('hsSpot') : document.getElementById('popSpot');
   whichSpot.appendChild(inspectSet);
   whichSpot.appendChild(delaySet);
-  settingsArr[2] ? BWdiv.classList.remove('none') : BWdiv.classList.add('none');
-  bestworst(settingsArr[3] ? displaytimes : alltimes);
-  settingsArr[5] ? multiScram.classList.remove('none'): multiScram.classList.add('none');
+  storeSettings.showBW ? BWdiv.classList.remove('none') : BWdiv.classList.add('none');
+  bestworst(storeSettings.BWperSess ? displaytimes : alltimes);
+  storeSettings.multiScram ? multiScram.classList.remove('none'): multiScram.classList.add('none');
 
   //sessions
   sesdrop.innerHTML = '';
@@ -905,14 +922,14 @@ function inspection() {
   if (displayctdn === 7) { //8 second alert
     timealert.classList.remove('none');
     timealert.textContent = '8s!';
-    if (!played8 && settingsArr[0]) {
+    if (!played8 && storeSettings.announce) {
       eightSecSound.play();
       played8 = true;
     }
   }
   else if (displayctdn === 3) { //twelve second alert
     timealert.textContent = '12s!';
-    if (!played12 && settingsArr[0]) {
+    if (!played12 && storeSettings.announce) {
       twelveSecSound.play();
       played12 = true;
     }
@@ -1014,14 +1031,14 @@ function up() { //spacebar up
         inspecting = true;
         time.classList.add('none');
         insptime.classList.remove('none');
-        if (settingsArr[4]) onlytime.classList.add('initial'); //check for hide all or not
+        if (storeSettings.hideWhileTiming) onlytime.classList.add('initial'); //check for hide all or not
         istart = new Date();
         inspectstart = setInterval(inspection, 10);
       }
       if ((!inspectTime && waiting) || waiting) { //go! (start the stopwatch)
         start = new Date();
         intstart = setInterval(stopwatch, 10); //actually start the stopwatch
-        if (settingsArr[4]) onlytime.classList.add('initial');
+        if (storeSettings.hideWhileTiming) onlytime.classList.add('initial');
         insptime.classList.add('none');
         time.classList.remove('none');
         time.classList.add('zfour');
@@ -1116,8 +1133,10 @@ function closeAll() { //close everything
   }
 
   if (setpop) {
-    settingsArr.forEach((e, i) => { settingsArr[i] = settingsSettings[i].checked; });
-    localStorage.setItem('settings', JSON.stringify(settingsArr));
+    for (let i of settingsKeys) {
+      storeSettings[i] = settingsSettings[i].checked;
+    }
+    localStorage.setItem('settings', JSON.stringify(storeSettings));
   }
 
   centerpop.classList.add('none'); //for some reason it interferes at the top if displayed at all
