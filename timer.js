@@ -2,11 +2,11 @@
  * round corners of top and bottom session selection highlights - try queryselector with nth-child
  * switch is faster, object literal looks better - either is probably better for all the clicks
  */
-/* 
+
 if (navigator.serviceWorker) {
   navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
 }
- */
+
 let removed = []; //removed times
 let sesremoved = []; //removed sessions
 
