@@ -8,10 +8,17 @@
     <link rel="canonical" href="https://redfluffydragon.github.io/cube-timer/"/>
     <link rel="manifest" href="manifest.json"/>
     <link rel="stylesheet" type="text/css" href="timer.css" async/>
-    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Cube Timer" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" media="(orientation: portrait)"/>
     <link rel="apple-touch-icon" sizes="144x144" href="img/apple-touch-icon.png"/>
-    <link rel="apple-touch-startup-image" sizes="320x568" href="img/splashscreen320x568.png"/>
+    <link
+      rel="apple-touch-startup-image"
+      media="screen and (device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"
+      href="img/splashscreen320x568.png"
+    />
     <meta name="theme-color" content="#b70909"/>
     <meta name="description" content="A simple cube timer. Supports all WCA puzzles."/>
     <script src="timer.js" type="text/javascript" defer></script>
@@ -122,7 +129,7 @@
     <div id="centerpop" class="none">
       <div id="timepops">
       <div id="timepopup" class="popup">
-        <h3 id="timedit">Edit time </h3>
+        <h3 id="timedit">Edit time <span id="showEditTime"></span> <span id="inmore">[more]</span> </h3>
         <p class="modtime pointer" id="thetwo">+2</p>
         <p class="modtime pointer" id="thednf">DNF</p>
         <p class="modtime pointer" id="thedel">Delete</p>
@@ -241,7 +248,7 @@
 
     <div id="sessions">
       <div class="dropup">
-        <div id="sesdrop" class="dropupcontent">Session 1</div>
+        <div id="sesdrop" class="dropupcontent"><p class="top bottom">Session 1</p></div>
         <button id="sesslc" class="sesedit dropupbtn" title="current session">Session 1 </button>
       </div>
       <button id="sesopt"class="sesedit" title="session options">Options</button>
