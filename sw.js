@@ -17,7 +17,7 @@ let URLS = [
   '/cube-timer/img/outicon.png',
   '/cube-timer/img/infoicon.png',
   '/cube-timer/sound/eight.mp3',
-  '/cube-timer/sound/twelve.mp3'
+  '/cube-timer/sound/twelve.mp3',
 ];
 
 self.addEventListener('fetch', e => {
@@ -25,7 +25,7 @@ self.addEventListener('fetch', e => {
     caches.match(e.request).then(function (request) {
       return request || fetch(e.request)
     })
-  )
+  );
 }, false);
 
 self.addEventListener('install', e => {
@@ -33,7 +33,7 @@ self.addEventListener('install', e => {
     caches.open(CACHE_NAME).then(cache => {
       return cache.addAll(URLS);
     })
-  )
+  );
 }, false);
 
 self.addEventListener('activate', e => {
@@ -41,15 +41,14 @@ self.addEventListener('activate', e => {
     caches.keys().then(keyList => {
       let cacheWhitelist = keyList.filter(key =>{
         return key.indexOf(APP_PREFIX);
-      })
+      });
       cacheWhitelist.push(CACHE_NAME);
 
       return Promise.all(keyList.map((key, i) => {
         if (cacheWhitelist.indexOf(key) === -1) {
           return caches.delete(keyList[i]);
         }
-      }))
-
+      }));
     })
-  )
+  );
 }, false);
