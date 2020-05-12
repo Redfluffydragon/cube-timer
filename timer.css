@@ -1,10 +1,13 @@
 body {
-  height: 95vh;
-  width: 100vh;
+  height: 100%;
+  width: 100vw;
   top: 0;
   left: 0;
+  margin: 0;
+  padding: 0;
   overflow: hidden;
   background: white;
+  position: fixed;
 }
 
 #everything {
@@ -73,6 +76,7 @@ body {
   width: 70vw;
   max-height: 37vh;
   overflow: auto;
+  white-space: pre-line;
 }
 
 #multiScram {
@@ -498,6 +502,7 @@ input, textarea { padding: 4px; border: .5px solid rgb(150, 150, 150);}
 #seethings td {
   vertical-align: top;
   text-align: left;
+  white-space: pre-line;
 }
 
 #inmore {
@@ -735,7 +740,7 @@ input, textarea { padding: 4px; border: .5px solid rgb(150, 150, 150);}
   #time {top: 67vh;}
   #insptime {top: 67vh;}
   #timebody{max-height: 62vh;}
-  #scrambletxt {max-height: 55vh; top: 11.5vh;}; 
+  #scrambletxt {max-height: 55vh; top: 11.5vh;}
   #timealert {bottom: 4vh;}
 }
 
