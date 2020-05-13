@@ -3,7 +3,7 @@
  */
 
 if (navigator.serviceWorker) {
-  // navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
+  navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
 }
 
 let removed = []; //removed times
@@ -157,10 +157,6 @@ const time = document.getElementById('time');
 const insptime = document.getElementById('insptime');
 const timealert = document.getElementById('timealert');
 const onlytime = document.getElementById('onlytime');
-const centerac = document.getElementById('centerac');
-
-//touch div, for touchscreens
-const touch = document.getElementById('touch');
 
 //modals
 const showEditTime = document.getElementById('showEditTime');
@@ -231,7 +227,6 @@ const rcorners = document.getElementById('rcorners');
 const scorners = document.getElementById('scorners');
 
 const isMobile = (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1);
-const standalone = window.matchMedia('(display-mode: standalone)').matches;
 
 //All the variables that need to be gotten on reload/load, and associated functions
 let alltimes = gotem('all', []);
@@ -275,7 +270,7 @@ document.addEventListener('click', e => {
   if (e.target.closest('#timebody')) {
     timeClicks(e);
   }
-  else if (match('.inspselect')) { 
+  else if (match('.inspselect')) {
     storeSettings.inspectTime = e.target.textContent === 'None' ? false : true;
     colorIndicator(inspselect, e.target.textContent);
   }
@@ -287,11 +282,10 @@ document.addEventListener('click', e => {
       scrambleNum = 0;
       localStorage.removeItem('scrambles');
       localStorage.removeItem('scrambleNum');
-      scramNum.textContent = '1';
+      scramNum.textContent = 1;
       scramble();
     }
     colorIndicator(cubeselect, storeSettings.cube);
-
   }
   else if (match('.delaytime')) {
     storeSettings.startdelay = parseInt(e.target.textContent.slice(0, -1), 10)*1000;
@@ -372,54 +366,42 @@ document.addEventListener('click', e => {
     showPop(setpopup);
     setpop = true;
   }
-  else if (match('#deleteallses')) {
-    let deleteallconf = confirm('Delete all sessions?');
-    if (deleteallconf) {
-      justAll();
-      sesremoved = sessions;
-      sessions = [{name: 'Session 1', description: 'Default session'}];
-      session = sessions[0].name;
-      sesslc.textContent = session;  
-      closeNdraw();
-    }
+  else if (match('#deleteallses') && confirm('Delete all sessions?')) {
+    justAll();
+    sesremoved = sessions;
+    sessions = [{name: 'Session 1', description: 'Default session'}];
+    session = sessions[0].name;
+    sesslc.textContent = session;  
+    closeNdraw();
   }
-  else if (match('#deleteses')) {
-    let deletesessionconf = confirm('Delete this session?');
-    if (deletesessionconf) {
-      justAsession();
-      sessions.find((e, i) => {
-        if (e.name === session) {
-          sesremoved.length = 0;
-          sesremoved.push(sessions.splice(i, 1)[0]);
-          let neyes = i-1; //switch to next available session after deleting the current one
-          let peyes = i+1;
-          if (neyes !== -1) session = sessions[neyes].name; 
-          else if (neyes === -1 && sessions[peyes] !== undefined) session = sessions[peyes].name;
-          else {
-            sessions.length = 0;
-            alltimes.length = 0;
-            sessions.push({name: 'Session 1', description: 'Default session'});
-            session = sessions[0].name;
-          }
+  else if (match('#deleteses') && confirm('Delete this session?')) {
+    justAsession();
+    sessions.find((e, i) => {
+      if (e.name === session) {
+        sesremoved.length = 0;
+        sesremoved.push(sessions.splice(i, 1)[0]);
+        let neyes = i-1; //switch to next available session after deleting the current one
+        let peyes = i+1;
+        if (neyes !== -1) session = sessions[neyes].name; 
+        else if (neyes === -1 && sessions[peyes] !== undefined) session = sessions[peyes].name;
+        else {
+          sessions.length = 0;
+          alltimes.length = 0;
+          sessions.push({name: 'Session 1', description: 'Default session'});
+          session = sessions[0].name;
         }
-      });
-      sesslc.textContent = session;
-      closeNdraw();
-    }
+      }
+    });
+    sesslc.textContent = session;
+    closeNdraw();
   }
-  else if (match('#clearallses')) {
-    let firm = confirm('Do you want to clear all times?');
-    if (firm) {
-      justAll();
-      closeNdraw();
-    }
+  else if (match('#clearallses') && confirm('Do you want to clear all times?')) {
+    justAll();
+    closeNdraw();
   }
-  else if (match('#clearses')) {
-    let clearsessionconf = confirm('Clear this session?');
-    if (clearsessionconf) {
-      justAsession();
-      closeNdraw();
-    }
+  else if (match('#clearses') && confirm('Clear this session?')) {
+    justAsession();
+    closeNdraw();
   }
   else if (match('#exportallses')) {
     createCsv(alltimes, 'Cube Timer - all times');
@@ -431,19 +413,17 @@ document.addEventListener('click', e => {
     showPop(sesoptpopup);
     changesesname.value = session;
     sessions.find(e => {
-      if (e.name === session) {
-        tempcrip = e;
-      }
+      e.name === session && (tempcrip = e);
     });
     seesescrip.value = tempcrip.description;
   }
   else if (match('#dothenter')) {
-    if (timentertoo.value !== '' && checkTime(timentertoo.value) !== undefined) {
+    if (timentertoo.value !== '' && checkTime(timentertoo.value) != null) {
       alltimes.push({number: '', time: checkTime(timentertoo.value), ao5: '', ao12: '', cube: cubenter.value, session: session, scramble: scramenter.value, date: datenter.value, comment: commenter.value, dnf: false, plustwo: false});
       for (let i of enterArr) { i.value = null; }
       closeNdraw();
     }
-    else {alert("I don't recognize that time.");}
+    else { alert("I don't recognize that time."); }
   }
   else if (match('#inmore')) {
     morepop ? morepopup.classList.remove('inlineBlock') : morepopup.classList.add('inlineBlock');
@@ -452,15 +432,12 @@ document.addEventListener('click', e => {
   }
   else if (match('#saveses')) {
     if (changesesname.value === session) {
-      let sesidx = sessions.indexOf(tempcrip);
-      sessions[sesidx].description = seesescrip.value;
+      sessions[sessions.indexOf(tempcrip)].description = seesescrip.value;
       closeNdraw();
     }
     else if (checkSession(changesesname.value, sameAlertAgain)) {
       for (let i of alltimes) {
-        if (i.session === session) {
-          i.session = changesesname.value;
-        }
+        i.session === session && (i.session = changesesname.value);
       }
       sessions.find(e => {
         if (e.name === session) {
@@ -470,9 +447,7 @@ document.addEventListener('click', e => {
         }
       });
       for (let i of sesselect) {
-        if (i === session) {
-          i.textContent = changesesname.value;
-        }
+        i === session && (i.textContent = changesesname.value);
       }
       session = changesesname.value;
       closeNdraw();
@@ -495,33 +470,33 @@ document.addEventListener('click', e => {
 document.addEventListener('mousedown', closeModal, false);
 
 document.addEventListener('touchstart', e => {
-  if (match(e, '#touch #time #insptime #onlytime')) touchdown(e);
-  else if (e.target.closest('#timebody')) touchMoved = false;
+  if (match(e, '#touch #time #insptime #onlytime')) { touchdown(e); }
+  else if (e.target.closest('#timebody')) { touchMoved = false; }
   closeModal(e);
 }, {passive: false, useCapture: false});
 
 document.addEventListener('touchend', e => {
   closing = false;
-  if (match(e, '#touch #time #insptime #onlytime')) up();
-  else if (e.target.closest('#timebody')) timeClicks(e);
+  if (match(e, '#touch #time #insptime #onlytime')) { up(); }
+  else if (e.target.closest('#timebody')) { timeClicks(e); }
 }, {passive: false, useCapture: false});
 
 window.addEventListener('keydown', e => {
   let key = e.keyCode;
-  if (key === 32) down(); //space
-  if (key === 27) closeAll(); //esc
+  if (key === 32) { down(); } //space
+  if (key === 27) { closeAll(); } //esc
   if (key === 90 && e.ctrlKey && !popup) { undo(); } //z to undo
   if (key === 13) { //enter
     if (sespop) { newSession(); }
     else if (enterpop && timentertoo.value !== '') { closeNdraw(); }
   }
   //2 and d, for +2 and DNF (only while time editing modal is open)
-  if (key === 50 && timepop && !morepop) { allthistime.plustwo = allthistime.plustwo ? false : true; closeNdraw();}
-  if (key === 68 && timepop && !morepop) { allthistime.dnf = allthistime.dnf ? false : true; closeNdraw();}
+  if (key === 50 && timepop && !morepop) { allthistime.plustwo = allthistime.plustwo ? false : true; closeNdraw(); }
+  if (key === 68 && timepop && !morepop) { allthistime.dnf = allthistime.dnf ? false : true; closeNdraw(); }
 }, false);
 
 window.addEventListener('keyup', e => {
-  if (e.keyCode === 32) up();
+  if (e.keyCode === 32) { up(); }
 }, false);
 
 window.addEventListener('load', afterLoad, false);
@@ -547,7 +522,7 @@ scrambletxt.addEventListener('transitionend', () => {if (!storeSettings.timein) 
 //wrapper function for getting stuff from localStorage
 function gotem(item, defalt, type = localStorage) {
   const getthething = JSON.parse(type.getItem(item));
-  if (getthething === null || getthething === undefined) return defalt; 
+  if (getthething === null || getthething === undefined) { return defalt; }
   return getthething;
 };
 
@@ -575,14 +550,12 @@ function draw() { //to redraw things after modifying
     scramNum.textContent = scrambleNum + 1;
   }
   else {
-    fscramble === null ? scramble() : scrambletxt.textContent = fscramble;
+    fscramble == null ? scramble() : scrambletxt.textContent = fscramble;
   }
 
   displaytimes.length = 0;
   for (let i of alltimes) {
-    if (i.session === session) {
-      displaytimes.push(i);
-    }
+    i.session === session && (displaytimes.push(i));
   }
   
   //clear the table
@@ -615,7 +588,7 @@ function draw() { //to redraw things after modifying
   whichSpot.appendChild(delaySet);
   storeSettings.showBW ? BWdiv.classList.remove('none') : BWdiv.classList.add('none');
   bestworst(storeSettings.BWperSess ? displaytimes : alltimes);
-  storeSettings.multiScram ? multiScram.classList.remove('none'): multiScram.classList.add('none');
+  storeSettings.multiScram ? multiScram.classList.remove('none') : multiScram.classList.add('none');
 
   //sessions
   sesdrop.innerHTML = '';
@@ -712,7 +685,7 @@ function closeModal(e) { //close modals
 function bestworst(array) { //get the best and worst times, not indluding dnfs
   justTimes.length = 0;
   for (let i of array) {
-    if (i.time) { justTimes.push(i.time); }
+    i.time && justTimes.push(i.time);
   }
   const worstTime = Math.max(...justTimes);
   const bestTime = Math.min(...justTimes);
@@ -881,9 +854,7 @@ function average(startpoint, leng) {
 }
 
 function toMinutes(time) { //seconds to colon format
-  if (time < 60) {
-    return time.toFixed(2);
-  }
+  if (time < 60) { return time.toFixed(2); }
   else if (time > 60 && time < 3600) {
     const minutes = Math.trunc(time/60);
     let secondsafter = (Math.trunc((time-(60*minutes))*100)/100).toFixed(2);
@@ -1140,7 +1111,7 @@ function newSession() { //create a new session
 function justAsession() { //get just the current session
   let sesremoves = [];
   for (let i of alltimes) {
-    if (i.session === session) { sesremoves.push(i); }
+    i.session === session && sesremoves.push(i);
   };
   for (let i of sesremoves) {
     const rmvidx = alltimes.indexOf(i);
@@ -1149,7 +1120,9 @@ function justAsession() { //get just the current session
 }
 
 function justAll() { //get everything
-  alltimes.forEach((e, i) => { removed.push({time: e, index: i}); });
+  for (let [idx, el] of alltimes) {
+    removed.push({time: el, index: idx});
+  }
   alltimes.length = 0;
   sessions.length = 0;
   localStorage.removeItem('all');
@@ -1159,9 +1132,7 @@ function justAll() { //get everything
 function createArray(array) { //create array of arrays from array of objects, with headers from keys 
   let returnarray = [];
   let columnNames = [];
-   //get the keys from the first element in the array (this assumes the keys are the same for all the elements in the array)
-  const getKeys = Object.keys(array[0]);
-  for (let i of getKeys) { //capitalize the keys, for column titles - use for in instead of Object.keys?
+  for (let i in array[0]) { //capitalize the keys, for column titles - assume keys are the same for all elements
     const titleCase = i.charAt(0).toUpperCase() + i.slice(1);
     columnNames.push(titleCase);
   }
@@ -1169,7 +1140,7 @@ function createArray(array) { //create array of arrays from array of objects, wi
   for (let i of array) { //for each element in the array
     let temparray = []; //initialize a temporary array (I'm not sure why it has to be initialized here, but it does)
     //push the value from each key in the current element to the temporary array
-    for (let j of getKeys) { temparray.push(`"${i[j].toString()}"`) };
+    for (let j in array[0]) { temparray.push(`"${i[j].toString()}"`) };
     returnarray.push(temparray); //push the temporary array to the final array
   }
   return returnarray;
@@ -1178,7 +1149,7 @@ function createArray(array) { //create array of arrays from array of objects, wi
 function createCsv(array, name) { //create csv file from 2d array
   const makeIntoArray = createArray(array); //get 2d array from array of objects
   let csvFile = 'data:text/csv;charset=utf-8,';
-  //concatenate each smaller array onto the csv file, andnadd a newline after each
+  //concatenate each smaller array onto the csv file, and add a newline after each
   for (let i of makeIntoArray) { csvFile += i + '\n' };
   const encoded = encodeURI(csvFile);
   const linkDownload = document.createElement('a'); //create a download link, and simulate a click on it
