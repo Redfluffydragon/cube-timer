@@ -25,7 +25,6 @@
   </head>
 
   <body>
-    <div id="everything">
     <audio src="sound/eight.mp3" id="eightSecSound"></audio>
     <audio src="sound/twelve.mp3" id="twelveSecSound"></audio>
 
@@ -166,7 +165,16 @@
           <li><label><input type="checkbox" checked id="hideThings"> Hide things while timing</label></li>
           <li><label><input type="checkbox" checked id="showMScram"> Multiple scrambles</label></li>
           <li>Corner style:</li>
-          <li class="indented"><label><input id="rcorners" type="radio" name="corners" checked>Round</label><br><label><input id="scorners" type="radio" name="corners">Sharp</label></li>
+          <li class="indented">
+            <label>
+              <input id="rcorners" type="radio" name="corners" checked>
+              Round
+            </label>
+            <label>
+              <input id="scorners" type="radio" name="corners">
+              Sharp
+            </label>
+          </li>
           <li id="centerThisOne"><div id="popSpot"></div></li>
         </ul>
         <button id="settingsClose">Close</button>
@@ -219,7 +227,7 @@
           <li>By default best and worst are overall.</li>
           <li>Options: make a new session; delete, clear, or export; and change the session name and description.</li>
           <li>To make changes to an individual time, click/tap on that time.</li>
-          <li>Yes, this is a PWA! You can add it to your home screen or make a shortcut or whatever.</li>
+          <li>Yes, this is a PWA! You can add it to your home screen or make a shortcut.</li>
         </ul>
         <p>
           <em>Written by: Kai Deru.
@@ -257,6 +265,5 @@
     </div>
     
     <img id="infobtn" alt="About this app" title="About this app" src="img/infoicon.png">
-  </div>
   </body>
 </html>
