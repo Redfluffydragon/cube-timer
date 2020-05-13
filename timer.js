@@ -1,10 +1,9 @@
 /**
- * round corners of top and bottom session selection highlights - try queryselector with nth-child
  * switch is faster, object literal looks better - either is probably better for all the clicks
  */
 
 if (navigator.serviceWorker) {
-  navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
+  // navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
 }
 
 let removed = []; //removed times
@@ -226,7 +225,6 @@ const settingsSettings = {
 };
 const settingsKeys = Object.keys(settingsSettings);
 
-const everything = document.getElementById('everything');
 const popups = document.getElementsByClassName('popup');
 
 const rcorners = document.getElementById('rcorners');
@@ -236,16 +234,6 @@ const isMobile = (typeof window.orientation !== 'undefined') || (navigator.userA
 const standalone = window.matchMedia('(display-mode: standalone)').matches;
 
 //All the variables that need to be gotten on reload/load, and associated functions
-let lmode = gotem('mode', true);
-    runmode(false);
-
-let cornerStyle = gotem('cornerStyle', 'r');
-    changeCorners(null, cornerStyle);
-
-let morechecked = gotem('moretoggle', false);
-    checkmore.checked = morechecked;
-    morechecked && (inmore.textContent = '[less]');
-
 let alltimes = gotem('all', []);
 
 let moddedTimes = gotem('modded', []);
@@ -255,16 +243,6 @@ let sessions = gotem('sessions', [{name: 'Session 1', description: 'Default sess
 
 let session = gotem('currses', sessions[0].name);
 
-let startdelay = gotem('delaysave', 300);
-    colorIndicator(delaytime, (startdelay/1000)+'s');
-
-let inspectTime = gotem('inspectsave', true);
-    colorIndicator(inspselect, inspectTime ? '15s (WCA)' : 'None');
-
-let cube = gotem('cubesave', '3x3');
-    cubeButton.textContent = cube;
-    colorIndicator(cubeselect, cube);
-
 const storeSettings = gotem('settings', {
   announce: true,
   delayAndInspect: true,
@@ -272,6 +250,13 @@ const storeSettings = gotem('settings', {
   BWperSess: false,
   hideWhileTiming: true,
   multiScram: true,
+  lmode: true,
+  timein: false,
+  cornerStyle: 'r',
+  morechecked: false,
+  startdelay: 300,
+  inspectTime: true,
+  cube: '3x3',
 });
 
 let fscramble = gotem('scramble', null);
@@ -283,11 +268,6 @@ if (isMobile) {
   undobtn.addEventListener('click', undo, false);
 }
 
-let timein = gotem('timein', false);
-    timesInOut(false);
-
-draw();
-
 //event listeners
 document.addEventListener('click', e => {
   const match = t => e.target.matches(t); //shorter match function
@@ -296,15 +276,13 @@ document.addEventListener('click', e => {
     timeClicks(e);
   }
   else if (match('.inspselect')) { 
-    inspectTime = e.target.textContent === 'None' ? false : true;
-    localStorage.setItem('inspectsave', JSON.stringify(inspectTime));
+    storeSettings.inspectTime = e.target.textContent === 'None' ? false : true;
     colorIndicator(inspselect, e.target.textContent);
   }
   else if (match('.cubeselect')) {
-    if (cube !== e.target.textContent) {
-      cube = e.target.textContent;
-      cubeButton.textContent = cube;
-      localStorage.setItem('cubesave', JSON.stringify(cube));
+    if (storeSettings.cube !== e.target.textContent) {
+      storeSettings.cube = e.target.textContent;
+      cubeButton.textContent = storeSettings.cube;
       scrambles.length = 0;
       scrambleNum = 0;
       localStorage.removeItem('scrambles');
@@ -312,12 +290,11 @@ document.addEventListener('click', e => {
       scramNum.textContent = '1';
       scramble();
     }
-    colorIndicator(cubeselect, cube);
+    colorIndicator(cubeselect, storeSettings.cube);
 
   }
   else if (match('.delaytime')) {
-    startdelay = e.target.textContent.slice(0, -1)*1000;
-    localStorage.setItem('delaysave', JSON.stringify(startdelay));
+    storeSettings.startdelay = parseInt(e.target.textContent.slice(0, -1), 10)*1000;
     colorIndicator(delaytime, e.target.textContent);
   }
   else if (match('.modtime')) {
@@ -333,99 +310,80 @@ document.addEventListener('click', e => {
             thetwo.classList.remove('disabled');
             alltimes[tempallidx] = moddedTimes.splice(i, 1)[0];
             alltimes[tempallidx].dnf = false;
-            localStorage.setItem('modded', JSON.stringify(moddedTimes));
           }
         });
       }
       else {
         thetwo.classList.add('disabled');
         moddedTimes.push(allthistime);
-        localStorage.setItem('modded', JSON.stringify(moddedTimes));
         allthistime.time = 0;
         allthistime.dnf = true;
       }
       moddedTimes = gotem('modded');
     }
-    if (match('#thedel')) {
-        let conf = confirm('Remove this time?')
-        if(conf){
-          removed = [{time: alltimes.splice(tempallidx, 1)[0], index: tempallidx}];
-          sessionStorage.setItem('removed', JSON.stringify(removed));
-        }
-    }
-    localStorage.setItem('all', JSON.stringify(alltimes));
+    match('#thedel') && confirm('Remove this time?') && (removed = [{time: alltimes.splice(tempallidx, 1)[0], index: tempallidx}]);
     draw();
     closeAll();
   }
   else if (match('.sesselect')) {
     session = e.target.textContent;
-    localStorage.setItem('currses', JSON.stringify(session));
     sesslc.textContent = session;
     draw();
   }
-  else if(match('#nextScram')) {
-    if (scrambleNum === 0) scrambles.push(fscramble);
+  else if (match('#nextScram')) {
+    if (scrambleNum === 0) { scrambles.push(fscramble); }
     scrambleNum++;
     if (scrambleNum > scrambles.length-1) {
       scramble();
       scrambles.push(fscramble);
-      localStorage.setItem('scrambles', JSON.stringify(scrambles));
     }
     else { scrambletxt.textContent = scrambles[scrambleNum]; }
-    localStorage.setItem('scrambleNum', JSON.stringify(scrambleNum));
     scramNum.textContent = scrambleNum + 1;
   }
-  else if(match('#firstScram')) {
-    if (scrambles.length) {
-      scrambleNum = 0;
-      scrambletxt.textContent = scrambles[scrambleNum];
-      scramNum.textContent = scrambleNum + 1;
-      localStorage.setItem('scrambleNum', JSON.stringify(scrambleNum));
-    }
+  else if (match('#firstScram') && scrambles.length) {
+    scrambleNum = 0;
+    scrambletxt.textContent = scrambles[scrambleNum];
+    scramNum.textContent = scrambleNum + 1;
   }
-  else if(match('#checkmore')) {
-    morechecked = checkmore.checked;
-    localStorage.setItem('moretoggle', JSON.stringify(morechecked));
+  else if (match('#checkmore')) {
+    storeSettings.morechecked = checkmore.checked;
   }
-  else if(match('#newses')) {
+  else if (match('#newses')) {
     showPop(sespopup);
     sesname.focus();
     shadow.style.zIndex = '7';
     sespop = true;
   }
-  else if(match('#sescancel')) {
+  else if (match('#sescancel')) {
     sespopup.classList.remove('inlineBlock');
     shadow.style.zIndex = '';
     sespop = false;
   }
-  else if(match('#timenter')) {
+  else if (match('#timenter')) {
     showPop(timenterpopup);
     timentertoo.focus();
     enterpop = true;
   }
-  else if(match('#settingsIcon')) {
+  else if (match('#settingsIcon')) {
     for (let i of settingsKeys) {
       settingsSettings[i].checked = storeSettings[i];
     }
-    rcorners.id.charAt(0) === cornerStyle ? rcorners.checked = true : scorners.checked = true;
+    rcorners.id.charAt(0) === storeSettings.cornerStyle ? rcorners.checked = true : scorners.checked = true;
     showPop(setpopup);
     setpop = true;
   }
-  else if(match('#deleteallses')) {
+  else if (match('#deleteallses')) {
     let deleteallconf = confirm('Delete all sessions?');
     if (deleteallconf) {
       justAll();
       sesremoved = sessions;
-      sessionStorage.setItem('sesremoved', JSON.stringify(sesremoved));
       sessions = [{name: 'Session 1', description: 'Default session'}];
       session = sessions[0].name;
       sesslc.textContent = session;  
-      localStorage.setItem('sessions', JSON.stringify(sessions));
-      localStorage.setItem('currses', JSON.stringify(session));
       closeNdraw();
     }
   }
-  else if(match('#deleteses')) {
+  else if (match('#deleteses')) {
     let deletesessionconf = confirm('Delete this session?');
     if (deletesessionconf) {
       justAsession();
@@ -433,7 +391,6 @@ document.addEventListener('click', e => {
         if (e.name === session) {
           sesremoved.length = 0;
           sesremoved.push(sessions.splice(i, 1)[0]);
-          sessionStorage.setItem('sesremoved', JSON.stringify(sesremoved));
           let neyes = i-1; //switch to next available session after deleting the current one
           let peyes = i+1;
           if (neyes !== -1) session = sessions[neyes].name; 
@@ -447,34 +404,30 @@ document.addEventListener('click', e => {
         }
       });
       sesslc.textContent = session;
-      localStorage.setItem('all', JSON.stringify(alltimes));
-      localStorage.setItem('sessions', JSON.stringify(sessions));
-      localStorage.setItem('currses', JSON.stringify(session));
-      sessionStorage.setItem('removed', JSON.stringify(removed));
       closeNdraw();
     }
   }
-  else if(match('#clearallses')) {
+  else if (match('#clearallses')) {
     let firm = confirm('Do you want to clear all times?');
     if (firm) {
       justAll();
       closeNdraw();
     }
   }
-  else if(match('#clearses')) {
+  else if (match('#clearses')) {
     let clearsessionconf = confirm('Clear this session?');
     if (clearsessionconf) {
       justAsession();
       closeNdraw();
     }
   }
-  else if(match('#exportallses')) {
+  else if (match('#exportallses')) {
     createCsv(alltimes, 'Cube Timer - all times');
   }
-  else if(match('#exportses')) {
+  else if (match('#exportses')) {
     createCsv(displaytimes, session);
   }
-  else if(match('#sesopt')) {
+  else if (match('#sesopt')) {
     showPop(sesoptpopup);
     changesesname.value = session;
     sessions.find(e => {
@@ -484,7 +437,7 @@ document.addEventListener('click', e => {
     });
     seesescrip.value = tempcrip.description;
   }
-  else if(match('#dothenter')) {
+  else if (match('#dothenter')) {
     if (timentertoo.value !== '' && checkTime(timentertoo.value) !== undefined) {
       alltimes.push({number: '', time: checkTime(timentertoo.value), ao5: '', ao12: '', cube: cubenter.value, session: session, scramble: scramenter.value, date: datenter.value, comment: commenter.value, dnf: false, plustwo: false});
       for (let i of enterArr) { i.value = null; }
@@ -492,16 +445,15 @@ document.addEventListener('click', e => {
     }
     else {alert("I don't recognize that time.");}
   }
-  else if(match('#inmore')) {
+  else if (match('#inmore')) {
     morepop ? morepopup.classList.remove('inlineBlock') : morepopup.classList.add('inlineBlock');
     morepop = !morepop;
     inmore.textContent = inmore.textContent === '[more]' ? '[less]' : '[more]';
   }
-  else if(match('#saveses')) {
+  else if (match('#saveses')) {
     if (changesesname.value === session) {
       let sesidx = sessions.indexOf(tempcrip);
       sessions[sesidx].description = seesescrip.value;
-      localStorage.setItem('sessions', JSON.stringify(sessions));
       closeNdraw();
     }
     else if (checkSession(changesesname.value, sameAlertAgain)) {
@@ -515,7 +467,6 @@ document.addEventListener('click', e => {
           e.name = changesesname.value;
           e.description = seesescrip.value;
           sesslc.textContent = changesesname.value;
-          localStorage.setItem('sessions', JSON.stringify(sessions));
         }
       });
       for (let i of sesselect) {
@@ -524,17 +475,16 @@ document.addEventListener('click', e => {
         }
       }
       session = changesesname.value;
-      localStorage.setItem('currses', JSON.stringify(session));
       closeNdraw();
     }
   }
-  else if(match('#lighticon')) runmode(true);
-  else if(match('#sescreate')) newSession();
-  else if(match('#infobtn')) showPop(infopopup);
-  else if(match('#outicon') || match('#inicon')) timesInOut();
-  else if(match('#rcorners') || match('#scorners')) changeCorners(e);
-  else if(match('#timeclose') || match('#settingsClose')) closeNdraw();
-  else if(match('#infoclose') || match('#timentercanc')) closeAll();
+  else if (match('#lighticon')) { runmode(true); }
+  else if (match('#sescreate')) newSession();
+  else if (match('#infobtn')) showPop(infopopup);
+  else if (match('#outicon') || match('#inicon')) timesInOut();
+  else if (match('#rcorners') || match('#scorners')) changeCorners(e);
+  else if (match('#timeclose') || match('#settingsClose')) closeNdraw();
+  else if (match('#infoclose') || match('#timentercanc')) closeAll();
   //have to call all of them all the time for clicks outside, I think - maybe do the closing in one function? would that be better?
   dropDown(cubeButton, cubeDrop, e);
   dropDown(inspectButton, inspectDrop, e);
@@ -546,14 +496,14 @@ document.addEventListener('mousedown', closeModal, false);
 
 document.addEventListener('touchstart', e => {
   if (match(e, '#touch #time #insptime #onlytime')) touchdown(e);
-  else if(e.target.closest('#timebody')) touchMoved = false;
+  else if (e.target.closest('#timebody')) touchMoved = false;
   closeModal(e);
 }, {passive: false, useCapture: false});
 
 document.addEventListener('touchend', e => {
   closing = false;
   if (match(e, '#touch #time #insptime #onlytime')) up();
-  else if(e.target.closest('#timebody')) timeClicks(e);
+  else if (e.target.closest('#timebody')) timeClicks(e);
 }, {passive: false, useCapture: false});
 
 window.addEventListener('keydown', e => {
@@ -576,9 +526,23 @@ window.addEventListener('keyup', e => {
 
 window.addEventListener('load', afterLoad, false);
 
+window.addEventListener('beforeunload', () => {
+  localStorage.setItem('all', JSON.stringify(alltimes));
+  localStorage.setItem('settings', JSON.stringify(storeSettings));
+  localStorage.setItem('scramble', JSON.stringify(fscramble));
+  localStorage.setItem('scrambles', JSON.stringify(scrambles));
+  localStorage.setItem('scrambleNum', JSON.stringify(scrambleNum));
+  localStorage.setItem('currses', JSON.stringify(session));
+  localStorage.setItem('sessions', JSON.stringify(sessions));
+  localStorage.setItem('modded', JSON.stringify(moddedTimes));
+
+  sessionStorage.setItem('sesremoved', JSON.stringify(sesremoved));
+  sessionStorage.setItem('removed', JSON.stringify(removed));
+}, false);
+
 timebody.addEventListener('touchmove', () => {touchMoved = true;}, {passive: true});
 
-scrambletxt.addEventListener('transitionend', () => {if(!timein) scrambletxt.style.left = '';}, false);
+scrambletxt.addEventListener('transitionend', () => {if (!storeSettings.timein) scrambletxt.style.left = '';}, false);
 
 //wrapper function for getting stuff from localStorage
 function gotem(item, defalt, type = localStorage) {
@@ -669,6 +633,23 @@ function draw() { //to redraw things after modifying
 }
 
 function afterLoad() {
+  timesInOut(false);
+
+  colorIndicator(inspselect, storeSettings.inspectTime ? '15s (WCA)' : 'None');
+
+  checkmore.checked = storeSettings.morechecked;
+  storeSettings.morechecked && (inmore.textContent = '[less]');
+
+  colorIndicator(delaytime, (storeSettings.startdelay/1000)+'s');
+
+  changeCorners(null, storeSettings.cornerStyle);
+
+  runmode(false);
+
+  cubeButton.textContent = storeSettings.cube;
+  colorIndicator(cubeselect, storeSettings.cube);
+
+  draw();
   sessionsdiv.classList.add('transOneSec');
   timetable.classList.add('transOneSec');
   scrambletxt.classList.add('transOneSec');
@@ -690,9 +671,9 @@ function timeClicks(e) {
 
     timepops.classList.add('inlineBlock');
     showPop(timepopup);
-    inmore.textContent = morechecked ? '[less]' : '[more]';
+    inmore.textContent = storeSettings.morechecked ? '[less]' : '[more]';
     timepop = true;
-    if (morechecked) {
+    if (storeSettings.morechecked) {
       morepopup.classList.add('inlineBlock');
       morepop = true;
     }
@@ -868,12 +849,11 @@ function checkclo() { //clock
 
 function scramble() { //do the scrambles
   tscramble.length = 0;
-  do { scramblers[cube](); }
+  do { scramblers[storeSettings.cube](); }
   while (tscramble.length < slen)
   
   fscramble = tscramble.join(' ');
   scrambletxt.textContent = fscramble;
-  localStorage.setItem('scramble', JSON.stringify(fscramble));
 }
 
 function average(startpoint, leng) {
@@ -960,13 +940,13 @@ function stopwatch() { //counts time
 function timeout() { //do the holding delay, and colors
   outime = new Date();
 
-  if ((outime-timeou) < startdelay) {
-    time.classList.add(lmode ? 'red' : 'cyan');
+  if ((outime-timeou) < storeSettings.startdelay) {
+    time.classList.add(storeSettings.lmode ? 'red' : 'cyan');
     insptime.classList.add('orange');
   }
   else {
     waiting = true;
-    time.classList.add(lmode ? 'green' : 'magenta');
+    time.classList.add(storeSettings.lmode ? 'green' : 'magenta');
     insptime.classList.remove('orange');
     insptime.classList.add('green');
   }
@@ -989,15 +969,12 @@ function fin() { //finish timing, save result
   insptime.classList.remove('orange', 'green');
   onlytime.classList.remove('initial');
   timealert.classList.add('none'); //should only be showing at this point if they DNFed by timeout
-  alltimes.push({number: null, time: counter+addTwo, ao5: '', ao12: '', cube: cube, session: session, scramble: whichScram, date: makeDate(), comment: '', dnf: dnf, plustwo: plustwo});
-  localStorage.setItem('all', JSON.stringify(alltimes));
+  alltimes.push({number: null, time: counter+addTwo, ao5: '', ao12: '', cube: storeSettings.cube, session: session, scramble: whichScram, date: makeDate(), comment: '', dnf: dnf, plustwo: plustwo});
 
   dnf = false;
   plustwo = false;
   scrambles.length = 0;
   scrambleNum = 0;
-  localStorage.setItem('scrambles', JSON.stringify(scrambles));
-  localStorage.setItem('scrambleNum', JSON.stringify(scrambleNum));
   scramNum.textContent = '1';
 
   scramble(); //new scramble
@@ -1007,14 +984,14 @@ function fin() { //finish timing, save result
 function down() { //spacebar down
   if (!popup && !dnf) {
     if (!onstart && !started) {
-      if (!inspectTime || inspecting) { //start delay timer
+      if (!storeSettings.inspectTime || inspecting) { //start delay timer
         timeou = new Date();
         oto = setInterval(timeout, 10);
       }
-      else { time.classList.add(lmode ? 'green' : 'magenta'); }
+      else { time.classList.add(storeSettings.lmode ? 'green' : 'magenta'); }
       onstart = true;
     }
-    else if(started) { fin(); }
+    else if (started) { fin(); }
   }
 }
   
@@ -1027,7 +1004,7 @@ function up() { //spacebar up
       onstart = false;
     }
     if (!keydown) {
-      if (inspectTime && !inspecting) { //go! (start inspection time)
+      if (storeSettings.inspectTime && !inspecting) { //go! (start inspection time)
         inspecting = true;
         time.classList.add('none');
         insptime.classList.remove('none');
@@ -1035,7 +1012,7 @@ function up() { //spacebar up
         istart = new Date();
         inspectstart = setInterval(inspection, 10);
       }
-      if ((!inspectTime && waiting) || waiting) { //go! (start the stopwatch)
+      if ((!storeSettings.inspectTime && waiting) || waiting) { //go! (start the stopwatch)
         start = new Date();
         intstart = setInterval(stopwatch, 10); //actually start the stopwatch
         if (storeSettings.hideWhileTiming) onlytime.classList.add('initial');
@@ -1075,7 +1052,6 @@ function undo() { //undo the last-done deletion
     const getIdx = removed[0].index;
     for (let i of removed) {
       alltimes[getIdx] === undefined ? alltimes.push(i.time) : alltimes.splice(getIdx, 0, i.time); 
-      localStorage.setItem('all', JSON.stringify(alltimes));      
     }
     removed.length = 0;
     sessionStorage.removeItem('removed');
@@ -1085,7 +1061,6 @@ function undo() { //undo the last-done deletion
     for (let i of sesremoved) {
       if (!sessions.includes(i)) { // fix duplicating sessions with one (not all)
         sessions.push({name: i.name, description: i.description});
-        localStorage.setItem('sessions', JSON.stringify(sessions));
       }
     }
     session = sesremoved[sesremoved.length-1].name;
@@ -1100,23 +1075,18 @@ function undo() { //undo the last-done deletion
     undone.classList.remove('inlineBlock');
     shadow.classList.remove('initial');
   }, 300);
-  localStorage.setItem('currses', JSON.stringify(session));
   draw();
 }
 
 function runmode(notstart) { // switch dark/light mode
-  if (notstart) {
-    lmode = !lmode;
-    localStorage.setItem('mode', JSON.stringify(lmode));
-  }
-  document.body.setAttribute('lmode', lmode);
+  notstart && (storeSettings.lmode = !storeSettings.lmode);
+  document.body.setAttribute('lmode', storeSettings.lmode);
 }
 
 function changeCorners(e, forStart) { //corner style
-  cornerStyle = e ? e.target.id.charAt(0) : forStart;
-  whichStyle = cornerStyle === 'r' ? true : false;
+  storeSettings.cornerStyle = e ? e.target.id.charAt(0) : forStart;
+  whichStyle = storeSettings.cornerStyle === 'r' ? true : false;
   document.body.setAttribute('round', whichStyle);
-  localStorage.setItem('cornerStyle', JSON.stringify(cornerStyle));
 }
 
 function closeAll() { //close everything
@@ -1127,16 +1097,12 @@ function closeAll() { //close everything
   shadow.classList.remove('initial');
   shadow.style.zIndex = '';
   
-  if (timepop) {
-    allthistime.comment = comment.value;
-    localStorage.setItem('all', JSON.stringify(alltimes));
-  }
+  timepop && (allthistime.comment = comment.value);
 
   if (setpop) {
     for (let i of settingsKeys) {
       storeSettings[i] = settingsSettings[i].checked;
     }
-    localStorage.setItem('settings', JSON.stringify(storeSettings));
   }
 
   centerpop.classList.add('none'); //for some reason it interferes at the top if displayed at all
@@ -1162,12 +1128,10 @@ function checkSession(name, alertElement) { //check for duplicate names
 function newSession() { //create a new session
   if (sesname.value !== '' && checkSession(sesname.value, sameAlert)) {
     sessions.push({name: sesname.value, description: sescrip.value});
-    localStorage.setItem('sessions', JSON.stringify(sessions));
     sameAlert.textContent = null;
     sesname.value = null;
     sescrip.value = null;
     session = sessions[sessions.length-1].name;
-    localStorage.setItem('currses', JSON.stringify(session));
     closeNdraw();
   }
 }
@@ -1182,12 +1146,10 @@ function justAsession() { //get just the current session
     const rmvidx = alltimes.indexOf(i);
     removed.push({time: alltimes.splice(rmvidx, 1)[0], index: rmvidx, session: session});
   }
-  sessionStorage.setItem('removed', JSON.stringify(removed));
 }
 
 function justAll() { //get everything
   alltimes.forEach((e, i) => { removed.push({time: e, index: i}); });
-  sessionStorage.setItem('removed', JSON.stringify(removed));
   alltimes.length = 0;
   sessions.length = 0;
   localStorage.removeItem('all');
@@ -1229,7 +1191,7 @@ function createCsv(array, name) { //create csv file from 2d array
 }
 
 function timesInOut(swtch = true) { //move the time table in and out, and associated transitions
-  if (timein === swtch) {
+  if (storeSettings.timein === swtch) {
     timetable.classList.remove('transXsixty');
     sessionsdiv.classList.remove('transXhundred');
     outicon.classList.add('none');
@@ -1260,10 +1222,7 @@ function timesInOut(swtch = true) { //move the time table in and out, and associ
       });
     });
   }
-  if (swtch) {
-    timein = timein ? false : true;
-    localStorage.setItem('timein', JSON.stringify(timein));
-  }
+  swtch && (storeSettings.timein = !storeSettings.timein);
 }
 
 function checkTime(time) { //check if a time is valid, and return it in seconds
