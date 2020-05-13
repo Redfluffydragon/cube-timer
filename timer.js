@@ -1,7 +1,8 @@
 /**
  * switch is faster, object literal looks better - either is probably better for all the clicks
- * use animationFrame for 
+ * use animationFrame for timer?
  */
+'use strict';
 
 if (navigator.serviceWorker) {
   navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
@@ -45,7 +46,7 @@ let forAutoplay = false;
 //scramble generator variables
 const faces = ['F', 'U', 'L', 'R', 'D', 'B'];
 const fewerFaces = ['L', 'R', 'B', 'U'];
-const mods = ['', "'", '2'];
+const mods = ['', `'`, '2'];
 const moves3 = [];
 const moves4 = [];
 const moves6 = [];
@@ -58,7 +59,7 @@ for (let i = 0; i < faces.length*mods.length; i++) {
 }
 
 for (let i = 0; i < fewerFaces.length*2; i++) {
-  pyrsmoves.push(fewerFaces[Math.trunc(i/2)]+mods[i%2]); //same for pyraminx
+  pyrsmoves.push(fewerFaces[Math.trunc(i/2)] + mods[i%2]); //same for pyraminx
 }
 
 const allmoves4 = moves3.concat(moves4);
@@ -217,7 +218,7 @@ const scorners = document.getElementById('scorners');
 const isMobile = (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1);
 
 //All the variables that need to be gotten on reload/load, and associated functions
-let alltimes = gotem('all', []);
+const alltimes = gotem('all', []);
 
 let moddedTimes = gotem('modded', []);
 
@@ -243,7 +244,7 @@ const storeSettings = gotem('settings', {
 });
 
 let fscramble = gotem('scramble', null);
-let scrambles = gotem('scrambles', []);
+const scrambles = gotem('scrambles', []);
 let scrambleNum = gotem('scrambleNum', 0);
 
 if (isMobile) {
@@ -259,7 +260,7 @@ document.addEventListener('click', e => {
     timeClicks(e);
   }
   else if (match('.inspselect')) {
-    storeSettings.inspectTime = e.target.textContent === 'None' ? false : true;
+    storeSettings.inspectTime = !(e.target.textContent === 'None');
     colorIndicator(inspselect, e.target.textContent);
   }
   else if (match('.cubeselect')) {
@@ -276,14 +277,14 @@ document.addEventListener('click', e => {
     colorIndicator(cubeselect, storeSettings.cube);
   }
   else if (match('.delaytime')) {
-    storeSettings.startdelay = parseInt(e.target.textContent.slice(0, -1), 10)*1000;
+    storeSettings.startdelay = parseFloat(e.target.textContent.slice(0, -1))*1000;
     colorIndicator(delaytime, e.target.textContent);
   }
   else if (match('.modtime')) {
     if (match('#thetwo')) {
-      if (thetwo.classList.contains('disabled')) return;
+      if (thetwo.classList.contains('disabled')) { return; }
       allthistime.time = Math.trunc((allthistime.plustwo ? allthistime.time-2 : allthistime.time+2)*100)/100;
-      allthistime.plustwo = allthistime.plustwo ? false : true; 
+      allthistime.plustwo = !allthistime.plustwo;
     }
     if (match('#thednf')) {
       if (allthistime.dnf) {
@@ -371,7 +372,7 @@ document.addEventListener('click', e => {
         let neyes = i-1; //switch to next available session after deleting the current one
         let peyes = i+1;
         if (neyes !== -1) session = sessions[neyes].name; 
-        else if (neyes === -1 && sessions[peyes] !== undefined) session = sessions[peyes].name;
+        else if (neyes === -1 && sessions[peyes] != null) session = sessions[peyes].name;
         else {
           sessions.length = 0;
           alltimes.length = 0;
@@ -411,7 +412,7 @@ document.addEventListener('click', e => {
       for (let i of enterArr) { i.value = null; }
       closeNdraw();
     }
-    else { alert("I don't recognize that time."); }
+    else { alert(`I don't recognize that time.`); }
   }
   else if (match('#inmore')) {
     morepop ? morepopup.classList.remove('inlineBlock') : morepopup.classList.add('inlineBlock');
@@ -470,21 +471,23 @@ document.addEventListener('touchend', e => {
 }, {passive: false, useCapture: false});
 
 window.addEventListener('keydown', e => {
-  let key = e.keyCode;
+  const key = e.keyCode;
   if (key === 32) { down(); } //space
-  if (key === 27) { closeAll(); } //esc
-  if (key === 90 && e.ctrlKey && !popup) { undo(); } //z to undo
-  if (key === 13) { //enter
-    if (sespop) { newSession(); }
-    else if (enterpop && timentertoo.value !== '') { closeNdraw(); }
+  else if (key === 27) { closeAll(); } //esc
+  else if (key === 90 && e.ctrlKey && !popup) { undo(); } //z to undo
+  else if (key === 13) { //enter
+    sespop && newSession();
+    enterpop && timentertoo.value !== '' && closeNdraw();
   }
-  //2 and d, for +2 and DNF (only while time editing modal is open)
-  if (key === 50 && timepop && !morepop) { allthistime.plustwo = allthistime.plustwo ? false : true; closeNdraw(); }
-  if (key === 68 && timepop && !morepop) { allthistime.dnf = allthistime.dnf ? false : true; closeNdraw(); }
+  else if (timepop && !morepop) { //2 and d, for +2 and DNF (only while time editing modal is open)
+    key === 50 && (allthistime.plustwo = !allthistime.plustwo);
+    key === 68 && (allthistime.dnf = !allthistime.dnf);
+    closeNdraw();
+  }
 }, false);
 
 window.addEventListener('keyup', e => {
-  if (e.keyCode === 32) { up(); }
+  e.keyCode === 32 && up();
 }, false);
 
 window.addEventListener('load', afterLoad, false);
@@ -510,7 +513,7 @@ scrambletxt.addEventListener('transitionend', () => {if (!storeSettings.timein) 
 //wrapper function for getting stuff from localStorage
 function gotem(item, defalt, type = localStorage) {
   const getthething = JSON.parse(type.getItem(item));
-  if (getthething === null || getthething === undefined) { return defalt; }
+  if (getthething == null) { return defalt; }
   return getthething;
 };
 
@@ -658,7 +661,7 @@ function timeClicks(e) {
     seescramble.textContent = allthistime.scramble;
     seedate.textContent = allthistime.date;
     seecube.textContent =  allthistime.cube;
-    allthistime.comment !== undefined && (comment.value = allthistime.comment);
+    allthistime.comment != null && (comment.value = allthistime.comment);
   }
 }
 
@@ -671,7 +674,7 @@ function closeModal(e) { //close modals
 }
 
 function bestworst(array) { //get the best and worst times, not indluding dnfs
-  let justTimes = [];
+  const justTimes = [];
   for (let i of array) {
     i.time && justTimes.push(i.time);
   }
@@ -699,8 +702,8 @@ function makeDate() { //the right date format
   let seconds = thedate.getSeconds().toString();
   const timezone = thedate.getTimezoneOffset()/-60;
 
-  seconds.length === 1 ? seconds = '0'+seconds : seconds;
-  minute.length === 1 ? minute = '0'+minute : minute;
+  seconds.length === 1 ? seconds = '0' + seconds : seconds;
+  minute.length === 1 ? minute = '0' + minute : minute;
 
   return `${days[day]}, ${months[month]} ${daydate}, ${year} ${hour}:${minute}:${seconds} UTC${timezone}`;
 }
@@ -733,11 +736,11 @@ function checknxn(moveset) { //for nxnxn cubes
 
   const twoCharT = tempmove.substring(0, 2);
   const charOneT = tempmove.charAt(0);
-  if (pmove !== undefined) {
+  if (pmove != null) {
     charOneP = pmove.charAt(0);
     twoCharP = pmove.substring(0, 2);
   }
-  if (twoBackMove !== undefined) {
+  if (twoBackMove != null) {
     charOneTwoBack = twoBackMove.charAt(0);
   }
   if (twoCharT === twoCharP || charOneP === charOneT || (charOneTwoBack === charOneT && oppositeSides[charOneT] === charOneP)) { return; }
@@ -750,7 +753,7 @@ function checkpyr1() { // turn the big corners for pyraminx
   const pmove = tscramble[0];
   const charOneT = tempmove.charAt(0);
   let charOneP;
-  if (pmove !== undefined) { charOneP = pmove.charAt(0); }
+  pmove != null && (charOneP = pmove.charAt(0));
   if (charOneT === charOneP) { return; }
   else { tscramble.unshift(tempmove); }
 }
@@ -761,7 +764,7 @@ function addfour(moveset, chancemod = 0.1, apostrophe = true) { //add zero to fo
     if (pointyn) {
       const pointdir = Math.round(Math.random());
       if (pointdir || !apostrophe) { tscramble.unshift(moveset[i]); }
-      else { tscramble.unshift(moveset[i] + "'"); }
+      else { tscramble.unshift(moveset[i] + `'`); }
     }
   }
 }
@@ -778,7 +781,7 @@ function checkmeg() { //megaminx
       const move = j%2 ? 'D' : 'R';
       tscramble.push(move + moveMod);
     }
-    Math.round(Math.random()) ? tscramble.push('U\r\n') : tscramble.push("U'\r\n");
+    Math.round(Math.random()) ? tscramble.push('U\r\n') : tscramble.push(`U'\r\n`);
   }
 }
 
@@ -803,7 +806,7 @@ function checkclo() { //clock
   for (let i of clocks) {
     const clockrand = Math.round((Math.random()*11)-5);
     const clkstr = JSON.stringify(clockrand);
-    const rvrsclock = clkstr.length > 1 ? clkstr.charAt(1)+clkstr.charAt(0) : clkstr.charAt(0)+'+'; 
+    const rvrsclock = clkstr.length > 1 ? clkstr.charAt(1) + clkstr.charAt(0) : clkstr.charAt(0) + '+'; 
     i !== 'y2' ? tscramble.unshift(i+rvrsclock) : tscramble.unshift(i);
   }
 }
@@ -819,8 +822,8 @@ function scramble() { //do the scrambles
 
 function average(startpoint, leng) {
   let sum;
-
   let avgAll = [];
+
   if (startpoint > (leng-1)) {
     for (let i = 1; i < leng+1; i++) {
       avgAll.push(displaytimes[startpoint-i].time);
@@ -850,7 +853,7 @@ function toMinutes(time) { //seconds to colon format
     secondsafter < 10 && (secondsafter = '0' + secondsafter);
     return minutes + ':' + secondsafter;
   }
-  else { return "You're slow"; }
+  return `You're slow`;
 }
 
 //display inspection countdown, as well as 8s, 12s, +2, and DNF by timeout
@@ -881,7 +884,7 @@ function inspection() {
     plustwo = false;
     clearInterval(oto); //stop the delay, if holding
   }
-  else if (displayctdn === undefined) { //reset the timer and finish
+  else if (displayctdn == null) { //reset the timer and finish
     time.textContent = '0.00';
     counter = 0;
     fin();
@@ -916,14 +919,21 @@ function fin() { //finish timing, save result
   clearInterval(intstart);
   clearInterval(inspectstart);
   
-  const addTwo = plustwo ? 2 : null;
-  const whichScram = scrambles.length ? scrambles.join(';\r\n') : fscramble;
-  time.className = ('zone'); //remove all other classes
+  time.className = 'zone'; //remove all other classes
   time.textContent = toMinutes(counter); //show hundredths of a second
   insptime.classList.remove('orange', 'green');
   onlytime.classList.remove('initial');
   timealert.classList.add('none'); //should only be showing at this point if they DNFed by timeout
-  alltimes.push({number: null, time: counter+addTwo, ao5: '', ao12: '', cube: storeSettings.cube, session: session, scramble: whichScram, date: makeDate(), comment: '', dnf: dnf, plustwo: plustwo});
+  alltimes.push({
+    number: null,
+    time: counter + (plustwo ? 2 : 0),
+    cube: storeSettings.cube,
+    session: session,
+    scramble: scrambles.length ? scrambles.join(';\r\n') : fscramble,
+    date: makeDate(),
+    dnf: dnf,
+    plustwo: plustwo,
+  });
 
   dnf = false;
   plustwo = false;
@@ -1005,7 +1015,7 @@ function undo() { //undo the last-done deletion
   if (removed.length) {
     const getIdx = removed[0].index;
     for (let i of removed) {
-      alltimes[getIdx] === undefined ? alltimes.push(i.time) : alltimes.splice(getIdx, 0, i.time); 
+      alltimes[getIdx] == null ? alltimes.push(i.time) : alltimes.splice(getIdx, 0, i.time); 
     }
     removed.length = 0;
     sessionStorage.removeItem('removed');
@@ -1037,10 +1047,9 @@ function runmode(notstart) { // switch dark/light mode
   document.body.setAttribute('lmode', storeSettings.lmode);
 }
 
-function changeCorners(e, forStart) { //corner style
-  storeSettings.cornerStyle = e ? e.target.id.charAt(0) : forStart;
-  whichStyle = storeSettings.cornerStyle === 'r' ? true : false;
-  document.body.setAttribute('round', whichStyle);
+function changeCorners(e, style) { //corner style
+  storeSettings.cornerStyle = e ? e.target.id.charAt(0) : style;
+  document.body.setAttribute('round', (storeSettings.cornerStyle === 'r'));
 }
 
 function closeAll() { //close everything
@@ -1071,7 +1080,7 @@ function closeAll() { //close everything
 function checkSession(name, alertElement) { //check for duplicate names
   for (let i of sessions) {
     if (name === i.name) {
-      alertElement.textContent = "You've already used that name.";
+      alertElement.textContent = `You've already used that name.`;
       sesname.value = null;
       return false; 
     }
