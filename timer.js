@@ -1,5 +1,6 @@
 /**
  * switch is faster, object literal looks better - either is probably better for all the clicks
+ * use animationFrame for 
  */
 
 if (navigator.serviceWorker) {
@@ -10,39 +11,28 @@ let removed = []; //removed times
 let sesremoved = []; //removed sessions
 
 //for stopwatch
-let timer;
 let counter;
-let thetime;
 let start;
 let intstart;
 let started = false;
 let inspecting = false;
 
-let justTimes = []; //just the times - for best/worst
-let displaytimes = []; //just the times from current session - for display
+const displaytimes = []; //just the times from current session - for display
 let tempallidx;
 let allthistime;
 
-let cells0 = [];
-let cells1 = [];
-let cells2 = [];
-let cells3 = [];
-const cellArrs = [cells0, cells1, cells2, cells3];
+const cellArrs = [[], [], [], []];
 const columnClass = ['number', 'times', 'avgofive', 'avgotwelve'];
-let avgAll = [];
 
 let keydown = false;
 let onstart = false;
 
 //for inspection time countdown
 let timeou;
-let outime;
 let oto;
 let waiting;
-let itimer;
 let inspectstart;
 let istart;
-let displayctdn;
 const countdown = [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, '+2', '+2', 'DNF'];
 let dnf = false;
 let plustwo = false;
@@ -54,7 +44,7 @@ let forAutoplay = false;
 
 //scramble generator variables
 const faces = ['F', 'U', 'L', 'R', 'D', 'B'];
-const lessfaces = ['L', 'R', 'B', 'U'];
+const fewerFaces = ['L', 'R', 'B', 'U'];
 const mods = ['', "'", '2'];
 const moves3 = [];
 const moves4 = [];
@@ -67,8 +57,8 @@ for (let i = 0; i < faces.length*mods.length; i++) {
   moves6.push('3' + faces[Math.trunc(i/3)] + 'w' + mods[i%3]); //only the new ones for 6x6 and 7x7
 }
 
-for (let i = 0; i < lessfaces.length*2; i++) {
-  pyrsmoves.push(lessfaces[Math.trunc(i/2)]+mods[i%2]); //same for pyraminx
+for (let i = 0; i < fewerFaces.length*2; i++) {
+  pyrsmoves.push(fewerFaces[Math.trunc(i/2)]+mods[i%2]); //same for pyraminx
 }
 
 const allmoves4 = moves3.concat(moves4);
@@ -78,10 +68,7 @@ const clocksl4 = ['UL', 'DL', 'DR', 'UR']; //last four moves for clock
 const clocksf4 = ['ALL', 'L', 'D', 'R', 'U']; //repeating series in clock scramble
 const clocks = clocksf4.concat('y2').concat(clocksf4).concat(clocksl4); //concat all together
 
-let tscramble = [];
-let tempmove;
-let pmove;
-let twobackmove;
+const tscramble = [];
 let slen; //scramble length
 
 const oppositeSides = {//opposite sides for nxnxn cubes
@@ -107,7 +94,8 @@ const scramblers = { //object with all the scrambler functions in it, to replace
   'Clock': () => {slen = 0; checkclo();},
 }
 
-let timepop; //modals open or closed
+//modals open or closed
+let timepop;
 let morepop;
 let sespop;
 let enterpop;
@@ -116,7 +104,7 @@ let popup;
 let closing;
 
 //session elements
-let sesnames = [];
+const sesnames = [];
 let tempcrip;
 
 //for the date of a solve
@@ -515,7 +503,7 @@ window.addEventListener('beforeunload', () => {
   sessionStorage.setItem('removed', JSON.stringify(removed));
 }, false);
 
-timebody.addEventListener('touchmove', () => {touchMoved = true;}, {passive: true});
+timebody.addEventListener('touchmove', () => { touchMoved = true; }, {passive: true});
 
 scrambletxt.addEventListener('transitionend', () => {if (!storeSettings.timein) scrambletxt.style.left = '';}, false);
 
@@ -567,16 +555,16 @@ function draw() { //to redraw things after modifying
     createTableRow();
     e.number = i+1;
     const commentYN = e.comment ? '*' : null;
-    cells0[i].textContent = i+1 + commentYN;
-    cells1[i].textContent = e.dnf ? 'DNF' : //check dnf first
+    cellArrs[0][i].textContent = i+1 + commentYN;
+    cellArrs[1][i].textContent = e.dnf ? 'DNF' : //check dnf first
     e.plustwo ? toMinutes(e.time)+'+' : toMinutes(e.time); //then check +2
 
     const avgofiv = average(i+1, 5);
     const avgotwe = average(i+1, 12);
     e.ao5 = avgofiv;
     e.ao12 = avgotwe;
-    cells2[i].textContent = avgofiv;
-    cells3[i].textContent = avgotwe;
+    cellArrs[2][i].textContent = avgofiv;
+    cellArrs[3][i].textContent = avgotwe;
     const saveBack = alltimes.indexOf(e);
     alltimes[saveBack].ao5 = avgofiv;
     alltimes[saveBack].ao12 = avgotwe;
@@ -683,7 +671,7 @@ function closeModal(e) { //close modals
 }
 
 function bestworst(array) { //get the best and worst times, not indluding dnfs
-  justTimes.length = 0;
+  let justTimes = [];
   for (let i of array) {
     i.time && justTimes.push(i.time);
   }
@@ -735,9 +723,9 @@ function dropDown (button, content, e) { //toggle dropdowns
 function checknxn(moveset) { //for nxnxn cubes
   //p is for previous move, t is for temporary move (the one this is checking)
   const random = Math.trunc(Math.random()*(moveset.length));
-  tempmove = moveset[random];
-  pmove = tscramble[tscramble.length-1];
-  twoBackMove = tscramble[tscramble.length-2];
+  const tempmove = moveset[random];
+  const pmove = tscramble[tscramble.length-1];
+  const twoBackMove = tscramble[tscramble.length-2];
 
   let charOneTwoBack;
   let twoCharP;
@@ -758,8 +746,8 @@ function checknxn(moveset) { //for nxnxn cubes
 
 function checkpyr1() { // turn the big corners for pyraminx
   const random = Math.round(Math.random()*7);
-  tempmove = pyrsmoves[random];
-  pmove = tscramble[0];
+  const tempmove = pyrsmoves[random];
+  const pmove = tscramble[0];
   const charOneT = tempmove.charAt(0);
   let charOneP;
   if (pmove !== undefined) { charOneP = pmove.charAt(0); }
@@ -832,7 +820,7 @@ function scramble() { //do the scrambles
 function average(startpoint, leng) {
   let sum;
 
-  avgAll.length = 0;
+  let avgAll = [];
   if (startpoint > (leng-1)) {
     for (let i = 1; i < leng+1; i++) {
       avgAll.push(displaytimes[startpoint-i].time);
@@ -867,8 +855,7 @@ function toMinutes(time) { //seconds to colon format
 
 //display inspection countdown, as well as 8s, 12s, +2, and DNF by timeout
 function inspection() {
-  itimer = new Date();
-  displayctdn = countdown[Math.trunc((itimer-istart)/1000)];
+  const displayctdn = countdown[Math.trunc((new Date() - istart)/1000)];
   insptime.textContent = displayctdn;
   if (displayctdn === 7) { //8 second alert
     timealert.classList.remove('none');
@@ -902,16 +889,12 @@ function inspection() {
 }
 
 function stopwatch() { //counts time
-  timer = new Date();
-  counter = (Math.trunc((timer - start)/10)/100);
-  thetime = toMinutes(counter).toString().slice(0, -1);
-  time.textContent = thetime;
+  counter = (Math.trunc((new Date() - start)/10)/100);
+  time.textContent = toMinutes(counter).toString().slice(0, -1);
 }
 
 function timeout() { //do the holding delay, and colors
-  outime = new Date();
-
-  if ((outime-timeou) < storeSettings.startdelay) {
+  if ((new Date() - timeou) < storeSettings.startdelay) {
     time.classList.add(storeSettings.lmode ? 'red' : 'cyan');
     insptime.classList.add('orange');
   }
@@ -983,7 +966,7 @@ function up() { //spacebar up
         istart = new Date();
         inspectstart = setInterval(inspection, 10);
       }
-      if ((!storeSettings.inspectTime && waiting) || waiting) { //go! (start the stopwatch)
+      if (waiting) { //go! (start the stopwatch)
         start = new Date();
         intstart = setInterval(stopwatch, 10); //actually start the stopwatch
         if (storeSettings.hideWhileTiming) onlytime.classList.add('initial');
