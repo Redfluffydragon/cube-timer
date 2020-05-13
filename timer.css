@@ -1,21 +1,11 @@
 body {
+  width: 100%;
   height: 100%;
-  width: 100vw;
-  top: 0;
-  left: 0;
   margin: 0;
   padding: 0;
-  overflow: hidden;
   background: white;
   position: fixed;
-}
-
-#everything {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
+  bottom: 0;
 }
 
 #centerac {
@@ -52,7 +42,7 @@ body {
 
 #timealert {
   float: right;
-  font-size: calc(14px + 6vmax);
+  font-size: calc(14px + 12vmin);
   position: absolute;
   right: 8vw;
   bottom: 11vh;
@@ -69,7 +59,7 @@ body {
 }
 
 #scrambletxt {
-  font-size: calc(16px + .7vmax);  
+  font-size: calc(16px + 1.4vmin);
   position: absolute;
   top: 6vh;
   z-index: 3;
@@ -77,6 +67,10 @@ body {
   max-height: 37vh;
   overflow: auto;
   white-space: pre-line;
+}
+
+#scrambletxt::-webkit-scrollbar {
+  display: none;
 }
 
 #multiScram {
@@ -87,14 +81,14 @@ body {
   left: 0;
   z-index: 2;
   margin-top: 3px;
-  font-size: calc(8px + .7vw);
+  font-size: calc(8px + 1.4vmin);
 }
 
 #multiScram p {
   display: inline;
   color: black;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-size: calc(8px + .7vw);
+  font-size: calc(8px + 1.4vmin);
 }
 
 #multiScram u {
@@ -124,7 +118,7 @@ body {
   cursor: pointer;
 }
 
-#cubeDrop {right: 0;}
+#cubeDrop { right: 0; }
 
 .rdropbtn {
   border: none;
@@ -132,8 +126,8 @@ body {
   padding: 5px 12px 5px 12px;
   background: rgb(215, 215, 215);
   font-family: Arial, Helvetica, sans-serif;
-  margin-left: .3vmax;
-  margin-bottom: .3vmax;
+  margin-left: 0.6vmin;
+  margin-bottom: 0.6vmin;
   margin-right: 0;
   margin-top: 0;
   position: relative;
@@ -150,11 +144,9 @@ body {
   font-size: calc(11px + .7vw);
   text-align: left;
   color: black;
-  padding: 5px 21px 4px 22px;
+  padding: 2px 21px 4px 2px;
   text-decoration: none;
   position: absolute;
-  left: -20px;
-  top: -2px;
   overflow: hidden;
   text-align: center;
 }
@@ -202,9 +194,9 @@ body {
   scrollbar-width: none;
 }
 
-#timetable tbody::-webkit-scrollbar { width: 0 }
+#timetable tbody::-webkit-scrollbar { display: none; }
 
-.idAll:nth-child(odd) {background: #f2f2f2;}
+.idAll:nth-child(odd) { background: #f2f2f2; }
 
 .idAll:hover {
   cursor: pointer;
@@ -240,8 +232,8 @@ body {
 #sessions {
   position: absolute;
   display: inline-block;
-  left: .6vh;
-  bottom: .6vh;
+  left: .6vmin;
+  bottom: .6vmin;
   margin: 0;
   padding: 0;
   z-index: 2;
@@ -288,7 +280,7 @@ body {
   background: rgb(150, 150, 150);
 }
 
-#sespopup button{
+#sespopup button {
   display: inline-block;
   margin-bottom: 4px;
 }
@@ -361,7 +353,7 @@ body {
   font-size: calc(8px + .7vw);
 }
 
-#sesoptpopup button{
+#sesoptpopup button {
   display: inline-block;
   margin: 4px auto;
   width: 17vw;
@@ -409,7 +401,7 @@ button {
   margin: 4px;
 }
 
-input, textarea { padding: 4px; border: .5px solid rgb(150, 150, 150);}
+input, textarea { padding: 4px; border: .5px solid rgb(150, 150, 150); }
 
 #shadow {
   background: rgba(255, 255, 255, .8);
@@ -459,7 +451,7 @@ input, textarea { padding: 4px; border: .5px solid rgb(150, 150, 150);}
   display: none;
 }
 
-.modtime {cursor: pointer;}
+.modtime { cursor: pointer; }
 
 #timepopup p {
   font-size: calc(12px + .7vw);
@@ -571,7 +563,7 @@ input, textarea { padding: 4px; border: .5px solid rgb(150, 150, 150);}
   margin-bottom: 4px;
 }
 
-#codeLink{
+#codeLink {
   margin-bottom: 15px;
   display: inline-block;
 }
@@ -625,6 +617,10 @@ input, textarea { padding: 4px; border: .5px solid rgb(150, 150, 150);}
   margin-left: 10px;
 }
 
+.indented label {
+  display: block;
+}
+
 #popSpot {
   display: inline-block;
 }
@@ -650,98 +646,98 @@ input, textarea { padding: 4px; border: .5px solid rgb(150, 150, 150);}
 }
 
 @media screen and (min-width: 600px) {
-  #morepopup {width: 40vw;}
+  #morepopup { width: 40vw; }
 }
 
 @media screen and (max-width: 1100px) {
-  #scrambletxt {top: 15vh; font-size: calc(6px + 1.6vmax); width: 50vw;}
+  #scrambletxt { top: 15vh; font-size: calc(6px + 3.2vmin); width: 50vw; }
 }
 
 @media screen and (max-width: 1051px) {
-  #sesoptpopup button {width: 25vw;}
+  #sesoptpopup button { width: 25vw; }
 }
 
-@media screen and (max-width: 1000px) { 
-  #timeclose{right: 50vw;}
-  #sesoptpopup button {width: 25vw;}
-  #timetable tbody {max-height: 83vh;}
-  #time {top: 49vh;}
-  #insptime {top: 49vh;}
+@media screen and (max-width: 1000px) {
+  #timeclose { right: 50vw; }
+  #sesoptpopup button { width: 25vw; }
+  #timetable tbody { max-height: 83vh; }
+  #time { top: 49vh; }
+  #insptime { top: 49vh; }
 }
 
 @media screen and (max-width: 800px) {
-  #morepopup {width: 94%;}
-  #comment {width: 90%;}
+  #morepopup { width: 94%; }
+  #comment { width: 90%; }
 }
 
 @media screen and (max-width: 750px) {
-  #settings {width: 50vw;}
-  #time {top: 57vh;}
-  #insptime {top: 57vh;}
+  #settings { width: 50vw; }
+  #time { top: 57vh; }
+  #insptime { top: 57vh; }
 }
 
 @media screen and (max-width: 650px) {
-  #insptime {top: 57vh;}
-  #scrambletxt {top: 12vh; width: 60vw;}
-  #settings{width: 60vw;}
-  #settingslist{padding-left: 2vw;}
-  #sesoptpopup button {width: 29vw;}
-  #timetable tbody {max-height: 84vh;}
+  #insptime { top: 57vh; }
+  #scrambletxt { top: 12vh; width: 60vw; }
+  #settings { width: 60vw; }
+  #settingslist { padding-left: 2vw; }
+  #sesoptpopup button { width: 29vw; }
+  #timetable tbody { max-height: 84vh; }
 }
 
-@media screen and (max-width: 600px) { 
-  #comment {width: 90vw;} 
-  #time {margin-left: 15vw;}
-  #timepops {width: 100vw;}
+@media screen and (max-width: 600px) {
+  #comment { width: 90vw; }
+  #time { margin-left: 15vw; }
+  #timepops { width: 100vw; }
 }
 
 @media screen and (max-width: 545px) {
-  #time {top: 61vh;}
-  #insptime {top: 61vh;}
+  #time { top: 61vh; }
+  #insptime { top: 61vh; }
 }
 
 @media screen and (max-width: 420px) {
-  body {all: initial; overflow: hidden;}
-  #everything {overflow: hidden;}
-  #sesname {width: 48vw;}
-  #sescrip {width: 48vw;}
-  #seesescrip {width: 58vw;}
-  #scrambletxt {top: 17vh; left: 41vw; width: 56vw; max-height: 37vh; margin-right: 2px; overflow-y: scroll; -webkit-overflow-scrolling: touch;}
-  #morepopup {overflow-y: scroll; -webkit-overflow-scrolling: touch;}
-  #settings {height: 20vh;}
-  #time {margin: 0; top: 54vh;}
-  #insptime{top: 54vh;}
-  #timetable tbody {max-height: 50vh;}
-  #timealert {bottom: 16vh;}
-  #sesoptpopup button {width: 45vw;}
+  #time { margin: 0; top: 67vh; }
+  #insptime { top: 67vh; }
+  #timebody { max-height: 62vh; }
+  #timealert { bottom: 4vh; }
+  #scrambletxt { top: 17.5vh; left: 41vw; width: 56vw; max-height: 52vh; margin-right: 2px; overflow-y: scroll; -webkit-overflow-scrolling: touch; }
+  #morepopup { overflow-y: scroll; -webkit-overflow-scrolling: touch; }
+  #sesname { width: 48vw; }
+  #sescrip { width: 48vw; }
+  #seesescrip { width: 58vw; }
+  #timetable tbody { max-height: 66vh; }
+  #sesoptpopup button { width: 45vw; }
+}
+
+@media screen and (max-width: 420px) and (max-height: 454px) {
+  #scrambletxt { max-height: 37vh; }
+  #time, #insptime { top: 53vh; }
+  #timealert { bottom: 16vh; }
+  #timetable tbody { max-height: 50vh; }
 }
 
 @media all and (orientation: landscape) and (max-height: 420px) {
-  #time {top: 35vh;}
-  #insptime {top: 35vh;}
-  #multiScram {margin-left: 21vw; bottom: 8px;}
-  #timetable {max-height: 89vh;}
-  #scrambletxt {max-height: 24vh; left: 30vw; top: 17vh; overflow-y: scroll; -webkit-overflow-scrolling: touch;}
-  #settings {width: 67vw;}
-  #cubeDrop {max-height: 80vh; overflow-y: scroll; -webkit-overflow-scrolling: touch;}
+  #time, #insptime { top: 35vh; }
+  #multiScram { margin-left: 21vw; bottom: 8px; }
+  #timetable { max-height: 89vh; }
+  #scrambletxt { max-height: 24vh; left: 30vw; top: 17vh; overflow-y: scroll; -webkit-overflow-scrolling: touch; }
+  #multiScram p { font-size: 7px; }
+  #settings { width: 67vw; }
+  #cubeDrop { max-height: 80vh; overflow-y: scroll; -webkit-overflow-scrolling: touch; }
+  #setpopup h3 { margin: 5px auto 5px; }
+  #centerThisOne { margin: 0; }
+  .indented label { display: inline; }
 }
 
 @media all and (orientation: landscape) and (max-height: 420px) and (display-mode: standalone) {
-  #time {top: 39vh; margin-left: 20vw;}
-  #insptime {top: 39vh;}
-  #scrambletxt{top: 15vh; max-height: 24vh; left: 24vw; width: 70vw;}
-  #multiScram {margin-left: 21vw; bottom: 7px;}
-  #settings{width: 65vw;}
-  #timetable tbody {max-height: calc(95vh - 55px);}
-  #overtop {top: -70vh;}
-}
-
-@media all and (display-mode: standalone) and (orientation: portrait) {
-  #time {top: 67vh;}
-  #insptime {top: 67vh;}
-  #timebody{max-height: 62vh;}
-  #scrambletxt {max-height: 55vh; top: 11.5vh;}
-  #timealert {bottom: 4vh;}
+  #time { top: 39vh; margin-left: 20vw; }
+  #insptime { top: 39vh; }
+  #scrambletxt { top: 16vh; max-height: 24vh; left: 25vw; width: 70vw; }
+  #multiScram { margin-left: 21vw; bottom: 7px; }
+  #settings { width: 64vw; }
+  #timetable tbody { max-height: calc(95vh - 55px); }
+  #overtop { top: -70vh; }
 }
 
 .initial { display: initial; }
@@ -780,13 +776,13 @@ input, textarea { padding: 4px; border: .5px solid rgb(150, 150, 150);}
 
 .opzero { opacity: 0; }
 
-.disabled {cursor: not-allowed; color: rgb(80, 80, 80);}
+.disabled { cursor: not-allowed; color: rgb(80, 80, 80); }
 
 body[lmode = false] {
   background: black;
 }
-body[lmode = false] #everything {
-  filter: invert(100%); 
+body[lmode = false] {
+  filter: invert(87%);
 }
 body[lmode = false] #insptime {
   filter: invert(100%);
