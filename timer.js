@@ -4,7 +4,7 @@
 'use strict';
 
 if (navigator.serviceWorker) {
-  navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
+  // navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
 }
 
 let removed = []; //removed times
@@ -1181,6 +1181,7 @@ function timesInOut(swtch) { //move the time table in and out, and associated tr
       multiScram.style.gridColumn = '';
       outicon.classList.add('none');
       BWdiv.style.float = '';
+      scramOverflowShadow();
     }, 0);
   }
   else { //move time table off screen
@@ -1194,10 +1195,10 @@ function timesInOut(swtch) { //move the time table in and out, and associated tr
       sessionsdiv.classList.add('none');
       multiScram.style.gridColumn = 'span var(--grid-cols) / auto';
       BWdiv.style.float = 'right';
+      scramOverflowShadow();
     }, 200);
   }
   swtch && (storeSettings.timein = !storeSettings.timein);
-  scramOverflowShadow();
 }
 
 function checkTime(time) { //check if a time is valid, and return it in seconds
