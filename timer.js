@@ -1,5 +1,4 @@
 /**
- * switch is faster, object literal looks better - either is probably better for all the clicks
  * use animationFrame for timer?
  */
 'use strict';
@@ -115,6 +114,7 @@ const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 
 //elements
 //for scrambles
 const scrambletxt = document.getElementById('scrambletxt');
+const scramblediv = document.getElementById('scramblediv');
 const scramNum = document.getElementById('scramNum');
 const scramPlur = document.getElementById('scramPlur');
 const multiScram = document.getElementById('multiScram');
@@ -137,6 +137,7 @@ const delaytime = document.getElementsByClassName('delaytime');
 const settings = document.getElementById('settings');
 
 //timetable
+const ttsize = document.getElementById('ttsize');
 const timebody = document.getElementById('timebody');
 const timetable = document.getElementById('timetable');
 const outicon = document.getElementById('outicon');
@@ -443,13 +444,19 @@ document.addEventListener('click', e => {
     }
   }
   else if (match('#lighticon')) { runmode(true); }
-  else if (match('#sescreate')) newSession();
-  else if (match('#infobtn')) showPop(infopopup);
-  else if (match('#outicon') || match('#inicon')) timesInOut();
-  else if (match('#rcorners') || match('#scorners')) changeCorners(e);
-  else if (match('#timeclose') || match('#settingsClose')) closeNdraw();
-  else if (match('#infoclose') || match('#timentercanc')) closeAll();
-  //have to call all of them all the time for clicks outside, I think - maybe do the closing in one function? would that be better?
+  else if (match('#sescreate')) { newSession(); }
+  else if (match('#infobtn')) { showPop(infopopup); }
+  else if (multiMatch(e, '#outicon #inicon')) { timesInOut(true); }
+  else if (multiMatch(e, '#rcorners #scorners')) { changeCorners(e); }
+  else if (multiMatch(e, '#timeclose #settingsClose')) { closeNdraw(); }
+  else if (multiMatch(e, '#infoclose #timentercanc')) { closeAll(); }
+  if (!multiMatch(e, '.rdropdown .rdropbtn')) { //close dropdowns if clicked anywhere not on them
+    for (let i of document.getElementsByClassName('rdropcontent')) {
+      i.classList.remove('block');
+    }
+  }
+  if (!match('#sesslc')) { sesdrop.classList.remove('block'); }
+  //for dropdown buttons
   dropDown(cubeButton, cubeDrop, e);
   dropDown(inspectButton, inspectDrop, e);
   dropDown(delayButton, delayDrop, e);
@@ -459,15 +466,15 @@ document.addEventListener('click', e => {
 document.addEventListener('mousedown', closeModal, false);
 
 document.addEventListener('touchstart', e => {
-  if (match(e, '#touch #time #insptime #onlytime')) { touchdown(e); }
+  if (multiMatch(e, '#touch #time #insptime #onlytime')) { touchdown(e); }
   else if (e.target.closest('#timebody')) { touchMoved = false; }
-  closeModal(e);
 }, {passive: false, useCapture: false});
 
 document.addEventListener('touchend', e => {
   closing = false;
-  if (match(e, '#touch #time #insptime #onlytime')) { up(); }
+  if (multiMatch(e, '#touch #time #insptime #onlytime')) { up(); }
   else if (e.target.closest('#timebody')) { timeClicks(e); }
+  closeModal(e);
 }, {passive: false, useCapture: false});
 
 window.addEventListener('keydown', e => {
@@ -492,7 +499,8 @@ window.addEventListener('keyup', e => {
 
 window.addEventListener('load', afterLoad, false);
 
-window.addEventListener('beforeunload', () => {
+const whichUnload = (navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPhone/i)) ? 'pagehide' : 'beforeunload';
+window.addEventListener(whichUnload, () => {
   localStorage.setItem('all', JSON.stringify(alltimes));
   localStorage.setItem('settings', JSON.stringify(storeSettings));
   localStorage.setItem('scramble', JSON.stringify(fscramble));
@@ -506,9 +514,9 @@ window.addEventListener('beforeunload', () => {
   sessionStorage.setItem('removed', JSON.stringify(removed));
 }, false);
 
-timebody.addEventListener('touchmove', () => { touchMoved = true; }, {passive: true});
+window.addEventListener('resize', scramOverflowShadow, false);
 
-scrambletxt.addEventListener('transitionend', () => {if (!storeSettings.timein) scrambletxt.style.left = '';}, false);
+timebody.addEventListener('touchmove', () => { touchMoved = true; }, {passive: true});
 
 //wrapper function for getting stuff from localStorage
 function gotem(item, defalt, type = localStorage) {
@@ -597,7 +605,10 @@ function draw() { //to redraw things after modifying
 }
 
 function afterLoad() {
-  timesInOut(false);
+  window.setTimeout(() => {
+    scramOverflowShadow();
+    timesInOut(false);
+  }, 0);
 
   colorIndicator(inspselect, storeSettings.inspectTime ? '15s (WCA)' : 'None');
 
@@ -633,7 +644,7 @@ function timeClicks(e) {
     tempallidx = alltimes.indexOf(displaytimes[rvrsrow-1]);
     allthistime = alltimes[tempallidx];
 
-    timepops.classList.add('inlineBlock');
+    timepops.classList.remove('none');
     showPop(timepopup);
     inmore.textContent = storeSettings.morechecked ? '[less]' : '[more]';
     timepop = true;
@@ -708,18 +719,16 @@ function makeDate() { //the right date format
   return `${days[day]}, ${months[month]} ${daydate}, ${year} ${hour}:${minute}:${seconds} UTC${timezone}`;
 }
 
-function match(e, t) { //outside match function, with multiple inputs
+function multiMatch(e, t) { //match function for multiple possible matches
   const many = t.split(' ');
   for (let i of many) {
-    if (e.target.matches(i)) {
-      return true;
-    }
+    if (e.target.matches(i)) { return true; }
   }
   return false;
 }
 
-function dropDown (button, content, e) { //toggle dropdowns 
-  e.target === button ? content.classList.toggle('block') : content.classList.remove('block');
+function dropDown(button, content, e) { //toggle dropdowns on button click
+  e.target === button && content.classList.toggle('block')
 }
 
 //Just a random move scrambler.
@@ -818,6 +827,11 @@ function scramble() { //do the scrambles
   
   fscramble = tscramble.join(' ');
   scrambletxt.textContent = fscramble;
+  scramOverflowShadow();
+}
+
+function scramOverflowShadow() { //put an inset shadow on scramble when it's scrollable
+  scrambletxt.setAttribute('overflow', (scrambletxt.scrollHeight !== scrambletxt.clientHeight));
 }
 
 function average(startpoint, leng) {
@@ -919,7 +933,7 @@ function fin() { //finish timing, save result
   clearInterval(intstart);
   clearInterval(inspectstart);
   
-  time.className = 'zone'; //remove all other classes
+  time.className = 'zOne time'; //remove all other classes
   time.textContent = toMinutes(counter); //show hundredths of a second
   insptime.classList.remove('orange', 'green');
   onlytime.classList.remove('initial');
@@ -990,6 +1004,11 @@ function up() { //spacebar up
         waiting = false;
         started = true;
       }
+      //close any open dropdowns
+      for (let i of document.getElementsByClassName('rdropcontent')) {
+        i.classList.remove('block');
+      }
+      sesdrop.classList.remove('block');
     }
     else if (keydown) { keydown = false; }
   }
@@ -1056,7 +1075,7 @@ function closeAll() { //close everything
   for (let i of popups) {
     i.classList.remove('inlineBlock');
   }
-  timepops.classList.remove('inlineBlock');
+  timepops.classList.add('none');
   shadow.classList.remove('initial');
   shadow.style.zIndex = '';
   
@@ -1112,7 +1131,7 @@ function justAsession() { //get just the current session
 }
 
 function justAll() { //get everything
-  for (let [idx, el] of alltimes) {
+  for (let [idx, el] of alltimes.entries()) {
     removed.push({time: el, index: idx});
   }
   alltimes.length = 0;
@@ -1153,39 +1172,35 @@ function createCsv(array, name) { //create csv file from 2d array
   closeAll();
 }
 
-function timesInOut(swtch = true) { //move the time table in and out, and associated transitions
-  if (storeSettings.timein === swtch) {
-    timetable.classList.remove('transXsixty');
-    sessionsdiv.classList.remove('transXhundred');
-    outicon.classList.add('none');
-    settings.style.width = '';
-    scrambletxt.style.width = '';
-    if (!isMobile) {
-      requestAnimationFrame(() => {
-        scrambletxt.style.left = ''; //set it to the original position
-        let scLOffset = scrambletxt.offsetLeft; //to get offsetLeft in pixels from it
-        scrambletxt.style.left = '5vw'; //put back to the leftmost position
-        requestAnimationFrame(() => {
-          scrambletxt.style.left = scLOffset + 'px'; //transition it back to the original position
-        });
-      });
-    }
-    else { scrambletxt.style.left = ''; }
+function timesInOut(swtch) { //move the time table in and out, and associated transitions
+  if (storeSettings.timein === swtch) { //move time table onto screen
+    ttsize.classList.remove('none');
+    sessionsdiv.classList.remove('none');
+    window.setTimeout(() => {
+      timetable.classList.remove('transXsixty');
+      sessionsdiv.classList.remove('transXhundred');
+      scramblediv.style.marginLeft = '';
+      document.body.style.setProperty('--fill-sometimes', '');
+      multiScram.style.gridColumn = '';
+      outicon.classList.add('none');
+      BWdiv.style.float = '';
+    }, 0);
   }
-  else {
+  else { //move time table off screen
     timetable.classList.add('transXsixty');
     sessionsdiv.classList.add('transXhundred');
-    outicon.classList.remove('none');
-    settings.style.width = '90vw';
-    scrambletxt.style.width = '90vw';
-    requestAnimationFrame(() => {
-      scrambletxt.style.left = scrambletxt.offsetLeft + 'px'; //set it to its own position, but explicitly in px (not from auto position), so it transitions
-      requestAnimationFrame(() => {
-        scrambletxt.style.left = '5vw';
-      });
-    });
+    window.setTimeout(() => {
+      outicon.classList.remove('none');
+      ttsize.classList.add('none');
+      scramblediv.style.marginLeft = '0';
+      document.body.style.setProperty('--fill-sometimes', 'span var(--grid-cols) / auto');
+      sessionsdiv.classList.add('none');
+      multiScram.style.gridColumn = 'span var(--grid-cols) / auto';
+      BWdiv.style.float = 'right';
+    }, 200);
   }
   swtch && (storeSettings.timein = !storeSettings.timein);
+  scramOverflowShadow();
 }
 
 function checkTime(time) { //check if a time is valid, and return it in seconds
