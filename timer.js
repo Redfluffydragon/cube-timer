@@ -149,6 +149,7 @@ const timealert = document.getElementById('timealert');
 const onlytime = document.getElementById('onlytime');
 
 //modals
+const centerpop = document.getElementById('centerpop');
 const showEditTime = document.getElementById('showEditTime');
 const timepopup = document.getElementById('timepopup');
 const timepops = document.getElementById('timepops');
@@ -1052,12 +1053,8 @@ function undo() { //undo the last-done deletion
     msg = 'Undone!'
   }
   undotxt.textContent = msg;
-  undone.classList.add('inlineBlock');
-  shadow.classList.add('initial');
-  setTimeout(() => {
-    undone.classList.remove('inlineBlock');
-    shadow.classList.remove('initial');
-  }, 300);
+  showPop(undone);
+  setTimeout(closeAll, 400);
   draw();
 }
 
@@ -1087,7 +1084,7 @@ function closeAll() { //close everything
     }
   }
 
-  centerpop.classList.add('none'); //for some reason it interferes at the top if displayed at all
+  centerpop.classList.add('none');
   
   timepop = false;
   morepop = false;

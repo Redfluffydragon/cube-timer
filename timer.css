@@ -578,7 +578,7 @@ input, textarea { padding: 4px; border: 0.5px solid rgb(150, 150, 150); }
   top: 45vh;
   color: rgb(255, 255, 255);
   border-radius: 10px;
-  background: rgb(100, 100, 100);
+  background: rgb(80, 80, 80);
 }
 
 #undotxt {
