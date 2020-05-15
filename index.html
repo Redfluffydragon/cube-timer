@@ -29,111 +29,110 @@
     <audio src="sound/twelve.mp3" id="twelveSecSound"></audio>
     <div id="touch"></div>
     <div id="onlytime" class="coverall"></div>
-  <div class="allGrid">
-    <div id="ttsize">
-      <table id="timetable">
-        <thead>
-          <tr>
-            <td id="blank">#</td>
-            <td class="header">Time</td>
-            <td class="header">Ao5</td>
-            <td class="header">Ao12</td>
-            <td id="inoutcell">
-              <img src="img/inicon.png" id="inicon" alt="slide timetable in">
-            </td>
-          </tr>
-        </thead>
-        <tbody id="timebody">
-        </tbody>
-      </table>
-    </div>
-
-    <div id="settings">
-
-      <div class="rdropdown">
-        <button class="rdropbtn" id="cubeButton" title="Switch cube">Cube</button>
-        <div class="rdropcontent" id="cubeDrop">
-          <p class="cubeselect top">2x2</p>
-          <p class="cubeselect">3x3</p>
-          <p class="cubeselect">4x4</p>
-          <p class="cubeselect">5x5</p>
-          <p class="cubeselect">6x6</p>
-          <p class="cubeselect">7x7</p>
-          <p class="cubeselect">Megaminx</p>
-          <p class="cubeselect">Pyraminx</p>
-          <p class="cubeselect">Skewb</p>
-          <p class="cubeselect">Square-1</p>
-          <p class="cubeselect bottom">Clock</p>
-        </div>
+    <div class="allGrid">
+      <div id="ttsize">
+        <table id="timetable">
+          <thead>
+            <tr>
+              <td id="blank">#</td>
+              <td class="header">Time</td>
+              <td class="header">Ao5</td>
+              <td class="header">Ao12</td>
+              <td id="inoutcell">
+                <img src="img/inicon.png" id="inicon" alt="slide timetable in">
+              </td>
+            </tr>
+          </thead>
+          <tbody id="timebody">
+          </tbody>
+        </table>
       </div>
-      
-      <div id="hsSpot">
-        <div id="inspectSet" class="rdropdown">
-          <button class="rdropbtn" id="inspectButton">Inspection</button>
-          <div class="rdropcontent" id="inspectDrop">
-            <p class="top inspselect">None</p>
-            <p class="bottom inspselect">15s (WCA)</p>
+
+      <div id="settings">
+        <div class="rdropdown">
+          <button class="rdropbtn" id="cubeButton" title="Switch cube">Cube</button>
+          <div class="rdropcontent" id="cubeDrop">
+            <p class="cubeselect top">2x2</p>
+            <p class="cubeselect">3x3</p>
+            <p class="cubeselect">4x4</p>
+            <p class="cubeselect">5x5</p>
+            <p class="cubeselect">6x6</p>
+            <p class="cubeselect">7x7</p>
+            <p class="cubeselect">Megaminx</p>
+            <p class="cubeselect">Pyraminx</p>
+            <p class="cubeselect">Skewb</p>
+            <p class="cubeselect">Square-1</p>
+            <p class="cubeselect bottom">Clock</p>
+          </div>
+        </div>
+        
+        <div id="hsSpot">
+          <div id="inspectSet" class="rdropdown">
+            <button class="rdropbtn" id="inspectButton">Inspection</button>
+            <div class="rdropcontent" id="inspectDrop">
+              <p class="top inspselect">None</p>
+              <p class="bottom inspselect">15s (WCA)</p>
+            </div>
+          </div>
+
+          <div id="delaySet" class="rdropdown">
+            <button class= "rdropbtn" id="delayButton" title="how long you have to hold the spacebar to start">Delay time</button>
+            <div class="rdropcontent" id="delayDrop">
+              <p class="delaytime top">0s</p>
+              <p class="delaytime">0.3s</p>
+              <p class="delaytime">0.55s</p>
+              <p class="delaytime bottom">1s</p>
+            </div>
           </div>
         </div>
 
-        <div id="delaySet" class="rdropdown">
-          <button class= "rdropbtn" id="delayButton" title="how long you have to hold the spacebar to start">Delay time</button>
-          <div class="rdropcontent" id="delayDrop">
-            <p class="delaytime top">0s</p>
-            <p class="delaytime">0.3s</p>
-            <p class="delaytime">0.55s</p>
-            <p class="delaytime bottom">1s</p>
+        <div id="icons">
+          <div id="settingsIconSize">
+            <img src="img/settingsicon.png" id="settingsIcon" alt="More settings icon"/>
+          </div>
+          <div id="iconsize">
+            <img src="img/lightmode.png" id="lighticon" alt="Light/dark mode icon" title="light/dark mode">
           </div>
         </div>
-      </div>
 
-      <div id="icons">
-        <div id="settingsIconSize">
-          <img src="img/settingsicon.png" id="settingsIcon" alt="More settings icon"/>
-        </div>
-        <div id="iconsize">
-          <img src="img/lightmode.png" id="lighticon" alt="Light/dark mode icon" title="light/dark mode">
+        <div id="bestworst">
+          <h4 class="topstats">Best:&nbsp;<span id="best">--</span></h4>
+          <h4 class="topstats">Worst:&nbsp;<span id="worst">--</span></h4>
         </div>
       </div>
 
-      <div id="bestworst">
-        <h4 class="topstats">Best:&nbsp;<span id="best">--</span></h4>
-        <h4 class="topstats">Worst:&nbsp;<span id="worst">--</span></h4>
+      <div id="scramblediv">
+        <p id="scrambletxt" class="transOneSec scram" title="Just a random move scrambler." overflow="false"></p>
       </div>
-    </div>
-
-    <div id="scramblediv">
-      <p id="scrambletxt" class="transOneSec scram" title="Just a random move scrambler." overflow="false"></p>
-    </div>
-  
-    <div id="centerac" class="timegrid">
-      <p id="time" class="zOne time">0.00</p>
-      <p id="insptime" class="red none time">15</p>
-    </div>
-
-    <div id="sessions" class="threeWide">
-      <div class="dropup">
-        <div id="sesdrop" class="dropupcontent"><p class="top bottom">Session 1</p></div>
-        <button id="sesslc" class="sesedit dropupbtn" title="current session">Session 1 </button>
+    
+      <div id="centerac" class="timegrid">
+        <p id="time" class="zOne time">0.00</p>
+        <p id="insptime" class="red none time">15</p>
       </div>
-      <button id="sesopt"class="sesedit" title="session options">Options</button>
-      <button id="timenter" class="sesedit">Add Times</button>
-    </div>
 
-    <div id="multiScram">
-      <p>
-        <u id="firstScram">First&nbsp;scramble</u> /
-        <u id="nextScram">Next&nbsp;scramble</u> 
-        Scramble:&nbsp;#<span id="scramNum">1</span>
-      </p>
-    </div>
+      <div id="sessions" class="threeWide">
+        <div class="dropup">
+          <div id="sesdrop" class="dropupcontent"><p class="top bottom">Session 1</p></div>
+          <button id="sesslc" class="sesedit dropupbtn" title="current session">Session 1 </button>
+        </div>
+        <button id="sesopt"class="sesedit" title="session options">Options</button>
+        <button id="timenter" class="sesedit">Add Times</button>
+      </div>
 
-    <button id="undobtn" class="sesedit none" title="Undo button"><img class="undoIcon" src="img/undoicon.png" alt="undo the last done action"></button>
-  </div>
-  <p id="timealert" class="none">8s</p> 
+      <div id="multiScram">
+        <p>
+          <u id="firstScram">First&nbsp;scramble</u> /
+          <u id="nextScram">Next&nbsp;scramble</u> 
+          Scramble:&nbsp;#<span id="scramNum">1</span>
+        </p>
+      </div>
+
+      <button id="undobtn" class="sesedit none" title="Undo button"><img class="undoIcon" src="img/undoicon.png" alt="undo the last done action"></button>
+    </div>
+    
+    <p id="timealert" class="none">8s</p> 
   
-  
-  <img src="img/outicon.png" id="outicon">
+    <img src="img/outicon.png" id="outicon">
 
     <div id="shadow" class="coverall"></div>
     
@@ -280,7 +279,7 @@
       </div>
 
       <div id="undone" class="popup">
-        <p id="undotxt"></p>
+        <p id="undotxt">Undone!</p>
       </div>
     </div>
 
