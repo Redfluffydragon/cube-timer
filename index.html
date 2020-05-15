@@ -27,31 +27,9 @@
   <body>
     <audio src="sound/eight.mp3" id="eightSecSound"></audio>
     <audio src="sound/twelve.mp3" id="twelveSecSound"></audio>
-
-    <div id="scramblediv">
-      <p id="scrambletxt" title="Just a random move scrambler."></p>
-    </div>
-
-    <div id="multiScram">
-      <p>
-        <u id="firstScram">First scramble</u> / 
-        <u id="nextScram">Next scramble</u> 
-        Scramble: #<span id="scramNum">1</span>
-      </p>
-    </div>
-  
-    <div id="onlytime" class="coverall"></div>
-
-    <p id="timealert" class="none">8s</p> 
-
-    <div id="centerac">
-      <p id="time" class="zone">0.00</p>
-      <p id="insptime" class="red none">15</p>
-    </div>
-    
     <div id="touch"></div>
-
-    <img src="img/outicon.png" id="outicon" style="height: calc(24px + .7vw);">
+    <div id="onlytime" class="coverall"></div>
+  <div class="allGrid">
     <div id="ttsize">
       <table id="timetable">
         <thead>
@@ -61,7 +39,7 @@
             <td class="header">Ao5</td>
             <td class="header">Ao12</td>
             <td id="inoutcell">
-              <img src="img/inicon.png" id="inicon" style="height: calc(24px + .7vw);" alt="slide timetable in">
+              <img src="img/inicon.png" id="inicon" alt="slide timetable in">
             </td>
           </tr>
         </thead>
@@ -71,6 +49,7 @@
     </div>
 
     <div id="settings">
+
       <div class="rdropdown">
         <button class="rdropbtn" id="cubeButton" title="Switch cube">Cube</button>
         <div class="rdropcontent" id="cubeDrop">
@@ -110,23 +89,56 @@
 
       <div id="icons">
         <div id="settingsIconSize">
-          <img src="img/settingsicon.png" id="settingsIcon" alt="More settings icon" style="width: 100%; height: 100%;"/>
+          <img src="img/settingsicon.png" id="settingsIcon" alt="More settings icon"/>
         </div>
         <div id="iconsize">
-          <img src="img/lightmode.png" id="lighticon" alt="Light/dark mode icon" title="light/dark mode" style="width: 100%; height: 100%;">
+          <img src="img/lightmode.png" id="lighticon" alt="Light/dark mode icon" title="light/dark mode">
         </div>
       </div>
 
       <div id="bestworst">
-        <h4 id="better" class="topstats">Best: <span id="best">--</span></h4>
-        <h4 id="worse" class="topstats">Worst: <span id="worst">--</span></h4>
+        <h4 class="topstats">Best:&nbsp;<span id="best">--</span></h4>
+        <h4 class="topstats">Worst:&nbsp;<span id="worst">--</span></h4>
       </div>
     </div>
-    
+
+    <div id="scramblediv">
+      <p id="scrambletxt" class="transOneSec scram" title="Just a random move scrambler." overflow="false"></p>
+    </div>
+  
+    <div id="centerac" class="timegrid">
+      <p id="time" class="zOne time">0.00</p>
+      <p id="insptime" class="red none time">15</p>
+    </div>
+
+    <div id="sessions" class="threeWide">
+      <div class="dropup">
+        <div id="sesdrop" class="dropupcontent"><p class="top bottom">Session 1</p></div>
+        <button id="sesslc" class="sesedit dropupbtn" title="current session">Session 1 </button>
+      </div>
+      <button id="sesopt"class="sesedit" title="session options">Options</button>
+      <button id="timenter" class="sesedit">Add Times</button>
+    </div>
+
+    <div id="multiScram">
+      <p>
+        <u id="firstScram">First&nbsp;scramble</u> /
+        <u id="nextScram">Next&nbsp;scramble</u> 
+        Scramble:&nbsp;#<span id="scramNum">1</span>
+      </p>
+    </div>
+
+    <button id="undobtn" class="sesedit none" title="Undo button"><img class="undoIcon" src="img/undoicon.png" alt="undo the last done action"></button>
+  </div>
+  <p id="timealert" class="none">8s</p> 
+  
+  
+  <img src="img/outicon.png" id="outicon">
+
     <div id="shadow" class="coverall"></div>
     
     <div id="centerpop" class="none">
-      <div id="timepops">
+      <div id="timepops" class="none">
       <div id="timepopup" class="popup">
         <h3 id="timedit">Edit time <span id="showEditTime"></span> <span id="inmore">[more]</span> </h3>
         <p class="modtime pointer" id="thetwo">+2</p>
@@ -134,6 +146,7 @@
         <p class="modtime pointer" id="thedel">Delete</p>
         <button id="timeclose">Close</button>
       </div>
+      <br>
       <div id="morepopup" class="popup">
         <table id="seethings">
           <tr>
@@ -151,19 +164,49 @@
         </table>
         <label>Comments: </label>
         <textarea id="comment" resize></textarea>
-        <label id="alwsmore"><input id="checkmore" type="checkbox">Always show more</label>
+        <label id="alwsmore" class="inlineBlock"><input id="checkmore" type="checkbox">Always show more</label>
       </div>
       </div>
 
       <div id="setpopup" class="popup">
         <h3>Settings</h3>
         <ul>
-          <li><label><input type="checkbox" checked id="countAnnounce"> Countdown announcer</label></li>
-          <li><label><input type="checkbox" checked id="showSettings"> Delay & inspection on main screen</label></li>
-          <li><label><input type="checkbox" checked id="showBW"> Show best/worst</label></li>
-          <li><label><input type="checkbox" id="BWSesAll"> Best/worst per session</label></li>
-          <li><label><input type="checkbox" checked id="hideThings"> Hide things while timing</label></li>
-          <li><label><input type="checkbox" checked id="showMScram"> Multiple scrambles</label></li>
+          <li>
+            <label>
+              <input type="checkbox" checked id="countAnnounce">
+              Countdown announcer
+            </label>
+            </li>
+          <li>
+            <label>
+              <input type="checkbox" checked id="showSettings">
+              Delay & inspection on main screen
+            </label>
+          </li>
+          <li>
+            <label>
+              <input type="checkbox" checked id="showBW">
+              Show best/worst
+            </label>
+          </li>
+          <li>
+            <label>
+              <input type="checkbox" id="BWSesAll">
+              Best/worst per session
+            </label>
+          </li>
+          <li>
+            <label>
+              <input type="checkbox" checked id="hideThings">
+              Hide things while timing
+            </label>
+          </li>
+          <li>
+            <label>
+              <input type="checkbox" checked id="showMScram">
+              Multiple scrambles
+            </label>
+          </li>
           <li>Corner style:</li>
           <li class="indented">
             <label>
@@ -245,23 +288,13 @@
       <div id="sespopup" class="popup">
         <h3>New Session</h3>
           <p id="sameAlert"></p>
-          <ul style="list-style-type: none">
+          <ul>
             <li><label>Name: </label><input id="sesname"class="sesinput" maxlength="50"></li>
             <li><label>Description: <textarea id="sescrip" class="sesinput"></textarea></label></li>
           </ul>
         <button id="sescancel">Cancel</button>
         <button id="sescreate">Create</button>
       </div>    
-    </div>
-
-    <div id="sessions">
-      <div class="dropup">
-        <div id="sesdrop" class="dropupcontent"><p class="top bottom">Session 1</p></div>
-        <button id="sesslc" class="sesedit dropupbtn" title="current session">Session 1 </button>
-      </div>
-      <button id="sesopt"class="sesedit" title="session options">Options</button>
-      <button id="timenter" class="sesedit">Add Times</button>
-      <button id="undobtn" class="sesedit none" title="Undo button"><img src="img/undoicon.png" style="width:80%; height:80%;" alt="undo the last done action"></button>
     </div>
     
     <img id="infobtn" alt="About this app" title="About this app" src="img/infoicon.png">
