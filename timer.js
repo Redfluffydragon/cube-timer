@@ -444,13 +444,17 @@ document.addEventListener('click', e => {
   else if (multiMatch(e, '#rcorners', '#scorners')) { changeCorners(e); }
   else if (multiMatch(e, '#timeclose', '#settingsClose')) { closeNdraw(); }
   else if (multiMatch(e, '#infoclose', '#timentercanc')) { closeAll(); }
-  if (!multiMatch(e, '.rdropdown .rdropbtn')) {  closeDrops(); } //close dropdowns if clicked anywhere not on them
-  if (!match('#sesslc')) { sesdrop.classList.remove('block'); }
+  
   //for dropdown buttons
-  dropDown(cubeButton, cubeDrop, e);
-  dropDown(inspectButton, inspectDrop, e);
-  dropDown(delayButton, delayDrop, e);
+  const onButton = 
+  dropDown(cubeButton, cubeDrop, e) ||
+  dropDown(inspectButton, inspectDrop, e) ||
+  dropDown(delayButton, delayDrop, e) ||
   dropDown(sesslc, sesdrop, e);
+
+  //close dropdowns if clicked anywhere not on the content, and don't close if clicked on the button for that dropdown
+  if (!match('.rdropdown')) {  closeDrops(onButton); }
+  if (!match('#sesslc')) { sesdrop.classList.remove('block'); }
 }, false);
 
 document.addEventListener('mousedown', closeModal, false);
@@ -693,7 +697,11 @@ function multiMatch(e, ...targets) { //match function for multiple possible matc
 }
 
 function dropDown(button, content, e) { //toggle dropdowns on button click
-  e.target === button && content.classList.toggle('block')
+  if (e.target === button) {
+    content.classList.toggle('block');
+    return button.id;
+  }
+  return false;
 }
 
 //Just a random move scrambler.
@@ -1049,8 +1057,10 @@ function closeAll() { //close everything
   popup = false;
 }
 
-function closeDrops() {
-  for (let i of document.getElementsByClassName('rdropcontent')) { i.classList.remove('block'); }
+function closeDrops(button) {
+  for (let i of document.getElementsByClassName('rdropcontent')) {
+    i.parentElement.getElementsByClassName('rdropbtn')[0].id !== button && i.classList.remove('block');
+  }
 }
 
 function checkSession(name, alertElement) { //check for duplicate names
