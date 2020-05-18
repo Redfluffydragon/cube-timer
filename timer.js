@@ -207,7 +207,6 @@ const settingsSettings = {
   hideWhileTiming: hideThings,
   multiScram: showMScram,
 };
-const settingsKeys = Object.keys(settingsSettings);
 
 const popups = document.getElementsByClassName('popup');
 
@@ -345,7 +344,7 @@ document.addEventListener('click', e => {
     enterpop = true;
   }
   else if (match('#settingsIcon')) {
-    for (let i of settingsKeys) { settingsSettings[i].checked = storeSettings[i]; }
+    for (let i in storeSettings) { settingsSettings[i].checked = storeSettings[i]; }
     rcorners.id.charAt(0) === storeSettings.cornerStyle ? rcorners.checked = true : scorners.checked = true;
     showPop(setpopup);
     setpop = true;
@@ -1043,7 +1042,7 @@ function closeAll() { //close everything
   timepop && (allthistime.comment = comment.value);
 
   if (setpop) {
-    for (let i of settingsKeys) {
+    for (let i in storeSettings) {
       storeSettings[i] = settingsSettings[i].checked;
     }
   }
