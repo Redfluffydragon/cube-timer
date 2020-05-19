@@ -1,3 +1,9 @@
+/**
+ * figure out which timers are mutually exclusive and use one variable for them
+ * - I think the inspection countdown can't be going at the same time as the timer
+ * eigth second sound seemed delayed - too much silence at the start of it? slow to load? something else?
+ */
+
 'use strict';
 
 navigator.serviceWorker && navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
@@ -86,11 +92,6 @@ const scramblers = { //object with all the scrambler functions in it, to replace
 }
 
 //modals open or closed
-let timepop;
-let morepop;
-let sespop;
-let enterpop;
-let setpop;
 let popup;
 let closing;
 
@@ -305,23 +306,19 @@ document.addEventListener('click', e => {
     showPop(sespopup);
     sesname.focus();
     shadow.style.zIndex = '7'; //even further up to cover everything except the new session div
-    sespop = true;
   }
   else if (match('#sescancel')) {
     sespopup.classList.remove('inlineBlock');
     shadow.style.zIndex = '';
-    sespop = false;
   }
   else if (match('#timenter')) {
     showPop(timenterpopup);
     timentertoo.focus();
-    enterpop = true;
   }
   else if (match('#settingsIcon')) {
     for (let i in settingsSettings) { settingsSettings[i].checked = storeSettings[i]; }
     rcorners.id.charAt(0) === storeSettings.cornerStyle ? rcorners.checked = true : scorners.checked = true;
     showPop(setpopup);
-    setpop = true;
   }
   else if (match('#deleteallses') && confirm('Delete all sessions?')) {
     justAll();
@@ -374,25 +371,10 @@ document.addEventListener('click', e => {
     seesescrip.value = tempcrip.description;
   }
   else if (match('#dothenter')) {
-    if (timentertoo.value !== '' && checkTime(timentertoo.value) != null) {
-      alltimes.push({
-        time: checkTime(timentertoo.value),
-        cube: cubenter.value,
-        session: session,
-        scramble: scramenter.value,
-        date: datenter.value,
-        comment: commenter.value,
-        dnf: false,
-        plustwo: false
-      });
-      for (let i of enterArr) { i.value = null; }
-      closeNdraw();
-    }
-    else { alert(`I don't recognize that time.`); }
+    addNewTime();
   }
   else if (match('#inmore')) {
-    morepopup.classList[morepop ? 'remove' : 'add']('inlineBlock');
-    morepop = !morepop;
+    morepopup.classList[morepopup.matches('.inlineBlock') ? 'remove' : 'add']('inlineBlock');
     inmore.textContent = inmore.textContent === '[more]' ? '[less]' : '[more]';
   }
   else if (match('#saveses')) {
@@ -450,10 +432,11 @@ window.addEventListener('keydown', e => {
   else if (key === 27) { closeAll(); } //esc
   else if (key === 90 && e.ctrlKey && !popup) { undo(); } //z to undo
   else if (key === 13) { //enter
-    sespop && newSession();
-    enterpop && timentertoo.value !== '' && closeNdraw();
+    sespopup.matches('.inlineBlock') && newSession();
+    timenterpopup.matches('.inlineBlock') && timentertoo.value !== '' && addNewTime();
   }
-  else if (timepop && !morepop) { //2 and d, for +2 and DNF (only while time editing modal is open)
+  //2 and d, for +2 and DNF (only while time editing modal is open)
+  else if (timepopup.matches('.inlineBlock') && !morepopup.matches('.inlineBlock')) {
     key === 50 && (allthistime.plustwo = !allthistime.plustwo);
     key === 68 && (allthistime.dnf = !allthistime.dnf);
     closeNdraw();
@@ -609,11 +592,8 @@ function timeClicks(e) {
     timepops.classList.remove('none');
     showPop(timepopup);
     inmore.textContent = storeSettings.morechecked ? '[less]' : '[more]';
-    timepop = true;
-    if (storeSettings.morechecked) {
-      morepopup.classList.add('inlineBlock');
-      morepop = true;
-    }
+
+    storeSettings.morechecked && morepopup.classList.add('inlineBlock');
 
     const timetoshine = allthistime.dnf ? 'DNF' : toMinutes(allthistime.time);
     thednf.classList[allthistime.dnf ? 'add' : 'remove']('oneforty');
@@ -668,6 +648,24 @@ function makeDate() { //the right date format
 
   return `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()},
   ${d.getFullYear()} ${d.getHours()}:${minute}:${seconds} UTC${timezone}`;
+}
+
+function addNewTime() {
+  if (timentertoo.value !== '' && checkTime(timentertoo.value) != null) {
+    alltimes.push({
+      time: checkTime(timentertoo.value),
+      cube: cubenter.value,
+      session: session,
+      scramble: scramenter.value,
+      date: datenter.value,
+      comment: commenter.value,
+      dnf: false,
+      plustwo: false
+    });
+    for (let i of enterArr) { i.value = null; }
+    closeNdraw();
+  }
+  else { alert(`I don't recognize that time.`); }
 }
 
 function multiMatch(e, ...targets) { //match function for multiple possible matches
@@ -1002,14 +1000,14 @@ function changeCorners(e, style) { //corner style
 }
 
 function closeAll() { //close everything
+  timepopup.matches('.inlineBlock') && (allthistime.comment = comment.value);
+
   for (let i of popups) { i.classList.remove('inlineBlock'); }
   timepops.classList.add('none');
   shadow.classList.remove('initial');
   shadow.style.zIndex = '';
 
-  timepop && (allthistime.comment = comment.value);
-
-  if (setpop) {
+  if (setpopup.matches('.inlineBlock')) {
     for (let i in settingsSettings) {
       storeSettings[i] = settingsSettings[i].checked;
     }
@@ -1017,10 +1015,6 @@ function closeAll() { //close everything
 
   centerpop.classList.add('none');
 
-  timepop = false;
-  morepop = false;
-  sespop = false;
-  setpop = false;
   popup = false;
 }
 
