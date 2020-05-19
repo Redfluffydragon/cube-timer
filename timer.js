@@ -1,6 +1,3 @@
-/**
- * use animationFrame for timer?
- */
 'use strict';
 
 navigator.serviceWorker && navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
@@ -840,6 +837,7 @@ function toMinutes(time) { //seconds to colon format
 }
 
 function inspection() { //display inspection countdown, as well as 8s, 12s, +2, and DNF by timeout
+  inspectstart = requestAnimationFrame(inspection);
   const displayctdn = countdown[Math.trunc((new Date() - istart)/1000)];
   insptime.textContent = displayctdn;
   if (displayctdn === 7) { //8 second alert
@@ -864,7 +862,7 @@ function inspection() { //display inspection countdown, as well as 8s, 12s, +2, 
   else if (displayctdn === 'DNF') { //dnf by timeout
     dnf = true;
     plustwo = false;
-    clearInterval(oto); //stop the delay, if holding
+    cancelAnimationFrame(oto); //stop the delay, if holding
   }
   else if (displayctdn == null) { //reset the timer and finish
     time.textContent = '0.00';
@@ -874,11 +872,13 @@ function inspection() { //display inspection countdown, as well as 8s, 12s, +2, 
 }
 
 function stopwatch() { //counts time
+  intstart = requestAnimationFrame(stopwatch)
   counter = (Math.trunc((new Date() - start)/10)/100);
   time.textContent = toMinutes(counter).toString().slice(0, -1);
 }
 
 function timeout() { //do the holding delay, and colors
+  oto = requestAnimationFrame(timeout);
   if ((new Date() - timeou) < storeSettings.startdelay) {
     time.classList.add(storeSettings.lmode ? 'red' : 'cyan');
     insptime.classList.add('orange');
@@ -898,8 +898,8 @@ function fin() { //finish timing, save result
   played12 = false;
   keydown = true;
   waiting = false;
-  clearInterval(intstart);
-  clearInterval(inspectstart);
+  cancelAnimationFrame(intstart);
+  cancelAnimationFrame(inspectstart);
 
   time.className = 'zOne time'; //remove all other classes
   time.textContent = toMinutes(counter); //show hundredths of a second
@@ -932,7 +932,7 @@ function down() { //spacebar down
     if (!onstart && !started) {
       if (!storeSettings.inspectTime || inspecting) { //start delay timer
         timeou = new Date();
-        oto = setInterval(timeout, 10);
+        oto = requestAnimationFrame(timeout);
       }
       else { time.classList.add(storeSettings.lmode ? 'green' : 'magenta'); }
       onstart = true;
@@ -946,7 +946,7 @@ function up() { //spacebar up
   insptime.classList.remove('orange');
   if (!popup && !dnf) {
     if (!started && !waiting) { //if delay hasn't run out yet
-      clearInterval(oto); //reset the hold delay
+      cancelAnimationFrame(oto); //reset the hold delay
       onstart = false;
     }
     if (!keydown) {
@@ -956,18 +956,18 @@ function up() { //spacebar up
         insptime.classList.remove('none');
         storeSettings.hideWhileTiming && onlytime.classList.add('initial'); //check for hide all or not
         istart = new Date();
-        inspectstart = setInterval(inspection, 10);
+        inspectstart = requestAnimationFrame(inspection);
       }
       if (waiting) { //go! (start the stopwatch)
         start = new Date();
-        intstart = setInterval(stopwatch, 10); //actually start the stopwatch
+        intstart = requestAnimationFrame(stopwatch); //actually start the stopwatch
         storeSettings.hideWhileTiming && onlytime.classList.add('initial');
         insptime.classList.add('none');
         time.classList.remove('none');
         time.classList.add('zfour');
         timealert.classList.add('none');
-        clearInterval(inspectstart);
-        clearInterval(oto);
+        cancelAnimationFrame(inspectstart);
+        cancelAnimationFrame(oto);
         inspecting = false;
         waiting = false;
         started = true;
