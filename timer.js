@@ -2,9 +2,6 @@
 
 navigator.serviceWorker && navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
 
-let removed = []; //removed times
-let sesremoved = []; //removed sessions
-
 //for stopwatch
 let counter;
 let start;
@@ -16,7 +13,8 @@ const displaytimes = []; //just the times from current session - for display
 let tempallidx;
 let allthistime;
 
-const columnClass = ['number', 'times', 'avgofive', 'avgotwelve'];
+let removed = []; //removed times
+let sesremoved = []; //removed sessions
 
 let keydown = false;
 let onstart = false;
@@ -101,10 +99,6 @@ let closing;
 const sesnames = [];
 let tempcrip;
 
-//for the date of a solve
-const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
 //elements
 //for scrambles
 const scrambletxt = document.getElementById('scrambletxt');
@@ -128,12 +122,9 @@ const delayButton = document.getElementById('delayButton');
 const delayDrop = document.getElementById('delayDrop');
 const delaytime = document.getElementsByClassName('delaytime');
 
-const settings = document.getElementById('settings');
-
 //timetable
 const ttsize = document.getElementById('ttsize');
 const timebody = document.getElementById('timebody');
-const timetable = document.getElementById('timetable');
 const outicon = document.getElementById('outicon');
 
 //time
@@ -170,7 +161,6 @@ const sameAlertAgain = document.getElementById('sameAlertAgain');
 const sesname = document.getElementById('sesname');
 const sescrip = document.getElementById('sescrip');
 const sesoptpopup = document.getElementById('sesoptpopup');
-const sesselect = document.getElementsByClassName('sesselect');
 const changesesname = document.getElementById('changesesname');
 const seesescrip = document.getElementById('seesescrip');
 const sessionsdiv = document.getElementById('sessions');
@@ -181,7 +171,6 @@ const cubenter = document.getElementById('cubenter');
 const scramenter = document.getElementById('scramenter');
 const datenter = document.getElementById('datenter');
 const commenter = document.getElementById('commenter');
-const showMScram = document.getElementById('showMScram');
 const enterArr = [timentertoo, cubenter, scramenter, datenter, commenter];
 
 const infopopup = document.getElementById('infopopup');
@@ -191,18 +180,13 @@ const undotxt = document.getElementById('undotxt');
 
 //settings
 const setpopup = document.getElementById('setpopup')
-const countAnnounce = document.getElementById('countAnnounce');
-const showSettings = document.getElementById('showSettings');
-const showBW = document.getElementById('showBW');
-const BWSesAll = document.getElementById('BWSesAll');
-const hideThings = document.getElementById('hideThings');
-const settingsSettings = {
-  announce: countAnnounce,
-  delayAndInspect: showSettings,
-  showBW: showBW,
-  BWperSess: BWSesAll,
-  hideWhileTiming: hideThings,
-  multiScram: showMScram,
+const settingsSettings = { // object holding the settings options checkboxes
+  announce: document.getElementById('countAnnounce'),
+  delayAndInspect: document.getElementById('showSettings'),
+  showBW: document.getElementById('showBW'),
+  BWperSess: document.getElementById('BWSesAll'),
+  hideWhileTiming: document.getElementById('hideThings'),
+  multiScram: document.getElementById('showMScram'),
 };
 
 const popups = document.getElementsByClassName('popup');
@@ -215,7 +199,7 @@ const isMobile = (typeof window.orientation !== 'undefined') || (navigator.userA
 //All the variables that need to be gotten on reload/load, and associated functions
 const alltimes = gotem('all', []);
 
-let moddedTimes = gotem('modded', []);
+const moddedTimes = gotem('modded', []);
 
 const sessions = gotem('sessions', [{name: 'Session 1', description: 'Default session'}]);
     for (let i of sessions) { sesnames.push(i.name); };
@@ -293,7 +277,6 @@ document.addEventListener('click', e => {
         allthistime.time = 0;
         allthistime.dnf = true;
       }
-      moddedTimes = gotem('modded');
     }
     else if (match('#thedel') && confirm('Remove this time?')){
       removed = [{time: alltimes.splice(tempallidx, 1)[0], index: tempallidx}];
@@ -341,7 +324,7 @@ document.addEventListener('click', e => {
     enterpop = true;
   }
   else if (match('#settingsIcon')) {
-    for (let i in storeSettings) { settingsSettings[i].checked = storeSettings[i]; }
+    for (let i in settingsSettings) { settingsSettings[i].checked = storeSettings[i]; }
     rcorners.id.charAt(0) === storeSettings.cornerStyle ? rcorners.checked = true : scorners.checked = true;
     showPop(setpopup);
     setpop = true;
@@ -531,8 +514,10 @@ function draw() { //to redraw things after modifying
   displaytimes.length = 0;
   for (let i of alltimes) { i.session === session && (displaytimes.push(i)); } //get all saved times for tehe current session
 
+  const columnClass = ['number', 'times', 'avgofive', 'avgotwelve'];
+
   //clear the table
-  timebody.innerHTML = '';
+  timebody.innerHTML = '';  
   for (let [i, e] of displaytimes.entries()) {
     const row = timebody.insertRow(0);
     row.className = 'idAll';
@@ -669,6 +654,9 @@ function showPop(div) { //open a modal
 }
 
 function makeDate() { //the right date format
+  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  
   const thedate = new Date();
   const year = thedate.getFullYear();
   const month = thedate.getMonth();
@@ -1042,7 +1030,7 @@ function closeAll() { //close everything
   timepop && (allthistime.comment = comment.value);
 
   if (setpop) {
-    for (let i in storeSettings) {
+    for (let i in settingsSettings) {
       storeSettings[i] = settingsSettings[i].checked;
     }
   }
@@ -1142,7 +1130,7 @@ function timesInOut(swtch) { //move the time table in and out, and associated tr
     ttsize.classList.remove('none');
     sessionsdiv.classList.remove('none');
     window.setTimeout(() => {
-      timetable.classList.remove('transXsixty');
+      ttsize.classList.remove('transXsixty');
       sessionsdiv.classList.remove('transXhundred');
       scramblediv.style.marginLeft = '';
       document.body.style.setProperty('--fill-sometimes', '');
@@ -1153,7 +1141,7 @@ function timesInOut(swtch) { //move the time table in and out, and associated tr
     }, 0);
   }
   else { //move time table off screen
-    timetable.classList.add('transXsixty');
+    ttsize.classList.add('transXsixty');
     sessionsdiv.classList.add('transXhundred');
     outicon.classList.remove('none');
     window.setTimeout(() => {
@@ -1173,5 +1161,5 @@ function checkTime(time) { //check if a time is valid, and return it in seconds
   const colonCount = time.split(':');
   if (time < 60) { return parseFloat(time); }
   else if (colonCount.length === 2) { return (parseInt(colonCount[0])*60 + parseFloat(colonCount[1])); }
-  else { return null; }
+  return null;
 }
