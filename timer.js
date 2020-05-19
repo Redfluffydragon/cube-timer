@@ -32,7 +32,6 @@ const eightSecSound = document.getElementById('eightSecSound');
 const twelveSecSound = document.getElementById('twelveSecSound');
 let played8 = false;
 let played12 = false;
-let forAutoplay = false;
 
 //scramble generator variables
 const faces = ['F', 'U', 'L', 'R', 'D', 'B'];
@@ -225,11 +224,6 @@ const storeSettings = gotem('settings', {
 let fscramble = gotem('scramble', null);
 const scrambles = gotem('scrambles', []);
 let scrambleNum = gotem('scrambleNum', 0);
-
-if (isMobile) {
-  undobtn.classList.remove('none');
-  undobtn.addEventListener('click', undo, false);
-}
 
 //event listeners
 document.addEventListener('click', e => {
@@ -588,7 +582,16 @@ function afterLoad() {
   colorIndicator(cubeselect, storeSettings.cube);
 
   draw();
-  forAutoplay = true;
+  if (isMobile) {
+    document.addEventListener('touchstart', () => { //set up sounds to play whenever on mobile
+      eightSecSound.play();
+      eightSecSound.pause();
+      twelveSecSound.play();
+      twelveSecSound.pause();
+    }, {once: true, useCapture: false});
+    undobtn.classList.remove('none'); //and show undo button
+    undobtn.addEventListener('click', undo, false);
+  }
 }
 
 function closeNdraw() { //just put them in one function
@@ -971,13 +974,6 @@ function up() { //spacebar up
 function touchdown(e) { //preventDefault() for touch, and play sounds for later (mobile won't let you otherwise)
   e.preventDefault();
   closeAll();
-  if (forAutoplay && isMobile) { //pre-play sounds so they can actually play when needed
-    eightSecSound.play();
-    eightSecSound.pause();
-    twelveSecSound.play();
-    twelveSecSound.pause();
-    forAutoplay = false;
-  }
   down();
 }
 
