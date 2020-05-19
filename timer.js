@@ -492,8 +492,7 @@ function gotem(item, defalt, type = localStorage) {
 };
 
 function colorIndicator(array, value) { //mark selection in dropdowns
-  for (let i of array) {
-    //mark the right one (darker gray), and unmark all the other ones
+  for (let i of array) { //mark the right one (darker gray), and unmark all the other ones
     i.classList[i.textContent === value ? 'add' : 'remove']('oneforty');
   }
 };
@@ -633,14 +632,13 @@ function timeClicks(e) {
 }
 
 function closeModal(e) { //close modals
-  if (e.target.closest('.popup')) { return; }
-  if (popup) {
+  if (!e.target.closest('.popup') && popup) {
     closing = true;
     closeNdraw();
   }
 }
 
-function bestworst(array) { //get the best and worst times, not indluding dnfs
+function bestworst(array) { //get the best and worst times, not including dnfs
   const justTimes = [];
   for (let i of array) { i.time && justTimes.push(i.time); }
   const worstTime = Math.max(...justTimes);
@@ -660,20 +658,16 @@ function makeDate() { //the right date format
   const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   
-  const thedate = new Date();
-  const year = thedate.getFullYear();
-  const month = thedate.getMonth();
-  const day = thedate.getDay();
-  const daydate = thedate.getDate();
-  const hour = thedate.getHours();
-  let minute = thedate.getMinutes().toString();
-  let seconds = thedate.getSeconds().toString();
-  const timezone = thedate.getTimezoneOffset()/-60;
+  const d = new Date();
+  let minute = d.getMinutes().toString();
+  let seconds = d.getSeconds().toString();
+  const timezone = d.getTimezoneOffset()/-60;
 
   seconds.length === 1 ? seconds = '0' + seconds : seconds;
   minute.length === 1 ? minute = '0' + minute : minute;
 
-  return `${days[day]}, ${months[month]} ${daydate}, ${year} ${hour}:${minute}:${seconds} UTC${timezone}`;
+  return `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()},
+  ${d.getFullYear()} ${d.getHours()}:${minute}:${seconds} UTC${timezone}`;
 }
 
 function multiMatch(e, ...targets) { //match function for multiple possible matches
@@ -708,30 +702,21 @@ function checknxn(moveset) { //for nxnxn cubes
     charOneP = pmove.charAt(0);
     twoCharP = pmove.slice(0, 2);
   }
-  if (twoBackMove != null) {
-    charOneTwoBack = twoBackMove.charAt(0);
+  if (twoBackMove != null) { charOneTwoBack = twoBackMove.charAt(0); }
+  if (twoCharT !== twoCharP || charOneP !== charOneT || (charOneTwoBack !== charOneT && oppositeSides[charOneT] !== charOneP)) {
+    tscramble.push(tempmove);
   }
-  if (twoCharT === twoCharP || charOneP === charOneT || (charOneTwoBack === charOneT && oppositeSides[charOneT] === charOneP)) { return; }
-  else { tscramble.push(tempmove); }
 }
 
 function checkpyr1() { // turn the big corners for pyraminx
-  const random = Math.round(Math.random()*7);
-  const tempmove = pyrsmoves[random];
-  const pmove = tscramble[0];
-  const charOneT = tempmove.charAt(0);
-  let charOneP;
-  pmove != null && (charOneP = pmove.charAt(0));
-  if (charOneT === charOneP) { return; }
-  else { tscramble.unshift(tempmove); }
+  const tempmove = pyrsmoves[Math.trunc(Math.random()*pyrsmoves.length)];
+  if (tscramble[0] != null && tempmove.charAt(0) !== tscramble[0].charAt(0)) { tscramble.unshift(tempmove); }
 }
 
 function addfour(moveset, chancemod = 0.1, apostrophe = true) { //add zero to four moves at the end (pyra and clock)
   for (let i = 0; i < 4; i++) {
-    const pointyn = Math.round(Math.random()+chancemod);
-    if (pointyn) {
-      const pointdir = Math.round(Math.random());
-      if (pointdir || !apostrophe) { tscramble.unshift(moveset[i]); }
+    if (Math.random() < (0.5 + chancemod)) { //50/50, plus chancemod makes it more likely to get one
+      if (Math.random() < 0.5 || !apostrophe) { tscramble.unshift(moveset[i]); }
       else { tscramble.unshift(moveset[i] + `'`); }
     }
   }
@@ -745,11 +730,11 @@ function checkpyrall() { //combine pyraminx scramble bits
 function checkmeg() { //megaminx
   for (let i = 0; i < slen/11; i++) {
     for (let j = 0; j < 10; j++) {
-      const moveMod = Math.round(Math.random()) ? '++' : '--';
+      const moveMod = Math.random() < 0.5 ? '++' : '--';
       const move = j%2 ? 'D' : 'R';
       tscramble.push(move + moveMod);
     }
-    Math.round(Math.random()) ? tscramble.push('U\r\n') : tscramble.push(`U'\r\n`);
+    Math.random() < 0.5 ? tscramble.push('U\r\n') : tscramble.push(`U'\r\n`);
   }
 }
 
@@ -762,11 +747,11 @@ function checksqu() {//probably doesn't work. I don't know what moves aren't all
     firstnum = tscramble[tscramble.length-1].charAt(1);
     secondnum = tscramble[tscramble.length-1].charAt(3);
   }
-  if ((onerand === firstnum && tworand === secondnum) ||
-      (onerand === secondnum && tworand === firstnum) ||
-      (onerand === 0 && tworand === 0))
-      { return; } //there are probably other exclusions
-  else {tscramble.push( `(${onerand},${tworand})` )}
+  if ((onerand !== firstnum && tworand !== secondnum) ||
+      (onerand !== secondnum && tworand !== firstnum) ||
+      (onerand !== 0 && tworand !== 0)) { //there are probably other exclusions
+        tscramble.push(`(${onerand},${tworand})`);
+      }
 }
 
 function checkclo() { //clock
@@ -799,11 +784,10 @@ function average(startpoint, leng) {
 
   if (startpoint > (leng-1)) {
     for (let i = 1; i < leng+1; i++) {
-      avgAll.push(displaytimes[startpoint-i].time);
+      const tempTime = displaytimes[startpoint-i].time;
+      if (tempTime !== 0) { avgAll.push(tempTime); } //don't push dnfs
     }
   }
-
-  avgAll = avgAll.filter(i => i !== 0); //get rid of DNFs
 
   avgAll.splice(avgAll.indexOf(Math.max(...avgAll)), 1); //remove max
 
