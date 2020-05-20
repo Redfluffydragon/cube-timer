@@ -3,7 +3,7 @@
 navigator.serviceWorker && navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
 
 //for stopwatch
-let counter;
+let counter; //holds the time
 let timerStartTime;
 let runStopwatch;
 let timerState = 'stopped';
@@ -15,8 +15,10 @@ let allthistime;
 let removed = []; //removed times
 let sesremoved = []; //removed sessions
 
-let keydown = false;
-let onstart = false;
+let keydown = false; //so it doesn't just start on keydown and stop on keyup
+let onstart = false; //starting or stopping
+
+let touchMoved; //scrolling or not
 
 //for inspection time countdown
 let timeoutStartTime;
@@ -24,8 +26,10 @@ let runTimeout;
 let inspectStartTime;
 let runInspect;
 const countdown = [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, '+2', '+2', 'DNF'];
+
 let dnf = false;
 let plustwo = false;
+
 const eightSecSound = document.getElementById('eightSecSound');
 const twelveSecSound = document.getElementById('twelveSecSound');
 let played8 = false;
@@ -87,9 +91,7 @@ const scramblers = { //object with all the scrambler functions in it, to replace
 let popup;
 let closing;
 
-//session elements
-const sesnames = [];
-let findSession;
+let findSession; //for editing sessions
 
 //elements
 //for scrambles
@@ -194,7 +196,6 @@ const alltimes = gotem('all', []);
 const moddedTimes = gotem('modded', []);
 
 const sessions = gotem('sessions', [{name: 'Session 1', description: 'Default session'}]);
-    for (let i of sessions) { sesnames.push(i.name); };
 
 let session = gotem('currses', sessions[0].name);
 
@@ -574,7 +575,6 @@ function closeNdraw() { //just put them in one function
 }
 
 //for clicks on the time table
-let touchMoved;
 function timeClicks(e) {
   if ((!isMobile || !touchMoved) && e.target.parentNode.rowIndex >= 0 && !closing) {
     const rvrsrow = displaytimes.length - e.target.parentNode.rowIndex+1; //reverse the row index
@@ -840,7 +840,7 @@ function fin() { //finish timing, save result
   timerState = 'stopped';
   played8 = false;
   played12 = false;
-  keydown = true;
+  keydown = true; //for if holding space when it times out
   cancelAnimationFrame(runStopwatch);
   cancelAnimationFrame(runInspect);
 
