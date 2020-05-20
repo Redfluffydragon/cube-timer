@@ -1,19 +1,12 @@
-/**
- * figure out which timers are mutually exclusive and use one variable for them
- * - I think the inspection countdown can't be going at the same time as the timer
- * eigth second sound seemed delayed - too much silence at the start of it? slow to load? something else?
- */
-
 'use strict';
 
 navigator.serviceWorker && navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
 
 //for stopwatch
 let counter;
-let start;
-let intstart;
-let started = false;
-let inspecting = false;
+let timerStartTime;
+let runStopwatch;
+let timerState = 'stopped';
 
 const displaytimes = []; //just the times from current session - for display
 let tempallidx;
@@ -26,11 +19,10 @@ let keydown = false;
 let onstart = false;
 
 //for inspection time countdown
-let timeou;
-let oto;
-let waiting;
-let inspectstart;
-let istart;
+let timeoutStartTime;
+let runTimeout;
+let inspectStartTime;
+let runInspect;
 const countdown = [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, '+2', '+2', 'DNF'];
 let dnf = false;
 let plustwo = false;
@@ -97,7 +89,7 @@ let closing;
 
 //session elements
 const sesnames = [];
-let tempcrip;
+let findSession;
 
 //elements
 //for scrambles
@@ -367,8 +359,8 @@ document.addEventListener('click', e => {
   else if (match('#sesopt')) {
     showPop(sesoptpopup);
     changesesname.value = session;
-    sessions.find(e => e.name === session && (tempcrip = e));
-    seesescrip.value = tempcrip.description;
+    sessions.find(e => e.name === session && (findSession = e));
+    seesescrip.value = findSession.description;
   }
   else if (match('#dothenter')) {
     addNewTime();
@@ -389,7 +381,7 @@ document.addEventListener('click', e => {
       });
       session = changesesname.value;
     }
-    sessions[sessions.indexOf(tempcrip)].description = seesescrip.value;
+    sessions[sessions.indexOf(findSession)].description = seesescrip.value;
     closeNdraw();
   }
   else if (match('#lighticon')) { runmode(true); }
@@ -634,22 +626,6 @@ function showPop(div) { //open a modal
   popup = true;
 }
 
-function makeDate() { //the right date format
-  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  
-  const d = new Date();
-  let minute = d.getMinutes().toString();
-  let seconds = d.getSeconds().toString();
-  const timezone = d.getTimezoneOffset()/-60;
-
-  seconds.length === 1 ? seconds = '0' + seconds : seconds;
-  minute.length === 1 ? minute = '0' + minute : minute;
-
-  return `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()},
-  ${d.getFullYear()} ${d.getHours()}:${minute}:${seconds} UTC${timezone}`;
-}
-
 function addNewTime() {
   if (timentertoo.value !== '' && checkTime(timentertoo.value) != null) {
     alltimes.push({
@@ -810,8 +786,8 @@ function toMinutes(time) { //seconds to colon format
 }
 
 function inspection() { //display inspection countdown, as well as 8s, 12s, +2, and DNF by timeout
-  inspectstart = requestAnimationFrame(inspection);
-  const displayctdn = countdown[Math.trunc((new Date() - istart)/1000)];
+  runInspect = requestAnimationFrame(inspection);
+  const displayctdn = countdown[Math.trunc((new Date() - inspectStartTime)/1000)];
   insptime.textContent = displayctdn;
   if (displayctdn === 7) { //8 second alert
     timealert.classList.remove('none');
@@ -835,7 +811,7 @@ function inspection() { //display inspection countdown, as well as 8s, 12s, +2, 
   else if (displayctdn === 'DNF') { //dnf by timeout
     dnf = true;
     plustwo = false;
-    cancelAnimationFrame(oto); //stop the delay, if holding
+    cancelAnimationFrame(runTimeout); //stop the delay, if holding
   }
   else if (displayctdn == null) { //reset the timer and finish
     time.textContent = '0.00';
@@ -845,19 +821,15 @@ function inspection() { //display inspection countdown, as well as 8s, 12s, +2, 
 }
 
 function stopwatch() { //counts time
-  intstart = requestAnimationFrame(stopwatch)
-  counter = (Math.trunc((new Date() - start)/10)/100);
-  time.textContent = toMinutes(counter).toString().slice(0, -1);
+  runStopwatch = requestAnimationFrame(stopwatch)
+  counter = (Math.trunc((new Date() - timerStartTime)/10)/100);
+  time.textContent = toMinutes(counter).toString().slice(0, -1); //don't show hundredths while running
 }
 
 function timeout() { //do the holding delay, and colors
-  oto = requestAnimationFrame(timeout);
-  if ((new Date() - timeou) < storeSettings.startdelay) {
-    time.classList.add(storeSettings.lmode ? 'red' : 'cyan');
-    insptime.classList.add('orange');
-  }
-  else {
-    waiting = true;
+  runTimeout = requestAnimationFrame(timeout);
+  if ((new Date() - timeoutStartTime) >= storeSettings.startdelay) {
+    timerState = 'waiting';
     time.classList.add(storeSettings.lmode ? 'green' : 'magenta');
     insptime.classList.remove('orange');
     insptime.classList.add('green');
@@ -865,14 +837,12 @@ function timeout() { //do the holding delay, and colors
 }
 
 function fin() { //finish timing, save result
-  started = false;
-  inspecting = false;
+  timerState = 'stopped';
   played8 = false;
   played12 = false;
   keydown = true;
-  waiting = false;
-  cancelAnimationFrame(intstart);
-  cancelAnimationFrame(inspectstart);
+  cancelAnimationFrame(runStopwatch);
+  cancelAnimationFrame(runInspect);
 
   time.className = 'zOne time'; //remove all other classes
   time.textContent = toMinutes(counter); //show hundredths of a second
@@ -885,7 +855,7 @@ function fin() { //finish timing, save result
     cube: storeSettings.cube,
     session: session,
     scramble: scrambles.length ? scrambles.join(';\r\n') : fscramble,
-    date: makeDate(),
+    date: new Date().toString(),
     dnf: dnf,
     plustwo: plustwo,
   });
@@ -902,15 +872,17 @@ function fin() { //finish timing, save result
 
 function down() { //spacebar down
   if (!popup && !dnf) {
-    if (!onstart && !started) {
-      if (!storeSettings.inspectTime || inspecting) { //start delay timer
-        timeou = new Date();
-        oto = requestAnimationFrame(timeout);
+    if (!onstart && timerState !== 'started') {
+      if (!storeSettings.inspectTime || timerState === 'inspecting') { //start delay timer
+        timeoutStartTime = new Date();
+        runTimeout = requestAnimationFrame(timeout);
+        time.classList.add(storeSettings.lmode ? 'red' : 'cyan');
+        insptime.classList.add('orange');
       }
       else { time.classList.add(storeSettings.lmode ? 'green' : 'magenta'); }
       onstart = true;
     }
-    else if (started) { fin(); }
+    else if (timerState === 'started') { fin(); }
   }
 }
   
@@ -918,32 +890,30 @@ function up() { //spacebar up
   time.classList.remove('red', 'green', 'cyan', 'magenta');
   insptime.classList.remove('orange');
   if (!popup && !dnf) {
-    if (!started && !waiting) { //if delay hasn't run out yet
-      cancelAnimationFrame(oto); //reset the hold delay
+    if (timerState !== 'started' && timerState !== 'waiting') { //if delay hasn't run out yet
+      cancelAnimationFrame(runTimeout); //reset the hold delay
       onstart = false;
     }
     if (!keydown) {
-      if (storeSettings.inspectTime && !inspecting) { //go! (start inspection time)
-        inspecting = true;
-        time.classList.add('none');
-        insptime.classList.remove('none');
-        storeSettings.hideWhileTiming && onlytime.classList.add('initial'); //check for hide all or not
-        istart = new Date();
-        inspectstart = requestAnimationFrame(inspection);
-      }
-      if (waiting) { //go! (start the stopwatch)
-        start = new Date();
-        intstart = requestAnimationFrame(stopwatch); //actually start the stopwatch
+      if (timerState === 'waiting') { //go! (start the stopwatch)
+        timerStartTime = new Date();
+        runStopwatch = requestAnimationFrame(stopwatch);
         storeSettings.hideWhileTiming && onlytime.classList.add('initial');
         insptime.classList.add('none');
         time.classList.remove('none');
         time.classList.add('zfour');
         timealert.classList.add('none');
-        cancelAnimationFrame(inspectstart);
-        cancelAnimationFrame(oto);
-        inspecting = false;
-        waiting = false;
-        started = true;
+        cancelAnimationFrame(runInspect);
+        cancelAnimationFrame(runTimeout);
+        timerState = 'started';
+      }
+      else if (storeSettings.inspectTime && timerState !== 'inspecting') { //go! (start inspection time)
+        timerState = 'inspecting';
+        time.classList.add('none');
+        insptime.classList.remove('none');
+        storeSettings.hideWhileTiming && onlytime.classList.add('initial'); //check for hide all or not
+        inspectStartTime = new Date();
+        runInspect = requestAnimationFrame(inspection);
       }
       //close any open dropdowns
       closeDrops();
