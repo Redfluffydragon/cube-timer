@@ -62,7 +62,7 @@ const clocks = clocksf4.concat('y2').concat(clocksf4).concat(clocksl4); //concat
 const tscramble = [];
 let slen; //scramble length
 
-const oppositeSides = {//opposite sides for nxnxn cubes
+const oppositeSides = { //opposite sides for nxnxn cubes
   R: 'L',
   L: 'R',
   U: 'D',
@@ -86,7 +86,7 @@ const scramblers = { //object with all the scrambler functions in it, to replace
 }
 
 //modals open or closed
-let popup;
+let popup = false;
 let closing = false;
 
 let findSession; //for editing sessions
@@ -647,15 +647,19 @@ function dropDown(button, content, e) { //toggle dropdowns on button click
   return false;
 }
 
+function timePos(center) { //center and uncenter time and insptime
+  ttsize.classList[center ? 'add' : 'remove']('none');
+  document.body.style.setProperty('--fill-sometimes', center ? 'span var(--grid-cols) / auto' : '');
+}
+
 function timesInOut(swtch) { //move the time table in and out, and associated transitions
   if (storeSettings.timein === swtch) { //move time table onto screen
-    ttsize.classList.remove('none');
+    timePos(false);
     sessionsdiv.classList.remove('none');
+    scramblediv.style.marginLeft = '';
     window.setTimeout(() => {
       ttsize.classList.remove('transXsixty');
       sessionsdiv.classList.remove('transXhundred');
-      scramblediv.style.marginLeft = '';
-      document.body.style.setProperty('--fill-sometimes', '');
       multiScram.style.gridColumn = '';
       outicon.classList.add('none');
       BWdiv.style.float = '';
@@ -667,9 +671,8 @@ function timesInOut(swtch) { //move the time table in and out, and associated tr
     sessionsdiv.classList.add('transXhundred');
     outicon.classList.remove('none');
     window.setTimeout(() => {
-      ttsize.classList.add('none');
+      timePos(true);
       scramblediv.style.marginLeft = '4px';
-      document.body.style.setProperty('--fill-sometimes', 'span var(--grid-cols) / auto');
       sessionsdiv.classList.add('none');
       multiScram.style.gridColumn = 'span var(--grid-cols) / auto';
       BWdiv.style.float = 'right';
@@ -794,9 +797,9 @@ function average(startpoint, leng) {
 
 function toMinutes(time) { //seconds to colon format
   if (time < 60) { return time.toFixed(2); }
-  else if (time > 60 && time < 3600) {
+  else if (time >= 60 && time < 3600) {
     const minutes = Math.trunc(time/60);
-    let secondsafter = (Math.trunc((time-(60*minutes))*100)/100).toFixed(2);
+    let secondsafter = (time - (60*minutes)).toFixed(2);
     secondsafter < 10 && (secondsafter = '0' + secondsafter);
 
     return `${minutes}:${secondsafter}`;
@@ -864,6 +867,7 @@ function fin() { //finish timing, save result
   cancelAnimationFrame(runInspect);
 
   time.className = 'zOne time'; //remove all other classes
+  timePos(false); //uncenter time
   time.textContent = toMinutes(counter); //show hundredths of a second
   insptime.classList.remove('orange', 'green');
   onlytime.classList.remove('initial');
@@ -918,6 +922,7 @@ function up() { //spacebar up
         timerStartTime = new Date();
         runStopwatch = requestAnimationFrame(stopwatch);
         storeSettings.hideWhileTiming && onlytime.classList.add('initial');
+        timePos(true); //center time
         insptime.classList.add('none');
         time.classList.remove('none');
         time.classList.add('zfour');
@@ -927,6 +932,7 @@ function up() { //spacebar up
         timerState = 'started';
       }
       else if (storeSettings.inspectTime && timerState !== 'inspecting') { //go! (start inspection time)
+        timePos(true);
         timerState = 'inspecting';
         time.classList.add('none');
         insptime.classList.remove('none');
