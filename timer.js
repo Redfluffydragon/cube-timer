@@ -12,8 +12,8 @@ const displaytimes = []; //just the times from current session - for display
 let tempallidx;
 let allthistime;
 
-let removed = []; //removed times
-let sesremoved = []; //removed sessions
+let removed = gotem('removed', [], sessionStorage); //removed times
+let sesremoved = gotem('sesremoved', [], sessionStorage); //removed sessions
 
 let keydown = false; //so it doesn't just start on keydown and stop on keyup
 let onstart = false; //starting or stopping
@@ -196,7 +196,6 @@ const alltimes = gotem('all', []);
 const moddedTimes = gotem('modded', []);
 
 const sessions = gotem('sessions', [{name: 'Session 1', description: 'Default session'}]);
-
 let session = gotem('currses', sessions[0].name);
 
 const storeSettings = gotem('settings', {
@@ -519,8 +518,7 @@ function draw() { //to redraw things after modifying
   sesdrop.innerHTML = '';
   for (let i of sessions) {
     const sesnode = document.createElement('p');
-    const sesnodename = document.createTextNode(i.name);
-    sesnode.appendChild(sesnodename);
+    sesnode.textContent = i.name;
     sesnode.classList.add('sesselect');
     sesdrop.appendChild(sesnode);
   }
@@ -568,8 +566,7 @@ function closeNdraw() { //just put them in one function
   draw();
 }
 
-//for clicks on the time table
-function timeClicks(e) {
+function timeClicks(e) { //for clicks on the time table
   if ((!isMobile || !touchMoved) && e.target.parentNode.rowIndex >= 0 && !closing) {
     const rvrsrow = displaytimes.length - e.target.parentNode.rowIndex+1; //reverse the row index
     tempallidx = alltimes.indexOf(displaytimes[rvrsrow-1]);
@@ -638,6 +635,13 @@ function addNewTime() {
   else { alert(`I don't recognize that time.`); }
 }
 
+function checkTime(time) { //check if a time is valid, and return it in seconds
+  const colonCount = time.split(':');
+  if (time < 60) { return parseFloat(time); }
+  else if (colonCount.length === 2) { return (parseInt(colonCount[0])*60 + parseFloat(colonCount[1])); }
+  return null;
+}
+
 function multiMatch(e, ...targets) { //match function for multiple possible matches
   for (let i of targets) {
     if (e.target.matches(i)) { return true; }
@@ -651,6 +655,38 @@ function dropDown(button, content, e) { //toggle dropdowns on button click
     return button.id;
   }
   return false;
+}
+
+function timesInOut(swtch) { //move the time table in and out, and associated transitions
+  if (storeSettings.timein === swtch) { //move time table onto screen
+    ttsize.classList.remove('none');
+    sessionsdiv.classList.remove('none');
+    window.setTimeout(() => {
+      ttsize.classList.remove('transXsixty');
+      sessionsdiv.classList.remove('transXhundred');
+      scramblediv.style.marginLeft = '';
+      document.body.style.setProperty('--fill-sometimes', '');
+      multiScram.style.gridColumn = '';
+      outicon.classList.add('none');
+      BWdiv.style.float = '';
+      scramOverflowShadow();
+    }, 0);
+  }
+  else { //move time table off screen
+    ttsize.classList.add('transXsixty');
+    sessionsdiv.classList.add('transXhundred');
+    outicon.classList.remove('none');
+    window.setTimeout(() => {
+      ttsize.classList.add('none');
+      scramblediv.style.marginLeft = '4px';
+      document.body.style.setProperty('--fill-sometimes', 'span var(--grid-cols) / auto');
+      sessionsdiv.classList.add('none');
+      multiScram.style.gridColumn = 'span var(--grid-cols) / auto';
+      BWdiv.style.float = 'right';
+      scramOverflowShadow();
+    }, 500);
+  }
+  swtch && (storeSettings.timein = !storeSettings.timein);
 }
 
 //Just a random move scrambler.
@@ -725,8 +761,7 @@ function checksqu() {//probably doesn't work. I don't know what moves aren't all
 function checkclo() { //clock
   addfour(clocksl4, 0, false);
   for (let i of clocks) {
-    const clockrand = Math.round((Math.random()*11)-5);
-    const clkstr = JSON.stringify(clockrand);
+    const clkstr = JSON.stringify(Math.round((Math.random()*11)-5));
     const rvrsclock = clkstr.length > 1 ? clkstr.charAt(1) + clkstr.charAt(0) : clkstr.charAt(0) + '+';
     i !== 'y2' ? tscramble.unshift(i+rvrsclock) : tscramble.unshift(i);
   }
@@ -858,7 +893,7 @@ function fin() { //finish timing, save result
   plustwo = false;
   scrambles.length = 0;
   scrambleNum = 0;
-  scramNum.textContent = '1';
+  scramNum.textContent = 1;
 
   scramble(); //new scramble
   draw();
@@ -917,7 +952,7 @@ function up() { //spacebar up
   }
 }
 
-function touchdown(e) { //preventDefault() for touch, and play sounds for later (mobile won't let you otherwise)
+function touchdown(e) { //preventDefault() for touch
   e.preventDefault();
   closeAll();
   down();
@@ -925,8 +960,6 @@ function touchdown(e) { //preventDefault() for touch, and play sounds for later 
 
 function undo() { //undo the last-done deletion
   let msg = 'Nothing to undo';
-  removed = gotem('removed', [], sessionStorage);
-  sesremoved = gotem('sesremoved', [], sessionStorage);
   if (removed.length) {
     const getIdx = removed[0].index;
     for (let i of removed) {
@@ -966,7 +999,7 @@ function changeCorners(e, style) { //corner style
 function closeAll() { //close everything
   timepopup.matches('.inlineBlock') && (allthistime.comment = comment.value);
 
-  for (let i of popups) { i.classList.remove('inlineBlock'); }
+  for (let i of popups) { i.classList.remove('inlineBlock'); } //close all popups
   timepops.classList.add('none');
   shadow.classList.remove('initial');
   shadow.style.zIndex = '';
@@ -1061,43 +1094,4 @@ function createCsv(array, name) { //create csv file from 2d array
   linkDownload.click();
   linkDownload.remove();
   closeAll();
-}
-
-function timesInOut(swtch) { //move the time table in and out, and associated transitions
-  if (storeSettings.timein === swtch) { //move time table onto screen
-    ttsize.classList.remove('none');
-    sessionsdiv.classList.remove('none');
-    window.setTimeout(() => {
-      ttsize.classList.remove('transXsixty');
-      sessionsdiv.classList.remove('transXhundred');
-      scramblediv.style.marginLeft = '';
-      document.body.style.setProperty('--fill-sometimes', '');
-      multiScram.style.gridColumn = '';
-      outicon.classList.add('none');
-      BWdiv.style.float = '';
-      scramOverflowShadow();
-    }, 0);
-  }
-  else { //move time table off screen
-    ttsize.classList.add('transXsixty');
-    sessionsdiv.classList.add('transXhundred');
-    outicon.classList.remove('none');
-    window.setTimeout(() => {
-      ttsize.classList.add('none');
-      scramblediv.style.marginLeft = '4px';
-      document.body.style.setProperty('--fill-sometimes', 'span var(--grid-cols) / auto');
-      sessionsdiv.classList.add('none');
-      multiScram.style.gridColumn = 'span var(--grid-cols) / auto';
-      BWdiv.style.float = 'right';
-      scramOverflowShadow();
-    }, 500);
-  }
-  swtch && (storeSettings.timein = !storeSettings.timein);
-}
-
-function checkTime(time) { //check if a time is valid, and return it in seconds
-  const colonCount = time.split(':');
-  if (time < 60) { return parseFloat(time); }
-  else if (colonCount.length === 2) { return (parseInt(colonCount[0])*60 + parseFloat(colonCount[1])); }
-  return null;
 }
