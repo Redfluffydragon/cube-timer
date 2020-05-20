@@ -215,7 +215,6 @@ const storeSettings = gotem('settings', {
   cube: '3x3',
 });
 
-let fscramble = gotem('scramble', null);
 const scrambles = gotem('scrambles', []);
 let scrambleNum = gotem('scrambleNum', 0);
 
@@ -278,12 +277,8 @@ document.addEventListener('click', e => {
     draw();
   }
   else if (match('#nextScram')) {
-    scrambleNum === 0 && scrambles.push(fscramble);
     scrambleNum++;
-    if (scrambleNum > scrambles.length-1) {
-      scramble();
-      scrambles.push(fscramble);
-    }
+    if (scrambleNum > scrambles.length-1) { scramble(); }
     else { scrambletxt.textContent = scrambles[scrambleNum]; }
     scramNum.textContent = scrambleNum + 1;
   }
@@ -318,7 +313,7 @@ document.addEventListener('click', e => {
     sesremoved = sessions;
     sessions.length = 0;
     sessions.push({name: 'Session 1', description: 'Default session'});
-    session = sessions[0].name;
+    session = 'Session 1';
     sesslc.textContent = session;
     closeNdraw();
   }
@@ -336,7 +331,7 @@ document.addEventListener('click', e => {
           sessions.length = 0;
           alltimes.length = 0;
           sessions.push({name: 'Session 1', description: 'Default session'});
-          session = sessions[0].name;
+          session = 'Session 1';
         }
       }
     });
@@ -446,7 +441,6 @@ const whichUnload = (navigator.userAgent.match(/iPad/i) || navigator.userAgent.m
 window.addEventListener(whichUnload, () => {
   localStorage.setItem('all', JSON.stringify(alltimes));
   localStorage.setItem('settings', JSON.stringify(storeSettings));
-  localStorage.setItem('scramble', JSON.stringify(fscramble));
   localStorage.setItem('scrambles', JSON.stringify(scrambles));
   localStorage.setItem('scrambleNum', JSON.stringify(scrambleNum));
   localStorage.setItem('currses', JSON.stringify(session));
@@ -478,7 +472,7 @@ function draw() { //to redraw things after modifying
     scrambletxt.textContent = scrambles[scrambleNum];
     scramNum.textContent = scrambleNum + 1;
   }
-  else { fscramble == null ? scramble() : scrambletxt.textContent = fscramble; }
+  else { scramble(); }
 
   displaytimes.length = 0;
   for (let i of alltimes) { i.session === session && (displaytimes.push(i)); } //get all saved times for tehe current session
@@ -672,19 +666,19 @@ function checknxn(moveset) { //for nxnxn cubes
 
   const twoCharT = tempmove.slice(0, 2);
   const charOneT = tempmove.charAt(0);
-  if (pmove != null) {
+  if (tscramble.length) {
     charOneP = pmove.charAt(0);
     twoCharP = pmove.slice(0, 2);
   }
-  if (twoBackMove != null) { charOneTwoBack = twoBackMove.charAt(0); }
-  if (twoCharT !== twoCharP || charOneP !== charOneT || (charOneTwoBack !== charOneT && oppositeSides[charOneT] !== charOneP)) {
+  if (tscramble.length > 1) { charOneTwoBack = twoBackMove.charAt(0); }
+  if (twoCharT !== twoCharP && charOneP !== charOneT && (charOneTwoBack !== charOneT || oppositeSides[charOneT] !== charOneP)) {
     tscramble.push(tempmove);
   }
 }
 
 function checkpyr1() { // turn the big corners for pyraminx
   const tempmove = pyrsmoves[Math.trunc(Math.random()*pyrsmoves.length)];
-  if (tscramble[0] != null && tempmove.charAt(0) !== tscramble[0].charAt(0)) { tscramble.unshift(tempmove); }
+  if (tscramble.length && tempmove.charAt(0) !== tscramble[0].charAt(0)) { tscramble.unshift(tempmove); }
 }
 
 function addfour(moveset, chancemod = 0.1, apostrophe = true) { //add zero to four moves at the end (pyra and clock)
@@ -721,9 +715,9 @@ function checksqu() {//probably doesn't work. I don't know what moves aren't all
     firstnum = tscramble[tscramble.length-1].charAt(1);
     secondnum = tscramble[tscramble.length-1].charAt(3);
   }
-  if ((onerand !== firstnum && tworand !== secondnum) ||
-      (onerand !== secondnum && tworand !== firstnum) ||
-      (onerand !== 0 && tworand !== 0)) { //there are probably other exclusions
+  if ((onerand !== firstnum || tworand !== secondnum) &&
+      (onerand !== secondnum || tworand !== firstnum) &&
+      (onerand !== 0 || tworand !== 0)) { //there are probably other exclusions
         tscramble.push(`(${onerand},${tworand})`);
       }
 }
@@ -743,8 +737,8 @@ function scramble() { //do the scrambles
   do { scramblers[storeSettings.cube](); }
   while (tscramble.length < slen)
 
-  fscramble = tscramble.join(' ');
-  scrambletxt.textContent = fscramble;
+  scrambles.push(tscramble.join(' '));
+  scrambletxt.textContent = scrambles[scrambleNum];
   scramOverflowShadow();
 }
 
@@ -854,7 +848,7 @@ function fin() { //finish timing, save result
     time: counter + (plustwo ? 2 : 0),
     cube: storeSettings.cube,
     session: session,
-    scramble: scrambles.length ? scrambles.join(';\r\n') : fscramble,
+    scramble: scrambles.join(';\r\n'),
     date: new Date().toString(),
     dnf: dnf,
     plustwo: plustwo,
