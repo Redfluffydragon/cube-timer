@@ -18,8 +18,6 @@ let sesremoved = gotem('sesremoved', [], sessionStorage); //removed sessions
 let keydown = false; //so it doesn't just start on keydown and stop on keyup
 let onstart = false; //starting or stopping
 
-let touchMoved; //scrolling or not
-
 //for inspection time countdown
 let timeoutStartTime;
 let runTimeout;
@@ -89,7 +87,7 @@ const scramblers = { //object with all the scrambler functions in it, to replace
 
 //modals open or closed
 let popup;
-let closing;
+let closing = false;
 
 let findSession; //for editing sessions
 
@@ -219,9 +217,9 @@ let scrambleNum = gotem('scrambleNum', 0);
 
 //event listeners
 document.addEventListener('click', e => {
+  closeModal(e);
   const match = t => e.target.matches(t); //shorter match function
-  closing = false; //for touch, trying to prevent opening things when closing modals and such. Does not work.
-  if (e.target.closest('#timebody')) {
+  if (e.target.closest('#timebody') && !closing) {
     timeClicks(e);
   }
   else if (match('.inspselect')) {
@@ -386,7 +384,7 @@ document.addEventListener('click', e => {
   else if (multiMatch(e, '#rcorners', '#scorners')) { changeCorners(e); }
   else if (multiMatch(e, '#timeclose', '#settingsClose')) { closeNdraw(); }
   else if (multiMatch(e, '#infoclose', '#timentercanc')) { closeAll(); }
-  
+
   //for dropdown buttons
   const onButton = 
   dropDown(cubeButton, cubeDrop, e) ||
@@ -397,20 +395,15 @@ document.addEventListener('click', e => {
   //close dropdowns if clicked anywhere not on the content, and don't close if clicked on the button for that dropdown
   if (!match('.rdropdown')) {  closeDrops(onButton); }
   if (!match('#sesslc')) { sesdrop.classList.remove('block'); }
+  closing = false;
 }, false);
-
-document.addEventListener('mousedown', closeModal, false);
 
 document.addEventListener('touchstart', e => {
   if (multiMatch(e, '#touch', '#time', '#insptime', '#onlytime')) { touchdown(e); }
-  else if (e.target.closest('#timebody')) { touchMoved = false; }
 }, {passive: false, useCapture: false});
 
 document.addEventListener('touchend', e => {
-  closing = false;
   if (multiMatch(e, '#touch', '#time', '#insptime', '#onlytime')) { up(); }
-  else if (e.target.closest('#timebody')) { timeClicks(e); }
-  closeModal(e);
 }, {passive: false, useCapture: false});
 
 window.addEventListener('keydown', e => {
@@ -452,10 +445,7 @@ window.addEventListener(whichUnload, () => {
 
 window.addEventListener('resize', scramOverflowShadow, false);
 
-timebody.addEventListener('touchmove', () => { touchMoved = true; }, {passive: true});
-
-//wrapper function for getting stuff from localStorage
-function gotem(item, defalt, type = localStorage) {
+function gotem(item, defalt, type = localStorage) { //wrapper function for getting stuff from localStorage
   const getthething = type.getItem(item);
   return getthething == null ? defalt : JSON.parse(getthething);
 };
@@ -567,8 +557,8 @@ function closeNdraw() { //just put them in one function
 }
 
 function timeClicks(e) { //for clicks on the time table
-  if ((!isMobile || !touchMoved) && e.target.parentNode.rowIndex >= 0 && !closing) {
-    const rvrsrow = displaytimes.length - e.target.parentNode.rowIndex+1; //reverse the row index
+  if (e.target.parentNode.rowIndex >= 0) {
+    const rvrsrow = displaytimes.length - e.target.parentNode.rowIndex + 1; //reverse the row index
     tempallidx = alltimes.indexOf(displaytimes[rvrsrow-1]);
     allthistime = alltimes[tempallidx];
 
@@ -596,8 +586,8 @@ function timeClicks(e) { //for clicks on the time table
 
 function closeModal(e) { //close modals
   if (!e.target.closest('.popup') && popup) {
-    closing = true;
     closeNdraw();
+    closing = true;
   }
 }
 
