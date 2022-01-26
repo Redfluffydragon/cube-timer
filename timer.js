@@ -518,7 +518,7 @@ function draw() { //to redraw things after modifying
 }
 
 function afterLoad() {
-  window.setTimeout(() => {
+  setTimeout(() => {
     scramOverflowShadow();
     timesInOut(false);
   }, 0);
@@ -656,7 +656,7 @@ function timesInOut(swtch) { //move the time table in and out, and associated tr
     timePos(false);
     sessionsdiv.classList.remove('none');
     scramblediv.style.marginLeft = '';
-    window.setTimeout(() => {
+    setTimeout(() => {
       ttsize.classList.remove('transXsixty');
       sessionsdiv.classList.remove('transXhundred');
       multiScram.style.gridColumn = '';
@@ -669,7 +669,7 @@ function timesInOut(swtch) { //move the time table in and out, and associated tr
     ttsize.classList.add('transXsixty');
     sessionsdiv.classList.add('transXhundred');
     outicon.classList.remove('none');
-    window.setTimeout(() => {
+    setTimeout(() => {
       timePos(true);
       scramblediv.style.marginLeft = '4px';
       sessionsdiv.classList.add('none');
