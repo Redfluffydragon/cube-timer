@@ -493,6 +493,11 @@ input, textarea {
   white-space: pre-line;
 }
 
+#seescramble {
+  padding-top: 0.2em;
+  font-family: monospace;
+}
+
 #inmore {
   font-size: calc(6px + 0.8vw);
   position: relative;
