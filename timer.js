@@ -521,7 +521,7 @@ function afterLoad() {
   setTimeout(() => {
     scramOverflowShadow();
     timesInOut(false);
-  }, 0);
+  }, 10);
 
   colorIndicator(inspselect, storeSettings.inspectTime ? '15s (WCA)' : 'None');
 
@@ -663,7 +663,7 @@ function timesInOut(swtch) { //move the time table in and out, and associated tr
       outicon.classList.add('none');
       BWdiv.style.float = '';
       scramOverflowShadow();
-    }, 0);
+    }, 10);
   }
   else { //move time table off screen
     ttsize.classList.add('transXsixty');
