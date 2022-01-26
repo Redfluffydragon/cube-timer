@@ -406,25 +406,24 @@ document.addEventListener('touchend', e => {
   if (multiMatch(e, '#touch', '#time', '#insptime', '#onlytime')) { up(); }
 }, {passive: false, useCapture: false});
 
-window.addEventListener('keydown', e => {
-  const key = e.keyCode;
-  if (key === 32) { down(); } //space
-  else if (key === 27) { closeAll(); } //esc
-  else if (key === 90 && e.ctrlKey && !popup) { undo(); } //z to undo
-  else if (key === 13) { //enter
+addEventListener('keydown', e => {
+  if (e.key === ' ') { down(); }
+  else if (e.key === 'Escape') { closeAll(); }
+  else if (e.key === 'z' && e.ctrlKey && !popup) { undo(); }
+  else if (e.key === 'Enter') {
     sespopup.matches('.inlineBlock') && newSession();
     timenterpopup.matches('.inlineBlock') && timentertoo.value !== '' && addNewTime();
   }
-  //2 and d, for +2 and DNF (only while time editing modal is open)
+  // For +2 and DNF (only while time editing modal is open)
   else if (timepopup.matches('.inlineBlock') && !morepopup.matches('.inlineBlock')) {
-    key === 50 && (allthistime.plustwo = !allthistime.plustwo);
-    key === 68 && (allthistime.dnf = !allthistime.dnf);
+    e.key === '2' && (allthistime.plustwo = !allthistime.plustwo);
+    e.key === 'd' && (allthistime.dnf = !allthistime.dnf);
     closeNdraw();
   }
 }, false);
 
-window.addEventListener('keyup', e => {
-  e.keyCode === 32 && up();
+addEventListener('keyup', e => {
+  e.key === ' ' && up();
 }, false);
 
 window.addEventListener('load', afterLoad, false);
