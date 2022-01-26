@@ -2,23 +2,23 @@
 
 navigator.serviceWorker && navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
 
-//for stopwatch
-let counter; //holds the time
+// for stopwatch
+let counter; // holds the time
 let timerStartTime;
 let runStopwatch;
 let timerState = 'stopped';
 
-const displaytimes = []; //just the times from current session - for display
+const displaytimes = []; // just the times from current session - for display
 let tempallidx;
 let allthistime;
 
-let removed = gotem('removed', [], sessionStorage); //removed times
-let sesremoved = gotem('sesremoved', [], sessionStorage); //removed sessions
+let removed = gotem('removed', [], sessionStorage); // removed times
+let sesremoved = gotem('sesremoved', [], sessionStorage); // removed sessions
 
-let keydown = false; //so it doesn't just start on keydown and stop on keyup
-let onstart = false; //starting or stopping
+let keydown = false; // so it doesn't just start on keydown and stop on keyup
+let onstart = false; // starting or stopping
 
-//for inspection time countdown
+// for inspection time countdown
 let timeoutStartTime;
 let runTimeout;
 let inspectStartTime;
@@ -33,7 +33,7 @@ const twelveSecSound = document.getElementById('twelveSecSound');
 let played8 = false;
 let played12 = false;
 
-//scramble generator variables
+// scramble generator variables
 const faces = ['F', 'U', 'L', 'R', 'D', 'B'];
 const fewerFaces = ['L', 'R', 'B', 'U'];
 const mods = ['', `'`, '2'];
@@ -43,26 +43,26 @@ const moves6 = [];
 const pyrsmoves = [];
 
 for (let i = 0; i < faces.length*mods.length; i++) {
-  moves3.push(faces[Math.trunc(i/3)] + mods[i%3]); //run through and push all permutations of the faces and mods arrays
-  moves4.push(faces[Math.trunc(i/3)] + 'w' + mods[i%3]); //only the new ones for 4x4 and 5x5
-  moves6.push('3' + faces[Math.trunc(i/3)] + 'w' + mods[i%3]); //only the new ones for 6x6 and 7x7
+  moves3.push(faces[Math.trunc(i/3)] + mods[i%3]); // run through and push all permutations of the faces and mods arrays
+  moves4.push(faces[Math.trunc(i/3)] + 'w' + mods[i%3]); // only the new ones for 4x4 and 5x5
+  moves6.push('3' + faces[Math.trunc(i/3)] + 'w' + mods[i%3]); // only the new ones for 6x6 and 7x7
 }
 
 for (let i = 0; i < fewerFaces.length*2; i++) {
-  pyrsmoves.push(fewerFaces[Math.trunc(i/2)] + mods[i%2]); //same for pyraminx
+  pyrsmoves.push(fewerFaces[Math.trunc(i/2)] + mods[i%2]); // same for pyraminx
 }
 
 const allmoves4 = moves3.concat(moves4);
 const allmoves6 = moves6.concat(allmoves4);
-const pyrpmoves = ['l', 'r', 'b', 'u']; //the corner turns for pyraminx
-const clocksl4 = ['UL', 'DL', 'DR', 'UR']; //last four moves for clock
-const clocksf4 = ['ALL', 'L', 'D', 'R', 'U']; //repeating series in clock scramble
-const clocks = clocksf4.concat('y2').concat(clocksf4).concat(clocksl4); //concat all together
+const pyrpmoves = ['l', 'r', 'b', 'u']; // the corner turns for pyraminx
+const clocksl4 = ['UL', 'DL', 'DR', 'UR']; // last four moves for clock
+const clocksf4 = ['ALL', 'L', 'D', 'R', 'U']; // repeating series in clock scramble
+const clocks = clocksf4.concat('y2').concat(clocksf4).concat(clocksl4); // concat all together
 
 const tscramble = [];
-let slen; //scramble length
+let slen; // scramble length
 
-const oppositeSides = { //opposite sides for nxnxn cubes
+const oppositeSides = { // opposite sides for nxnxn cubes
   R: 'L',
   L: 'R',
   U: 'D',
@@ -71,7 +71,7 @@ const oppositeSides = { //opposite sides for nxnxn cubes
   B: 'F'
 }
 
-const scramblers = { //object with all the scrambler functions in it, to replace a giant switch
+const scramblers = { // object with all the scrambler functions in it, to replace a giant switch
   '2x2': () => { slen = 10; checknxn(moves3); },
   '3x3': () => { slen = 20; checknxn(moves3); },
   '4x4': () => { slen = 45; checknxn(allmoves4); },
@@ -85,21 +85,21 @@ const scramblers = { //object with all the scrambler functions in it, to replace
   'Clock': () => { slen = 0; checkclo(); },
 }
 
-//modals open or closed
+// modals open or closed
 let popup = false;
 let closing = false;
 
-let findSession; //for editing sessions
+let findSession; // for editing sessions
 
-//elements
-//for scrambles
+// elements
+// for scrambles
 const scrambletxt = document.getElementById('scrambletxt');
 const scramblediv = document.getElementById('scramblediv');
 const scramNum = document.getElementById('scramNum');
 const scramPlur = document.getElementById('scramPlur');
 const multiScram = document.getElementById('multiScram');
 
-//dropdowns
+// dropdowns
 const cubeButton = document.getElementById('cubeButton');
 const cubeDrop = document.getElementById('cubeDrop');
 const cubeselect = document.getElementsByClassName('cubeselect');
@@ -114,18 +114,18 @@ const delayButton = document.getElementById('delayButton');
 const delayDrop = document.getElementById('delayDrop');
 const delaytime = document.getElementsByClassName('delaytime');
 
-//timetable
+// timetable
 const ttsize = document.getElementById('ttsize');
 const timebody = document.getElementById('timebody');
 const outicon = document.getElementById('outicon');
 
-//time
+// time
 const time = document.getElementById('time');
 const insptime = document.getElementById('insptime');
 const timealert = document.getElementById('timealert');
 const onlytime = document.getElementById('onlytime');
 
-//modals
+// modals
 const centerpop = document.getElementById('centerpop');
 const showEditTime = document.getElementById('showEditTime');
 const timepopup = document.getElementById('timepopup');
@@ -144,7 +144,7 @@ const best = document.getElementById('best');
 const worst = document.getElementById('worst');
 const BWdiv = document.getElementById('bestworst');
 
-//sessions and new times and sessions
+// sessions and new times and sessions
 const sesslc = document.getElementById('sesslc');
 const sesdrop = document.getElementById('sesdrop');
 const sespopup = document.getElementById('sespopup');
@@ -170,9 +170,9 @@ const infopopup = document.getElementById('infopopup');
 const undone = document.getElementById('undone');
 const undotxt = document.getElementById('undotxt');
 
-//settings
+// settings
 const setpopup = document.getElementById('setpopup')
-const settingsSettings = { // object holding the settings options checkboxes
+const settingsSettings = { // object for the settings options checkboxes
   announce: document.getElementById('countAnnounce'),
   delayAndInspect: document.getElementById('showSettings'),
   showBW: document.getElementById('showBW'),
@@ -188,7 +188,7 @@ const scorners = document.getElementById('scorners');
 
 const isMobile = (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1);
 
-//All the variables that need to be gotten on reload/load, and associated functions
+// All the variables that need to be gotten on reload/load, and associated functions
 const alltimes = gotem('all', []);
 
 const moddedTimes = gotem('modded', []);
@@ -215,10 +215,10 @@ const storeSettings = gotem('settings', {
 const scrambles = gotem('scrambles', []);
 let scrambleNum = gotem('scrambleNum', 0);
 
-//event listeners
+// event listeners
 document.addEventListener('click', e => {
   closeModal(e);
-  const match = t => e.target.matches(t); //shorter match function
+  const match = t => e.target.matches(t); // shorter match function
   if (e.target.closest('#timebody') && !closing) {
     timeClicks(e);
   }
@@ -290,7 +290,7 @@ document.addEventListener('click', e => {
   else if (match('#newses')) {
     showPop(sespopup);
     sesname.focus();
-    shadow.style.zIndex = '7'; //even further up to cover everything except the new session div
+    shadow.style.zIndex = '7'; // even further up to cover everything except the new session div
   }
   else if (match('#sescancel')) {
     sespopup.classList.remove('inlineBlock');
@@ -320,7 +320,7 @@ document.addEventListener('click', e => {
       if (e.name === session) {
         sesremoved.length = 0;
         sesremoved.push(sessions.splice(i, 1)[0]);
-        let neyes = i-1; //switch to next available session after deleting the current one
+        let neyes = i-1; // switch to next available session after deleting the current one
         let peyes = i+1;
         if (neyes !== -1) session = sessions[neyes].name;
         else if (neyes === -1 && sessions[peyes] != null) session = sessions[peyes].name;
@@ -385,14 +385,14 @@ document.addEventListener('click', e => {
   else if (multiMatch(e, '#timeclose', '#settingsClose')) { closeNdraw(); }
   else if (multiMatch(e, '#infoclose', '#timentercanc')) { closeAll(); }
 
-  //for dropdown buttons
+  // for dropdown buttons
   const onButton = 
   dropDown(cubeButton, cubeDrop, e) ||
   dropDown(inspectButton, inspectDrop, e) ||
   dropDown(delayButton, delayDrop, e) ||
   dropDown(sesslc, sesdrop, e);
 
-  //close dropdowns if clicked anywhere not on the content, and don't close if clicked on the button for that dropdown
+  // close dropdowns if clicked anywhere not on the content, and don't close if clicked on the button for that dropdown
   if (!match('.rdropdown')) {  closeDrops(onButton); }
   if (!match('#sesslc')) { sesdrop.classList.remove('block'); }
   closing = false;
@@ -451,45 +451,45 @@ addEventListener('resize', scramOverflowShadow, false);
  * @param {localStorage | sessionStorage} [type] Local or session storage
  * @returns The item from storage, or the default if there was nothing set
  */
-function gotem(key, value, type = localStorage) { //wrapper function for getting stuff from localStorage
+function gotem(key, value, type = localStorage) { // wrapper function for getting stuff from localStorage
   const getthething = type.getItem(key);
   return getthething == null ? value : JSON.parse(getthething);
 };
 
-function colorIndicator(array, value) { //mark selection in dropdowns
-  for (let i of array) { //mark the right one (darker gray), and unmark all the other ones
+function colorIndicator(array, value) { // mark selection in dropdowns
+  for (let i of array) { // mark the right one (darker gray), and unmark all the other ones
     i.classList[i.textContent === value ? 'add' : 'remove']('oneforty');
   }
 };
 
-function draw() { //to redraw things after modifying
-  if (scrambles.length) { //multiple scrambles or not
+function draw() { // to redraw things after modifying
+  if (scrambles.length) { // multiple scrambles or not
     scrambletxt.textContent = scrambles[scrambleNum];
     scramNum.textContent = scrambleNum + 1;
   }
   else { scramble(); }
 
   displaytimes.length = 0;
-  for (let i of alltimes) { i.session === session && (displaytimes.push(i)); } //get all saved times for tehe current session
+  for (let i of alltimes) { i.session === session && (displaytimes.push(i)); } // get all saved times for tehe current session
 
   const columnClass = ['number', 'times', 'avgofive', 'avgotwelve'];
 
-  //clear the table
+  // clear the table
   timebody.innerHTML = '';  
   for (let [i, e] of displaytimes.entries()) {
     const row = timebody.insertRow(0);
     row.className = 'idAll';
     const tempRow = [];
-    for (let i = 0; i < 4; i++) { //make a row
+    for (let i = 0; i < 4; i++) { // make a row
       const tempCell = row.insertCell(i);
       tempCell.className = columnClass[i];
       tempRow.push(tempCell);
     }
 
     e.number = i+1;
-    tempRow[0].textContent = i+1 + (e.comment ? '*' : null); //number, and asterisk if commented on
-    tempRow[1].textContent = e.dnf ? 'DNF' : //check dnf first
-        e.plustwo ? toMinutes(e.time)+'+' : toMinutes(e.time); //then check +2
+    tempRow[0].textContent = i+1 + (e.comment ? '*' : null); // number, and asterisk if commented on
+    tempRow[1].textContent = e.dnf ? 'DNF' : // check dnf first
+        e.plustwo ? toMinutes(e.time)+'+' : toMinutes(e.time); // then check +2
 
     const avgofiv = average(i+1, 5);
     const avgotwe = average(i+1, 12);
@@ -502,7 +502,7 @@ function draw() { //to redraw things after modifying
     alltimes[saveBack].ao12 = avgotwe;
   }
 
-  //apply settings
+  // apply settings
   const whichSpot = storeSettings.delayAndInspect ? document.getElementById('hsSpot') : document.getElementById('popSpot');
   whichSpot.appendChild(inspectSet);
   whichSpot.appendChild(delaySet);
@@ -510,7 +510,7 @@ function draw() { //to redraw things after modifying
   bestworst(storeSettings.BWperSess ? displaytimes : alltimes);
   multiScram.classList[storeSettings.multiScram ? 'remove' : 'add']('opZero');
 
-  //sessions
+  // sessions
   sesdrop.innerHTML = '';
   for (let i of sessions) {
     const sesnode = document.createElement('p');
@@ -546,25 +546,25 @@ function afterLoad() {
 
   draw();
   if (isMobile) {
-    document.addEventListener('touchstart', () => { //set up sounds to play whenever on mobile
+    document.addEventListener('touchstart', () => { // set up sounds to play whenever on mobile
       eightSecSound.play();
       eightSecSound.pause();
       twelveSecSound.play();
       twelveSecSound.pause();
     }, {once: true, useCapture: false});
-    undobtn.classList.remove('none'); //and show undo button
+    undobtn.classList.remove('none'); // and show undo button
     undobtn.addEventListener('click', undo, false);
   }
 }
 
-function closeNdraw() { //just put them in one function
+function closeNdraw() { // just put them in one function
   closeAll();
   draw();
 }
 
-function timeClicks(e) { //for clicks on the time table
+function timeClicks(e) { // for clicks on the time table
   if (e.target.parentNode.rowIndex >= 0) {
-    const rvrsrow = displaytimes.length - e.target.parentNode.rowIndex + 1; //reverse the row index
+    const rvrsrow = displaytimes.length - e.target.parentNode.rowIndex + 1; // reverse the row index
     tempallidx = alltimes.indexOf(displaytimes[rvrsrow-1]);
     allthistime = alltimes[tempallidx];
 
@@ -581,7 +581,7 @@ function timeClicks(e) { //for clicks on the time table
     thetwo.classList[allthistime.plustwo ? 'add' : 'remove']('oneforty');
     showEditTime.textContent = `${rvrsrow} (${timetoshine})`;
 
-    //set up popup with correct data
+    // set up popup with correct data
     scramPlur.textContent = allthistime.scramble.includes(';') ? 'Scrambles: ' : 'Scramble: ';
     seescramble.textContent = allthistime.scramble;
     seedate.textContent = allthistime.date;
@@ -590,14 +590,14 @@ function timeClicks(e) { //for clicks on the time table
   }
 }
 
-function closeModal(e) { //close modals
+function closeModal(e) { // close modals
   if (!e.target.closest('.popup') && popup) {
     closeNdraw();
     closing = true;
   }
 }
 
-function bestworst(array) { //get the best and worst times, not including dnfs
+function bestworst(array) { // get the best and worst times, not including dnfs
   const justTimes = [];
   for (let i of array) { i.time && justTimes.push(i.time); }
   const worstTime = Math.max(...justTimes);
@@ -606,7 +606,7 @@ function bestworst(array) { //get the best and worst times, not including dnfs
   worst.textContent = !isNaN(JSON.stringify(worstTime)) ? toMinutes(worstTime) : '-';
 }
 
-function showPop(div) { //open a modal
+function showPop(div) { // open a modal
   centerpop.classList.remove('none');
   div.classList.add('inlineBlock');
   shadow.classList.add('initial');
@@ -631,21 +631,21 @@ function addNewTime() {
   else { alert(`I don't recognize that time.`); }
 }
 
-function checkTime(time) { //check if a time is valid, and return it in seconds
+function checkTime(time) { // check if a time is valid, and return it in seconds
   const colonCount = time.split(':');
   if (time < 60) { return parseFloat(time); }
   else if (colonCount.length === 2) { return (parseInt(colonCount[0])*60 + parseFloat(colonCount[1])); }
   return false;
 }
 
-function multiMatch(e, ...targets) { //match function for multiple possible matches
+function multiMatch(e, ...targets) { // match function for multiple possible matches
   for (let i of targets) {
     if (e.target.matches(i)) { return true; }
   }
   return false;
 }
 
-function dropDown(button, content, e) { //toggle dropdowns on button click
+function dropDown(button, content, e) { // toggle dropdowns on button click
   if (e.target === button) {
     content.classList.toggle('block');
     return button.id;
@@ -653,13 +653,13 @@ function dropDown(button, content, e) { //toggle dropdowns on button click
   return false;
 }
 
-function timePos(center) { //center and uncenter time and insptime
+function timePos(center) { // center and uncenter time and insptime
   ttsize.classList[center ? 'add' : 'remove']('none');
   document.body.style.setProperty('--fill-sometimes', center ? 'span var(--grid-cols) / auto' : '');
 }
 
-function timesInOut(swtch) { //move the time table in and out, and associated transitions
-  if (storeSettings.timein === swtch) { //move time table onto screen
+function timesInOut(swtch) { // move the time table in and out, and associated transitions
+  if (storeSettings.timein === swtch) { // move time table onto screen
     timePos(false);
     sessionsdiv.classList.remove('none');
     scramblediv.style.marginLeft = '';
@@ -672,7 +672,7 @@ function timesInOut(swtch) { //move the time table in and out, and associated tr
       scramOverflowShadow();
     }, 10);
   }
-  else { //move time table off screen
+  else { // move time table off screen
     ttsize.classList.add('transXsixty');
     sessionsdiv.classList.add('transXhundred');
     outicon.classList.remove('none');
@@ -688,9 +688,9 @@ function timesInOut(swtch) { //move the time table in and out, and associated tr
   swtch && (storeSettings.timein = !storeSettings.timein);
 }
 
-//Just a random move scrambler.
-function checknxn(moveset) { //for nxnxn cubes
-  //p is for previous move, t is for temporary move (the one this is checking)
+// Just a random move scrambler.
+function checknxn(moveset) { // for nxnxn cubes
+  // p is for previous move, t is for temporary move (the one this is checking)
   const tempmove = moveset[Math.trunc(Math.random()*moveset.length)];
   const pmove = tscramble[tscramble.length-1];
   const twoBackMove = tscramble[tscramble.length-2];
@@ -716,21 +716,21 @@ function checkpyr1() { // turn the big corners for pyraminx
   if (tscramble.length && tempmove.charAt(0) !== tscramble[0].charAt(0)) { tscramble.unshift(tempmove); }
 }
 
-function addfour(moveset, chancemod = 0.1, apostrophe = true) { //add zero to four moves at the end (pyra and clock)
+function addfour(moveset, chancemod = 0.1, apostrophe = true) { // add zero to four moves at the end (pyra and clock)
   for (let i = 0; i < 4; i++) {
-    if (Math.random() < (0.5 + chancemod)) { //50/50, plus chancemod makes it more likely to get one
+    if (Math.random() < (0.5 + chancemod)) { // 50/50, plus chancemod makes it more likely to get one
       if (Math.random() < 0.5 || !apostrophe) { tscramble.unshift(moveset[i]); }
       else { tscramble.unshift(moveset[i] + `'`); }
     }
   }
 }
 
-function checkpyrall() { //combine pyraminx scramble bits
+function checkpyrall() { // combine pyraminx scramble bits
   addfour(pyrpmoves);
   while (tscramble.length < 10) { checkpyr1(); }
 }
 
-function checkmeg() { //megaminx
+function checkmeg() { // megaminx
   for (let i = 0; i < slen/11; i++) {
     for (let j = 0; j < 10; j++) {
       const moveMod = Math.random() < 0.5 ? '++' : '--';
@@ -741,7 +741,7 @@ function checkmeg() { //megaminx
   }
 }
 
-function checksqu() {//probably doesn't work. I don't know what moves aren't allowed for squan.
+function checksqu() {// probably doesn't work. I don't know what moves aren't allowed for squan.
   const onerand = Math.round((Math.random()*11)-5);
   const tworand = Math.round((Math.random()*11)-5);
   let firstnum;
@@ -752,12 +752,12 @@ function checksqu() {//probably doesn't work. I don't know what moves aren't all
   }
   if ((onerand !== firstnum || tworand !== secondnum) &&
       (onerand !== secondnum || tworand !== firstnum) &&
-      (onerand !== 0 || tworand !== 0)) { //there are probably other exclusions
+      (onerand !== 0 || tworand !== 0)) { // there are probably other exclusions
         tscramble.push(`(${onerand},${tworand})`);
       }
 }
 
-function checkclo() { //clock
+function checkclo() { // clock
   addfour(clocksl4, 0, false);
   for (let i of clocks) {
     const clkstr = JSON.stringify(Math.round((Math.random()*11)-5));
@@ -766,7 +766,7 @@ function checkclo() { //clock
   }
 }
 
-function scramble() { //do the scrambles
+function scramble() { // do the scrambles
   tscramble.length = 0;
   do { scramblers[storeSettings.cube](); }
   while (tscramble.length < slen)
@@ -776,7 +776,7 @@ function scramble() { //do the scrambles
   scramOverflowShadow();
 }
 
-function scramOverflowShadow() { //put an inset shadow on scramble when it's scrollable
+function scramOverflowShadow() { // put an inset shadow on scramble when it's scrollable
   scrambletxt.setAttribute('overflow', (scrambletxt.scrollHeight !== scrambletxt.clientHeight));
 }
 
@@ -787,13 +787,13 @@ function average(startpoint, leng) {
   if (startpoint > (leng-1)) {
     for (let i = 1; i < leng+1; i++) {
       const tempTime = displaytimes[startpoint-i].time;
-      if (tempTime !== 0) { avgAll.push(tempTime); } //don't push dnfs
+      if (tempTime !== 0) { avgAll.push(tempTime); } // don't push dnfs
     }
   }
 
-  avgAll.splice(avgAll.indexOf(Math.max(...avgAll)), 1); //remove max
+  avgAll.splice(avgAll.indexOf(Math.max(...avgAll)), 1); // remove max
 
-  avgAll.splice(avgAll.indexOf(Math.min(...avgAll)), 1); //remove min
+  avgAll.splice(avgAll.indexOf(Math.min(...avgAll)), 1); // remove min
 
   avgAll.length && (sum = avgAll.reduce((previous, current) => current += previous));
 
@@ -801,7 +801,7 @@ function average(startpoint, leng) {
   return isNaN(avg) ? '' : toMinutes(avg);
 }
 
-function toMinutes(time) { //seconds to colon format
+function toMinutes(time) { // seconds to colon format
   if (time < 60) { return time.toFixed(2); }
   else if (time >= 60 && time < 3600) {
     const minutes = Math.trunc(time/60);
@@ -813,48 +813,48 @@ function toMinutes(time) { //seconds to colon format
   return `You're slow`;
 }
 
-function inspection() { //display inspection countdown, as well as 8s, 12s, +2, and DNF by timeout
+function inspection() { // display inspection countdown, as well as 8s, 12s, +2, and DNF by timeout
   runInspect = requestAnimationFrame(inspection);
   const displayctdn = countdown[Math.trunc((new Date() - inspectStartTime)/1000)];
   insptime.textContent = displayctdn;
-  if (displayctdn === 7) { //8 second alert
+  if (displayctdn === 7) { // 8 second alert
     timealert.classList.remove('none');
     timealert.textContent = '8s!';
-    if (!played8 && storeSettings.announce) { //eight second alert
+    if (!played8 && storeSettings.announce) { // eight second alert
       eightSecSound.play();
-      played8 = true; //so it only plays the sound once during the second it's showing 7
+      played8 = true; // so it only plays the sound once during the second it's showing 7
     }
   }
-  else if (displayctdn === 3) { //twelve second alert
+  else if (displayctdn === 3) { // twelve second alert
     timealert.textContent = '12s!';
     if (!played12 && storeSettings.announce) {
       twelveSecSound.play();
       played12 = true;
     }
   }
-  else if (displayctdn === '+2') { //plus two by timeout
+  else if (displayctdn === '+2') { // plus two by timeout
     plustwo = true;
     timealert.classList.add('none');
   }
-  else if (displayctdn === 'DNF') { //dnf by timeout
+  else if (displayctdn === 'DNF') { // dnf by timeout
     dnf = true;
     plustwo = false;
-    cancelAnimationFrame(runTimeout); //stop the delay, if holding
+    cancelAnimationFrame(runTimeout); // stop the delay, if holding
   }
-  else if (displayctdn == null) { //reset the timer and finish
+  else if (displayctdn == null) { // reset the timer and finish
     time.textContent = '0.00';
     counter = 0;
     fin();
   }
 }
 
-function stopwatch() { //counts time
+function stopwatch() { // counts time
   runStopwatch = requestAnimationFrame(stopwatch)
   counter = (Math.trunc((new Date() - timerStartTime)/10)/100);
-  time.textContent = toMinutes(counter).toString().slice(0, -1); //don't show hundredths while running
+  time.textContent = toMinutes(counter).toString().slice(0, -1); // don't show hundredths while running
 }
 
-function timeout() { //do the holding delay, and colors
+function timeout() { // do the holding delay, and colors
   runTimeout = requestAnimationFrame(timeout);
   if ((new Date() - timeoutStartTime) >= storeSettings.startdelay) {
     timerState = 'waiting';
@@ -864,20 +864,20 @@ function timeout() { //do the holding delay, and colors
   }
 }
 
-function fin() { //finish timing, save result
+function fin() { // finish timing, save result
   timerState = 'stopped';
   played8 = false;
   played12 = false;
-  keydown = true; //for if holding space when it times out
+  keydown = true; // for if holding space when it times out
   cancelAnimationFrame(runStopwatch);
   cancelAnimationFrame(runInspect);
 
-  time.className = 'zOne time'; //remove all other classes
-  timePos(false); //uncenter time
-  time.textContent = toMinutes(counter); //show hundredths of a second
+  time.className = 'zOne time'; // remove all other classes
+  timePos(false); // uncenter time
+  time.textContent = toMinutes(counter); // show hundredths of a second
   insptime.classList.remove('orange', 'green');
   onlytime.classList.remove('initial');
-  timealert.classList.add('none'); //should only be showing at this point if they DNFed by timeout
+  timealert.classList.add('none'); // should only be showing at this point if they DNFed by timeout
   alltimes.push({
     number: null,
     time: counter + (plustwo ? 2 : 0),
@@ -895,14 +895,14 @@ function fin() { //finish timing, save result
   scrambleNum = 0;
   scramNum.textContent = 1;
 
-  scramble(); //new scramble
+  scramble(); // new scramble
   draw();
 }
 
-function down() { //spacebar down
+function down() { // spacebar down
   if (!popup && !dnf) {
     if (!onstart && timerState !== 'started') {
-      if (!storeSettings.inspectTime || timerState === 'inspecting') { //start delay timer
+      if (!storeSettings.inspectTime || timerState === 'inspecting') { // start delay timer
         timeoutStartTime = new Date();
         runTimeout = requestAnimationFrame(timeout);
         time.classList.add(storeSettings.lmode ? 'red' : 'cyan');
@@ -915,20 +915,20 @@ function down() { //spacebar down
   }
 }
   
-function up() { //spacebar up
+function up() { // spacebar up
   time.classList.remove('red', 'green', 'cyan', 'magenta');
   insptime.classList.remove('orange');
   if (!popup && !dnf) {
-    if (timerState !== 'started' && timerState !== 'waiting') { //if delay hasn't run out yet
-      cancelAnimationFrame(runTimeout); //reset the hold delay
+    if (timerState !== 'started' && timerState !== 'waiting') { // if delay hasn't run out yet
+      cancelAnimationFrame(runTimeout); // reset the hold delay
       onstart = false;
     }
     if (!keydown) {
-      if (timerState === 'waiting') { //go! (start the stopwatch)
+      if (timerState === 'waiting') { // go! (start the stopwatch)
         timerStartTime = new Date();
         runStopwatch = requestAnimationFrame(stopwatch);
         storeSettings.hideWhileTiming && onlytime.classList.add('initial');
-        timePos(true); //center time
+        timePos(true); // center time
         insptime.classList.add('none');
         time.classList.remove('none');
         time.classList.add('zfour');
@@ -937,16 +937,16 @@ function up() { //spacebar up
         cancelAnimationFrame(runTimeout);
         timerState = 'started';
       }
-      else if (storeSettings.inspectTime && timerState !== 'inspecting') { //go! (start inspection time)
+      else if (storeSettings.inspectTime && timerState !== 'inspecting') { // go! (start inspection time)
         timePos(true);
         timerState = 'inspecting';
         time.classList.add('none');
         insptime.classList.remove('none');
-        storeSettings.hideWhileTiming && onlytime.classList.add('initial'); //check for hide all or not
+        storeSettings.hideWhileTiming && onlytime.classList.add('initial'); // check for hide all or not
         inspectStartTime = new Date();
         runInspect = requestAnimationFrame(inspection);
       }
-      //close any open dropdowns
+      // close any open dropdowns
       closeDrops();
       sesdrop.classList.remove('block');
     }
@@ -954,13 +954,13 @@ function up() { //spacebar up
   }
 }
 
-function touchdown(e) { //preventDefault() for touch
+function touchdown(e) { // preventDefault() for touch
   e.preventDefault();
   closeAll();
   down();
 }
 
-function undo() { //undo the last-done deletion
+function undo() { // undo the last-done deletion
   let msg = 'Nothing to undo';
   if (removed.length) {
     const getIdx = removed[0].index;
@@ -993,15 +993,15 @@ function runmode(notstart) { // switch dark/light mode
   document.body.setAttribute('lmode', storeSettings.lmode);
 }
 
-function changeCorners(e, style) { //corner style
+function changeCorners(e, style) { // corner style
   storeSettings.cornerStyle = e ? e.target.id.charAt(0) : style;
   document.body.setAttribute('round', (storeSettings.cornerStyle === 'r'));
 }
 
-function closeAll() { //close everything
+function closeAll() { // close everything
   timepopup.matches('.inlineBlock') && (allthistime.comment = comment.value);
 
-  for (let i of popups) { i.classList.remove('inlineBlock'); } //close all popups
+  for (let i of popups) { i.classList.remove('inlineBlock'); } // close all popups
   timepops.classList.add('none');
   shadow.classList.remove('initial');
   shadow.style.zIndex = '';
@@ -1023,7 +1023,7 @@ function closeDrops(button) {
   }
 }
 
-function checkSession(name, alertElement) { //check for duplicate names
+function checkSession(name, alertElement) { // check for duplicate names
   for (let i of sessions) {
     if (name === i.name) {
       alertElement.textContent = `You've already used that name.`;
@@ -1033,7 +1033,7 @@ function checkSession(name, alertElement) { //check for duplicate names
   return true;
 }
 
-function newSession() { //create a new session
+function newSession() { // create a new session
   if (sesname.value !== '' && checkSession(sesname.value, sameAlert)) {
     sessions.push({name: sesname.value, description: sescrip.value});
     sameAlert.textContent = null;
@@ -1044,8 +1044,8 @@ function newSession() { //create a new session
   }
 }
 
-//for csv export:
-function justAsession() { //get just the current session
+// for csv export:
+function justAsession() { // get just the current session
   const sesremoves = [];
   for (let i of alltimes) {
     i.session === session && sesremoves.push(i);
@@ -1056,7 +1056,7 @@ function justAsession() { //get just the current session
   }
 }
 
-function justAll() { //get everything
+function justAll() { // get everything
   for (let [idx, el] of alltimes.entries()) {
     removed.push({time: el, index: idx});
   }
@@ -1066,30 +1066,30 @@ function justAll() { //get everything
   time.textContent = '0.00';
 }
 
-function createArray(array) { //create array of arrays from array of objects, with headers from keys
+function createArray(array) { // create array of arrays from array of objects, with headers from keys
   let returnarray = [];
   let columnNames = [];
-  for (let i in array[0]) { //capitalize the keys, for column titles - assume keys are the same for all elements
+  for (let i in array[0]) { // capitalize the keys, for column titles - assume keys are the same for all elements
     const titleCase = i.charAt(0).toUpperCase() + i.slice(1);
     columnNames.push(titleCase);
   }
   returnarray.push(columnNames);
-  for (let i of array) { //for each element in the array
-    let temparray = []; //initialize a temporary array (I'm not sure why it has to be initialized here, but it does)
-    //push the value from each key in the current element to the temporary array
+  for (let i of array) { // for each element in the array
+    let temparray = []; // initialize a temporary array (I'm not sure why it has to be initialized here, but it does)
+    // push the value from each key in the current element to the temporary array
     for (let j in array[0]) { temparray.push(`"${i[j].toString()}"`) };
-    returnarray.push(temparray); //push the temporary array to the final array
+    returnarray.push(temparray); // push the temporary array to the final array
   }
   return returnarray;
 }
 
-function createCsv(array, name) { //create csv file from 2d array
-  const makeIntoArray = createArray(array); //get 2d array from array of objects
+function createCsv(array, name) { // create csv file from 2d array
+  const makeIntoArray = createArray(array); // get 2d array from array of objects
   let csvFile = 'data:text/csv;charset=utf-8,';
-  //concatenate each smaller array onto the csv file, and add a newline after each
+  // concatenate each smaller array onto the csv file, and add a newline after each
   for (let i of makeIntoArray) { csvFile += i + '\n' };
   const encoded = encodeURI(csvFile);
-  const linkDownload = document.createElement('a'); //create a download link, and simulate a click on it
+  const linkDownload = document.createElement('a'); // create a download link, and simulate a click on it
   linkDownload.setAttribute('href', encoded);
   linkDownload.setAttribute('download', name + '.csv');
   document.body.appendChild(linkDownload);
