@@ -444,9 +444,16 @@ addEventListener(whichUnload, () => {
 
 addEventListener('resize', scramOverflowShadow, false);
 
-function gotem(item, defalt, type = localStorage) { //wrapper function for getting stuff from localStorage
-  const getthething = type.getItem(item);
-  return getthething == null ? defalt : JSON.parse(getthething);
+/**
+ * Get an item from local- or sessionStorage, and if it doesn't exist, set it to the default
+ * @param {string} key The storage key for the item
+ * @param {*} value The default value to be set if the store does not exist yet
+ * @param {localStorage | sessionStorage} [type] Local or session storage
+ * @returns The item from storage, or the default if there was nothing set
+ */
+function gotem(key, value, type = localStorage) { //wrapper function for getting stuff from localStorage
+  const getthething = type.getItem(key);
+  return getthething == null ? value : JSON.parse(getthething);
 };
 
 function colorIndicator(array, value) { //mark selection in dropdowns
