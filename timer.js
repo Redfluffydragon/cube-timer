@@ -426,10 +426,10 @@ addEventListener('keyup', e => {
   e.key === ' ' && up();
 }, false);
 
-window.addEventListener('load', afterLoad, false);
+addEventListener('load', afterLoad, false);
 
 const whichUnload = (navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPhone/i)) ? 'pagehide' : 'beforeunload';
-window.addEventListener(whichUnload, () => {
+addEventListener(whichUnload, () => {
   localStorage.setItem('all', JSON.stringify(alltimes));
   localStorage.setItem('settings', JSON.stringify(storeSettings));
   localStorage.setItem('scrambles', JSON.stringify(scrambles));
@@ -442,7 +442,7 @@ window.addEventListener(whichUnload, () => {
   sessionStorage.setItem('removed', JSON.stringify(removed));
 }, false);
 
-window.addEventListener('resize', scramOverflowShadow, false);
+addEventListener('resize', scramOverflowShadow, false);
 
 function gotem(item, defalt, type = localStorage) { //wrapper function for getting stuff from localStorage
   const getthething = type.getItem(item);
