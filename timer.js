@@ -607,7 +607,7 @@ function showPop(div) { //open a modal
 }
 
 function addNewTime() {
-  if (timentertoo.value !== '' && checkTime(timentertoo.value) != null) {
+  if (timentertoo.value !== '' && checkTime(timentertoo.value)) {
     alltimes.push({
       time: checkTime(timentertoo.value),
       cube: cubenter.value,
@@ -628,7 +628,7 @@ function checkTime(time) { //check if a time is valid, and return it in seconds
   const colonCount = time.split(':');
   if (time < 60) { return parseFloat(time); }
   else if (colonCount.length === 2) { return (parseInt(colonCount[0])*60 + parseFloat(colonCount[1])); }
-  return null;
+  return false;
 }
 
 function multiMatch(e, ...targets) { //match function for multiple possible matches
