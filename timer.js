@@ -714,7 +714,7 @@ function checknxn(moveset) { // for nxnxn cubes
 
 function checkpyr1() { // turn the big corners for pyraminx
   const tempmove = pyrsmoves[Math.trunc(Math.random() * pyrsmoves.length)];
-  if (tscramble.length && tempmove.charAt(0) !== tscramble[0].charAt(0)) { tscramble.unshift(tempmove); }
+  if (tempmove.charAt(0) !== tscramble?.[0]?.charAt(0)) { tscramble.unshift(tempmove); }
 }
 
 function addfour(moveset, chancemod = 0.1, apostrophe = true) { // add zero to four moves at the end (pyra and clock)
