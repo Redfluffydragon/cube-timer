@@ -796,8 +796,7 @@ body[lmode = false] #timealert {
   color: cyan;
 }
 body[lmode = false] .popup {
-  background: rgb(180, 180, 180);
-  box-shadow: 5px 5px 10px #E6E6E6;
+  background: rgb(200, 200, 200);
 }
 
 body[round = true] #timetable td, #inicon, #outicon {
