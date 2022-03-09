@@ -658,6 +658,8 @@ function timePos(center) { // center and uncenter time and insptime
   document.body.style.setProperty('--fill-sometimes', center ? '1 / -1' : '');
 }
 
+function timesInOut(doSwitch) { // move the time table in and out, and associated transitions
+  if (storeSettings.timein === doSwitch) { // move time table onto screen
     ttsize.style.zIndex = '';
     timePos(false);
     sessionsdiv.classList.remove('none');
@@ -681,7 +683,7 @@ function timePos(center) { // center and uncenter time and insptime
       ttsize.style.zIndex = 'unset';
     }, 500);
   }
-  swtch && (storeSettings.timein = !storeSettings.timein);
+  doSwitch && (storeSettings.timein = !storeSettings.timein);
 }
 
 // Just a random move scrambler.
@@ -984,8 +986,8 @@ function undo() { // undo the last-done deletion
   draw();
 }
 
-function runmode(notstart) { // switch dark/light mode
-  notstart && (storeSettings.lmode = !storeSettings.lmode);
+function runmode(notStart) { // switch dark/light mode
+  notStart && (storeSettings.lmode = !storeSettings.lmode);
   document.body.setAttribute('lmode', storeSettings.lmode);
 }
 
