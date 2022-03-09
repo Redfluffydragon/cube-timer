@@ -523,6 +523,7 @@ input, textarea, select {
 .imgBtn {
   background: transparent;
   padding: 0;
+  margin: 0;
   width: 1.5em;
   aspect-ratio: 1;
 }
