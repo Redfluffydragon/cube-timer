@@ -784,7 +784,10 @@ input, textarea, select {
 
 body[lmode = false] {
   background: black;
-  filter: invert(87%);
+  filter: invert(100%);
+}
+body[lmode = false] input {
+  filter: invert(100%);
 }
 body[lmode = false] #insptime {
   filter: invert(100%);
