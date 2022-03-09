@@ -72,17 +72,17 @@ const oppositeSides = { // opposite sides for nxnxn cubes
 }
 
 const scramblers = { // object with all the scrambler functions in it, to replace a giant switch
-  '2x2': () => { slen = 10; checknxn(moves3); },
-  '3x3': () => { slen = 20; checknxn(moves3); },
-  '4x4': () => { slen = 45; checknxn(allmoves4); },
-  '5x5': () => { slen = 60; checknxn(allmoves4); },
-  '6x6': () => { slen = 70; checknxn(allmoves6); },
-  '7x7': () => { slen = 65; checknxn(allmoves6); },
-  'Megaminx': () => { slen = 77; checkmeg(); },
-  'Pyraminx': () => { slen = 10; checkpyrall(); },
-  'Skewb': () => { slen = 10; checkpyr1(); },
-  'Square-1': () => { slen = 15; checksqu(); },
-  'Clock': () => { slen = 0; checkclo(); },
+  '2x2': () => { slen = 10; scrambleNxN(moves3); },
+  '3x3': () => { slen = 20; scrambleNxN(moves3); },
+  '4x4': () => { slen = 45; scrambleNxN(allmoves4); },
+  '5x5': () => { slen = 60; scrambleNxN(allmoves4); },
+  '6x6': () => { slen = 70; scrambleNxN(allmoves6); },
+  '7x7': () => { slen = 65; scrambleNxN(allmoves6); },
+  'Megaminx': () => { slen = 77; scrambleMegaminx(); },
+  'Pyraminx': () => { slen = 10; scramblePyraminx(); },
+  'Skewb': () => { slen = 10; scrambleFourSides(); },
+  'Square-1': () => { slen = 15; scrambleSquan(); },
+  'Clock': () => { slen = 0; scrambleClock(); },
 }
 
 // modals open or closed
@@ -289,7 +289,7 @@ document.addEventListener('click', e => {
     storeSettings.morechecked = checkmore.checked;
   }
   else if (match('#newses')) {
-    showPop(sespopup);
+    showModal(sespopup);
     sesname.focus();
     shadow.style.zIndex = '7'; // even further up to cover everything except the new session div
   }
@@ -298,16 +298,16 @@ document.addEventListener('click', e => {
     shadow.style.zIndex = '';
   }
   else if (match('#timenter')) {
-    showPop(timenterpopup);
+    showModal(timenterpopup);
     timentertoo.focus();
   }
   else if (match('#settingsIcon')) {
     for (let i in settingsSettings) { settingsSettings[i].checked = storeSettings[i]; }
     rcorners.id.charAt(0) === storeSettings.cornerStyle ? rcorners.checked = true : scorners.checked = true;
-    showPop(setpopup);
+    showModal(setpopup);
   }
   else if (match('#deleteallses') && confirm('Delete all sessions?')) {
-    justAll();
+    saveAllTimes();
     sesremoved = sessions;
     sessions.length = 0;
     sessions.push({ name: 'Session 1', description: 'Default session' });
@@ -316,7 +316,7 @@ document.addEventListener('click', e => {
     closeNdraw();
   }
   else if (match('#deleteses') && confirm('Delete this session?')) {
-    justAsession();
+    saveCurrentSession();
     sessions.find((e, i) => {
       if (e.name === session) {
         sesremoved.length = 0;
@@ -337,11 +337,11 @@ document.addEventListener('click', e => {
     closeNdraw();
   }
   else if (match('#clearallses') && confirm('Do you want to clear all times?')) {
-    justAll();
+    saveAllTimes(); // For undo
     closeNdraw();
   }
   else if (match('#clearses') && confirm('Clear this session?')) {
-    justAsession();
+    saveCurrentSession();
     closeNdraw();
   }
   else if (match('#exportallses')) {
@@ -351,7 +351,7 @@ document.addEventListener('click', e => {
     createCsv(displaytimes, session);
   }
   else if (match('#sesopt')) {
-    showPop(sesoptpopup);
+    showModal(sesoptpopup);
     changesesname.value = session;
     sessions.find(e => e.name === session && (findSession = e));
     seesescrip.value = findSession.description;
@@ -380,7 +380,7 @@ document.addEventListener('click', e => {
   }
   else if (match('#lighticon')) { runmode(true); }
   else if (match('#sescreate')) { newSession(); }
-  else if (match('#infobtn')) { showPop(infopopup); }
+  else if (match('#infobtn')) { showModal(infopopup); }
   else if (e.target.closest('.moveTable')) { timesInOut(true); }
   else if (multiMatch(e, '#rcorners', '#scorners')) { changeCorners(e); }
   else if (multiMatch(e, '#timeclose', '#settingsClose')) { closeNdraw(); }
@@ -572,7 +572,7 @@ function timeClicks(e) { // for clicks on the time table
     allthistime = alltimes[tempallidx];
 
     timepops.classList.remove('none');
-    showPop(timepopup);
+    showModal(timepopup);
     inmore.textContent = storeSettings.morechecked ? '[less]' : '[more]';
 
     storeSettings.morechecked && morepopup.classList.add('inlineBlock');
@@ -609,9 +609,13 @@ function bestworst(array) { // get the best and worst times, not including dnfs
   worst.textContent = !isNaN(JSON.stringify(worstTime)) ? toMinutes(worstTime) : '-';
 }
 
-function showPop(div) { // open a modal
+/**
+ * Show and modal and the shadow and everything
+ * @param {HTMLElement} modal The modal to show
+ */
+function showModal(modal) { // open a modal
   centerpop.classList.remove('none');
-  div.classList.add('inlineBlock');
+  modal.classList.add('inlineBlock');
   shadow.classList.add('initial');
   popup = true;
 }
@@ -690,7 +694,7 @@ function timesInOut(doSwitch) { // move the time table in and out, and associate
 }
 
 // Just a random move scrambler.
-function checknxn(moveset) { // for nxnxn cubes
+function scrambleNxN(moveset) { // for nxnxn cubes
   // p is for previous move, t is for temporary move (the one this is checking)
   const tempmove = moveset[Math.trunc(Math.random() * moveset.length)];
   const pmove = tscramble[tscramble.length - 1];
@@ -712,12 +716,12 @@ function checknxn(moveset) { // for nxnxn cubes
   }
 }
 
-function checkpyr1() { // turn the big corners for pyraminx
+function scrambleFourSides() { // turn the big corners for pyraminx
   const tempmove = pyrsmoves[Math.trunc(Math.random() * pyrsmoves.length)];
   if (tempmove.charAt(0) !== tscramble?.[0]?.charAt(0)) { tscramble.unshift(tempmove); }
 }
 
-function addfour(moveset, chancemod = 0.1, apostrophe = true) { // add zero to four moves at the end (pyra and clock)
+function addFour(moveset, chancemod = 0.1, apostrophe = true) { // add zero to four moves at the end (pyra and clock)
   for (let i = 0; i < 4; i++) {
     if (Math.random() < (0.5 + chancemod)) { // 50/50, plus chancemod makes it more likely to get one
       if (Math.random() < 0.5 || !apostrophe) { tscramble.unshift(moveset[i]); }
@@ -726,12 +730,12 @@ function addfour(moveset, chancemod = 0.1, apostrophe = true) { // add zero to f
   }
 }
 
-function checkpyrall() { // combine pyraminx scramble bits
-  addfour(pyrpmoves);
-  while (tscramble.length < 10) { checkpyr1(); }
+function scramblePyraminx() { // combine pyraminx scramble bits
+  addFour(pyrpmoves);
+  while (tscramble.length < 10) { scrambleFourSides(); }
 }
 
-function checkmeg() { // megaminx
+function scrambleMegaminx() {
   for (let i = 0; i < slen / 11; i++) {
     for (let j = 0; j < 10; j++) {
       const moveMod = Math.random() < 0.5 ? '++' : '--';
@@ -742,7 +746,7 @@ function checkmeg() { // megaminx
   }
 }
 
-function checksqu() { // probably doesn't work. I don't know what moves aren't allowed for squan.
+function scrambleSquan() { // probably doesn't work. I don't know what moves aren't allowed for squan.
   const onerand = Math.round((Math.random() * 11) - 5);
   const tworand = Math.round((Math.random() * 11) - 5);
   let firstnum;
@@ -758,8 +762,8 @@ function checksqu() { // probably doesn't work. I don't know what moves aren't a
   }
 }
 
-function checkclo() { // clock
-  addfour(clocksl4, 0, false);
+function scrambleClock() {
+  addFour(clocksl4, 0, false);
   for (let i of clocks) {
     const clkstr = JSON.stringify(Math.round((Math.random() * 11) - 5));
     const rvrsclock = clkstr.length > 1 ? clkstr.charAt(1) + clkstr.charAt(0) : clkstr.charAt(0) + '+';
@@ -816,9 +820,9 @@ function toMinutes(time) { // seconds to colon format
 
 function inspection() { // display inspection countdown, as well as 8s, 12s, +2, and DNF by timeout
   runInspect = requestAnimationFrame(inspection);
-  const displayctdn = countdown[Math.trunc((new Date() - inspectStartTime) / 1000)];
-  insptime.textContent = displayctdn;
-  if (displayctdn === 7) { // 8 second alert
+  const countdownText = countdown[Math.trunc((new Date() - inspectStartTime) / 1000)];
+  insptime.textContent = countdownText;
+  if (countdownText === 7) { // 8 second alert
     timealert.classList.remove('none');
     timealert.textContent = '8s!';
     if (!played8 && storeSettings.announce) { // eight second alert
@@ -826,23 +830,23 @@ function inspection() { // display inspection countdown, as well as 8s, 12s, +2,
       played8 = true; // so it only plays the sound once during the second it's showing 7
     }
   }
-  else if (displayctdn === 3) { // twelve second alert
+  else if (countdownText === 3) { // twelve second alert
     timealert.textContent = '12s!';
     if (!played12 && storeSettings.announce) {
       twelveSecSound.play();
       played12 = true;
     }
   }
-  else if (displayctdn === '+2') { // plus two by timeout
+  else if (countdownText === '+2') { // plus two by timeout
     plustwo = true;
     timealert.classList.add('none');
   }
-  else if (displayctdn === 'DNF') { // dnf by timeout
+  else if (countdownText === 'DNF') { // dnf by timeout
     dnf = true;
     plustwo = false;
     cancelAnimationFrame(runTimeout); // stop the delay, if holding
   }
-  else if (displayctdn == null) { // reset the timer and finish
+  else if (countdownText == null) { // reset the timer and finish
     time.textContent = '0.00';
     counter = 0;
     fin();
@@ -984,7 +988,7 @@ function undo() { // undo the last-done deletion
     msg = 'Undone!'
   }
   undotxt.textContent = msg;
-  showPop(undone);
+  showModal(undone);
   setTimeout(closeAll, 400);
   draw();
 }
@@ -1046,18 +1050,18 @@ function newSession() { // create a new session
 }
 
 // for csv export:
-function justAsession() { // get just the current session
+function saveCurrentSession() { // get just the current session
   const sesremoves = [];
   for (let i of alltimes) {
     i.session === session && sesremoves.push(i);
-  };
+  }
   for (let i of sesremoves) {
     const rmvidx = alltimes.indexOf(i);
     removed.push({ time: alltimes.splice(rmvidx, 1)[0], index: rmvidx, session: session });
   }
 }
 
-function justAll() { // get everything
+function saveAllTimes() { // get everything
   for (let [idx, el] of alltimes.entries()) {
     removed.push({ time: el, index: idx });
   }
