@@ -695,12 +695,23 @@ input, textarea, select {
     max-width: 94vw;
   }
 
-  .timegrid {
+  .timegrid, #settings, #scramblediv, #multiScram {
     grid-column: 1 / -1;
   }
 
+  #settings {
+    justify-content: center;
+  }
+
+  #scramblediv {
+    grid-row: span 4 / auto;
+  }
+
+  #multiScram {
+    grid-row: -2;
+  }
+
   #ttsize {
-    position: fixed;
     z-index: 50;
     background: white;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.8);
@@ -710,21 +721,6 @@ input, textarea, select {
   #sessions {
     z-index: 51;
     grid-column: 1 / 2;
-  }
-
-  #settings {
-    grid-column: 1 / -1;
-    justify-content: center;
-  }
-
-  #scramblediv {
-    grid-row: span 4 / auto;
-    grid-column: 1 / -1;
-  }
-
-  #multiScram {
-    grid-column: 1 / -1;
-    grid-row: -2;
   }
 }
 
