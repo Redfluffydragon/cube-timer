@@ -58,13 +58,8 @@ img, svg {
   font-family: 'Times New Roman', Times, serif;
 }
 
-#insptime {
-  z-index: 4;
-}
-
 #onlytime {
   background: white;
-  z-index: 4;
 }
 
 #timealert {
@@ -74,7 +69,6 @@ img, svg {
   right: 8vw;
   bottom: 11vh;
   color: red;
-  z-index: 4;
 }
 
 #scramblediv {
