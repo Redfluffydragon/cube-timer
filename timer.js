@@ -589,7 +589,7 @@ function timeClicks(e) { // for clicks on the time table
     seescramble.textContent = allthistime.scramble;
     seedate.textContent = allthistime.date;
     seecube.textContent = allthistime.cube;
-    allthistime.comment != null && (comment.value = allthistime.comment);
+    allthistime.comment && (comment.value = allthistime.comment);
   }
 }
 
