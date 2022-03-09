@@ -414,6 +414,7 @@ button {
   padding: 1ch 1.2ch;
   cursor: pointer;
   margin: 0.5ch;
+  color: black;
 }
 
 input, textarea, select {
