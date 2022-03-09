@@ -15,6 +15,7 @@ body {
   position: fixed;
   --fill-sometimes: 2  / -1;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --five-rad: 0;
 }
 
 img, svg {
@@ -792,17 +793,17 @@ body[lmode = false] .popup {
 body[round = true] #timetable td, #inicon, #outicon {
   border-radius: 3px;
 }
-body[round = true] .popup, input, textarea {
-  border-radius: 5px;
+
+body[round = true] {
+  --five-rad: 5px;
 }
-body[round = true] button, .rdropcontent, .pointer, .dropupcontent {
-  border-radius: 4px;
+
+button, .rdropcontent, .pointer, .dropupcontent, .popup, input, textarea {
+  border-radius: var(--five-rad);
 }
-body[round = true] .top {
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
+.top {
+  border-radius: var(--five-rad) var(--five-rad) 0 0;
 }
-body[round = true] .bottom {
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
+.bottom {
+  border-radius: 0 0 var(--five-rad) var(--five-rad);
 }
