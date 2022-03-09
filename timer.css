@@ -152,6 +152,33 @@ img, svg {
   background: rgb(150, 150, 150);
 }
 
+#ttsize {
+  position: fixed;
+  grid-column: span 1 / auto;
+  grid-row: span 8 / auto;
+  z-index: 1;
+  place-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: 2ch;
+  height: 100%;
+  justify-content: space-between;
+  padding-right: 1ch;
+}
+
+.scrollTable {
+  max-height: 90vh;
+  overflow: -moz-scrollbars-none;
+  -ms-overflow-style: none;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.scrollTable::-webkit-scrollbar {
+  display: none;
+}
+
 #timetable {
   display: block;
   text-align: left;
@@ -178,40 +205,12 @@ img, svg {
 }
 
 .number {
-  min-width: 2ch;
-}
-
-#ttsize {
-  position: fixed;
-  grid-column: span 1 / auto;
-  grid-row: span 8 / auto;
-  z-index: 1;
-  place-self: start;
-  display: flex;
-  flex-direction: column;
-  gap: 2ch;
-  height: 100%;
-  justify-content: space-between;
+  padding: 0 0.5ch;
 }
 
 #blank {
   width: 2.1vw;
   background: rgb(215, 215, 215);
-}
-
-#timebody {
-  overflow-y: auto;
-  display: block;
-  max-height: 83vh;
-  overflow: -moz-scrollbars-none;
-  -ms-overflow-style: none;
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-
-#timebody::-webkit-scrollbar {
-  display: none;
 }
 
 .idAll:nth-child(odd) {
