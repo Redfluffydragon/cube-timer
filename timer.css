@@ -222,23 +222,23 @@ img, svg {
   background: #AAAAAA;
 }
 
-#inoutcell {
-  padding: 0;
+.moveTable {
+  height: 3rem;
 }
 
-#inicon {
-  height: calc(24px + 0.7vw);
-  display: block;
-  cursor: pointer;
-}
-
-#outicon {
-  height: calc(24px + 0.7vw);
+.moveTable.out {
   position: absolute;
   left: 3px;
   top: 4px;
-  cursor: pointer;
-  z-index: 2;
+}
+
+#inoutcell {
+  padding: 0;
+  position: absolute;
+}
+
+#inicon, #outicon {
+  aspect-ratio: unset;
 }
 
 #sessions {
@@ -816,7 +816,7 @@ input, textarea, select {
 }
 
 .transXsixty {
-  transform: translateX(-60vw);
+  transform: translateX(-130%);
 }
 
 .transXhundred {
