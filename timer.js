@@ -263,7 +263,7 @@ document.addEventListener('click', e => {
         allthistime.dnf = true;
       }
     }
-    else if (match('#thedel') && confirm('Remove this time?')){
+    else if (match('#thedel') && confirm('Remove this time?')) {
       removed = [{ time: alltimes.splice(tempallidx, 1)[0], index: tempallidx }];
     }
     draw();
@@ -388,10 +388,10 @@ document.addEventListener('click', e => {
 
   // for dropdown buttons
   const onButton =
-  dropDown(cubeButton, cubeDrop, e) ||
-  dropDown(inspectButton, inspectDrop, e) ||
-  dropDown(delayButton, delayDrop, e) ||
-  dropDown(sesslc, sesdrop, e);
+    dropDown(cubeButton, cubeDrop, e) ||
+    dropDown(inspectButton, inspectDrop, e) ||
+    dropDown(delayButton, delayDrop, e) ||
+    dropDown(sesslc, sesdrop, e);
 
   // close dropdowns if clicked anywhere not on the content, and don't close if clicked on the button for that dropdown
   if (!match('.rdropdown')) { closeDrops(onButton); }
@@ -491,7 +491,7 @@ function draw() { // to redraw things after modifying
     e.number = i + 1;
     tempRow[0].textContent = i + 1 + (e.comment ? '*' : null); // number, and asterisk if commented on
     tempRow[1].textContent = e.dnf ? 'DNF' : // check dnf first
-        e.plustwo ? toMinutes(e.time) + '+' : toMinutes(e.time); // then check +2
+      e.plustwo ? toMinutes(e.time) + '+' : toMinutes(e.time); // then check +2
 
     const avgofiv = average(i + 1, 5);
     const avgotwe = average(i + 1, 12);
@@ -588,7 +588,7 @@ function timeClicks(e) { // for clicks on the time table
     scramPlur.textContent = allthistime.scramble.includes(';') ? 'Scrambles: ' : 'Scramble: ';
     seescramble.textContent = allthistime.scramble;
     seedate.textContent = allthistime.date;
-    seecube.textContent =  allthistime.cube;
+    seecube.textContent = allthistime.cube;
     allthistime.comment != null && (comment.value = allthistime.comment);
   }
 }
@@ -752,10 +752,10 @@ function checksqu() { // probably doesn't work. I don't know what moves aren't a
     secondnum = tscramble[tscramble.length - 1].charAt(3);
   }
   if ((onerand !== firstnum || tworand !== secondnum) &&
-      (onerand !== secondnum || tworand !== firstnum) &&
-      (onerand !== 0 || tworand !== 0)) { // there are probably other exclusions
-        tscramble.push(`(${onerand},${tworand})`);
-      }
+    (onerand !== secondnum || tworand !== firstnum) &&
+    (onerand !== 0 || tworand !== 0)) { // there are probably other exclusions
+    tscramble.push(`(${onerand},${tworand})`);
+  }
 }
 
 function checkclo() { // clock
@@ -1078,7 +1078,7 @@ function createArray(array) { // create array of arrays from array of objects, w
   for (let i of array) { // for each element in the array
     let temparray = []; // initialize a temporary array (I'm not sure why it has to be initialized here, but it does)
     // push the value from each key in the current element to the temporary array
-    for (let j in array[0]) { temparray.push(`"${i[j].toString() }"`) };
+    for (let j in array[0]) { temparray.push(`"${i[j].toString()}"`) };
     returnarray.push(temparray); // push the temporary array to the final array
   }
   return returnarray;
