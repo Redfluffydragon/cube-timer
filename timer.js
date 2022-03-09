@@ -658,8 +658,7 @@ function timePos(center) { // center and uncenter time and insptime
   document.body.style.setProperty('--fill-sometimes', center ? '1 / -1' : '');
 }
 
-function timesInOut(swtch) { // move the time table in and out, and associated transitions
-  if (storeSettings.timein === swtch) { // move time table onto screen
+    ttsize.style.zIndex = '';
     timePos(false);
     sessionsdiv.classList.remove('none');
     setTimeout(() => {
@@ -679,6 +678,7 @@ function timesInOut(swtch) { // move the time table in and out, and associated t
       timePos(true);
       sessionsdiv.classList.add('none');
       scramOverflowShadow();
+      ttsize.style.zIndex = 'unset';
     }, 500);
   }
   swtch && (storeSettings.timein = !storeSettings.timein);
