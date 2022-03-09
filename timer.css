@@ -18,6 +18,11 @@ body {
   --fill-sometimes: 2 / -1;
   --shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
   --five-rad: 0;
+  --three-rad: 0;
+
+  --overlay-bg: rgb(180, 180, 180);
+  --table-bg-primary: rgb(242, 242, 242);
+  --table-bg-secondary: white;
 }
 
 body[lmode=false] {
@@ -124,7 +129,7 @@ img, svg {
 .rdropcontent {
   display: none;
   position: absolute;
-  background: rgb(180, 180, 180);
+  background: var(--overlay-bg);
   z-index: 10;
   top: calc(100% + 4px);
   font-size: 1.1em;
@@ -189,16 +194,16 @@ img, svg {
   text-align: center;
 }
 
-.header {
-  background: rgb(215, 215, 215);
-  padding: 5px 3px;
-  text-align: center;
-  font-size: 1.1rem;
-  width: 7ch;
-  max-width: 7ch;
+#timetable td {
+  border-radius: var(--three-rad);
 }
 
-.times, .avgofive, .avgotwelve {
+.header {
+  background: rgb(215, 215, 215);
+  text-align: center;
+}
+
+.header, .times, .avgofive, .avgotwelve {
   font-size: 1.1rem;
   min-width: 7ch;
   padding: 5px 3px;
@@ -213,13 +218,17 @@ img, svg {
   background: rgb(215, 215, 215);
 }
 
+.idAll:nth-child(even) {
+  background: var(--table-bg-primary);
+}
+
 .idAll:nth-child(odd) {
-  background: #f2f2f2;
+  background: var(--table-bg-secondary);
 }
 
 .idAll:hover {
   cursor: pointer;
-  background: #AAAAAA;
+  background: var(--overlay-bg);
 }
 
 .moveTable {
@@ -239,6 +248,7 @@ img, svg {
 
 #inicon, #outicon {
   aspect-ratio: unset;
+  border-radius: var(--three-rad);
 }
 
 #sessions {
@@ -270,7 +280,7 @@ img, svg {
 
 .dropupcontent {
   display: none;
-  background: rgb(180, 180, 180);
+  background: var(--overlay-bg);
   position: relative;
   bottom: 4px;
 }
@@ -446,7 +456,7 @@ input, textarea, select {
 
 .popup {
   display: none;
-  background: rgb(180, 180, 180);
+  background: var(--overlay-bg);
   margin: 5px;
   font-size: 1.1em;
   box-shadow: var(--shadow);
@@ -848,33 +858,24 @@ input, textarea, select {
   grid-column: span 3 / auto;
 }
 
-body[lmode=false] {
+html[lmode=false] body {
   background: black;
   filter: invert(100%);
+
+  --overlay-bg: rgb(200, 200, 200);
+  --table-bg-primary: rgb(220, 220, 220);
+  --table-bg-secondary: rgb(240, 240, 240);
 }
 
-body[lmode=false] input {
+html[lmode=false] input,
+html[lmode=false] #insptime,
+html[lmode=false] #timealert {
   filter: invert(100%);
-}
-
-body[lmode=false] #insptime {
-  filter: invert(100%);
-}
-
-body[lmode=false] #timealert {
-  color: cyan;
-}
-
-body[lmode=false] .popup {
-  background: rgb(200, 200, 200);
-}
-
-body[round=true] #timetable td, #inicon, #outicon {
-  border-radius: 3px;
 }
 
 body[round=true] {
   --five-rad: 5px;
+  --three-rad: 3px;
 }
 
 button, .rdropcontent, .pointer, .dropupcontent, .popup, input, textarea {
