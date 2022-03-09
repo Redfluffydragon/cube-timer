@@ -182,6 +182,7 @@ img, svg {
 }
 
 #ttsize {
+  position: fixed;
   grid-column: span 1 / auto;
   grid-row: span 8 / auto;
   z-index: 1;
