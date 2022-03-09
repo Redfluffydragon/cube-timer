@@ -1,6 +1,6 @@
 'use strict';
 
-navigator.serviceWorker && navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
+navigator.serviceWorker && navigator.serviceWorker.register('/cube-timer/sw.js', { scope: '/cube-timer/' });
 
 // for stopwatch
 let counter; // holds the time
@@ -132,7 +132,7 @@ const timepopup = document.getElementById('timepopup');
 const timepops = document.getElementById('timepops');
 const shadow = document.getElementById('shadow');
 const thetwo = document.getElementById('thetwo');
-const thednf = document.getElementById('thednf'); 
+const thednf = document.getElementById('thednf');
 const comment = document.getElementById('comment');
 const checkmore = document.getElementById('checkmore');
 const morepopup = document.getElementById('morepopup');
@@ -193,7 +193,7 @@ const alltimes = gotem('all', []);
 
 const moddedTimes = gotem('modded', []);
 
-const sessions = gotem('sessions', [{name: 'Session 1', description: 'Default session'}]);
+const sessions = gotem('sessions', [{ name: 'Session 1', description: 'Default session' }]);
 let session = gotem('currses', sessions[0].name);
 
 let lightMode = gotem('lightMode', true);
@@ -264,7 +264,7 @@ document.addEventListener('click', e => {
       }
     }
     else if (match('#thedel') && confirm('Remove this time?')){
-      removed = [{time: alltimes.splice(tempallidx, 1)[0], index: tempallidx}];
+      removed = [{ time: alltimes.splice(tempallidx, 1)[0], index: tempallidx }];
     }
     draw();
     closeAll();
@@ -310,7 +310,7 @@ document.addEventListener('click', e => {
     justAll();
     sesremoved = sessions;
     sessions.length = 0;
-    sessions.push({name: 'Session 1', description: 'Default session'});
+    sessions.push({ name: 'Session 1', description: 'Default session' });
     session = 'Session 1';
     sesslc.textContent = session;
     closeNdraw();
@@ -328,7 +328,7 @@ document.addEventListener('click', e => {
         else {
           sessions.length = 0;
           alltimes.length = 0;
-          sessions.push({name: 'Session 1', description: 'Default session'});
+          sessions.push({ name: 'Session 1', description: 'Default session' });
           session = 'Session 1';
         }
       }
@@ -387,25 +387,25 @@ document.addEventListener('click', e => {
   else if (multiMatch(e, '#infoclose', '#timentercanc')) { closeAll(); }
 
   // for dropdown buttons
-  const onButton = 
+  const onButton =
   dropDown(cubeButton, cubeDrop, e) ||
   dropDown(inspectButton, inspectDrop, e) ||
   dropDown(delayButton, delayDrop, e) ||
   dropDown(sesslc, sesdrop, e);
 
   // close dropdowns if clicked anywhere not on the content, and don't close if clicked on the button for that dropdown
-  if (!match('.rdropdown')) {  closeDrops(onButton); }
+  if (!match('.rdropdown')) { closeDrops(onButton); }
   if (!match('#sesslc')) { sesdrop.classList.remove('block'); }
   closing = false;
 }, false);
 
 document.addEventListener('touchstart', e => {
   if (multiMatch(e, '#touch', '#time', '#insptime', '#onlytime')) { touchdown(e); }
-}, {passive: false, useCapture: false});
+}, { passive: false, useCapture: false });
 
 document.addEventListener('touchend', e => {
   if (multiMatch(e, '#touch', '#time', '#insptime', '#onlytime')) { up(); }
-}, {passive: false, useCapture: false});
+}, { passive: false, useCapture: false });
 
 addEventListener('keydown', e => {
   if (e.key === ' ') { down(); }
@@ -477,7 +477,7 @@ function draw() { // to redraw things after modifying
   const columnClass = ['number', 'times', 'avgofive', 'avgotwelve'];
 
   // clear the table
-  timebody.innerHTML = '';  
+  timebody.innerHTML = '';
   for (let [i, e] of displaytimes.entries()) {
     const row = timebody.insertRow(0);
     row.className = 'idAll';
@@ -580,7 +580,7 @@ function timeClicks(e) { // for clicks on the time table
     const timetoshine = allthistime.dnf ? 'DNF' : toMinutes(allthistime.time);
     thednf.classList[allthistime.dnf ? 'add' : 'remove']('oneforty');
     thetwo.classList[allthistime.dnf ? 'add' : 'remove']('oneforty');
-    
+
     thetwo.classList[allthistime.plustwo ? 'add' : 'remove']('oneforty');
     showEditTime.textContent = `${rvrsrow} (${timetoshine})`;
 
@@ -742,7 +742,7 @@ function checkmeg() { // megaminx
   }
 }
 
-function checksqu() {// probably doesn't work. I don't know what moves aren't allowed for squan.
+function checksqu() { // probably doesn't work. I don't know what moves aren't allowed for squan.
   const onerand = Math.round((Math.random() * 11) - 5);
   const tworand = Math.round((Math.random() * 11) - 5);
   let firstnum;
@@ -915,7 +915,7 @@ function down() { // spacebar down
     else if (timerState === 'started') { fin(); }
   }
 }
-  
+
 function up() { // spacebar up
   time.classList.remove('red', 'green', 'cyan', 'magenta');
   insptime.classList.remove('orange');
@@ -975,7 +975,7 @@ function undo() { // undo the last-done deletion
   if (sesremoved.length) {
     for (let i of sesremoved) {
       if (!sessions.includes(i)) { // fix duplicating sessions with one (not all)
-        sessions.push({name: i.name, description: i.description});
+        sessions.push({ name: i.name, description: i.description });
       }
     }
     session = sesremoved[sesremoved.length - 1].name;
@@ -1036,7 +1036,7 @@ function checkSession(name, alertElement) { // check for duplicate names
 
 function newSession() { // create a new session
   if (sesname.value !== '' && checkSession(sesname.value, sameAlert)) {
-    sessions.push({name: sesname.value, description: sescrip.value});
+    sessions.push({ name: sesname.value, description: sescrip.value });
     sameAlert.textContent = null;
     sesname.value = null;
     sescrip.value = null;
@@ -1053,13 +1053,13 @@ function justAsession() { // get just the current session
   };
   for (let i of sesremoves) {
     const rmvidx = alltimes.indexOf(i);
-    removed.push({time: alltimes.splice(rmvidx, 1)[0], index: rmvidx, session: session});
+    removed.push({ time: alltimes.splice(rmvidx, 1)[0], index: rmvidx, session: session });
   }
 }
 
 function justAll() { // get everything
   for (let [idx, el] of alltimes.entries()) {
-    removed.push({time: el, index: idx});
+    removed.push({ time: el, index: idx });
   }
   alltimes.length = 0;
   sessions.length = 0;
@@ -1078,7 +1078,7 @@ function createArray(array) { // create array of arrays from array of objects, w
   for (let i of array) { // for each element in the array
     let temparray = []; // initialize a temporary array (I'm not sure why it has to be initialized here, but it does)
     // push the value from each key in the current element to the temporary array
-    for (let j in array[0]) { temparray.push(`"${i[j].toString()}"`) };
+    for (let j in array[0]) { temparray.push(`"${i[j].toString() }"`) };
     returnarray.push(temparray); // push the temporary array to the final array
   }
   return returnarray;
