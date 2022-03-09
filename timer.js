@@ -655,33 +655,29 @@ function dropDown(button, content, e) { // toggle dropdowns on button click
 
 function timePos(center) { // center and uncenter time and insptime
   ttsize.classList[center ? 'add' : 'remove']('none');
-  document.body.style.setProperty('--fill-sometimes', center ? 'span var(--grid-cols) / auto' : '');
+  document.body.style.setProperty('--fill-sometimes', center ? '1 / -1' : '');
 }
 
 function timesInOut(swtch) { // move the time table in and out, and associated transitions
   if (storeSettings.timein === swtch) { // move time table onto screen
     timePos(false);
     sessionsdiv.classList.remove('none');
-    scramblediv.style.marginLeft = '';
     setTimeout(() => {
+      ttsize.style.gridRow = '';
       ttsize.classList.remove('transXsixty');
       sessionsdiv.classList.remove('transXhundred');
-      multiScram.style.gridColumn = '';
       outicon.classList.add('none');
-      BWdiv.style.float = '';
       scramOverflowShadow();
     }, 10);
   }
   else { // move time table off screen
+    ttsize.style.gridRow = 'none';
     ttsize.classList.add('transXsixty');
     sessionsdiv.classList.add('transXhundred');
     outicon.classList.remove('none');
     setTimeout(() => {
       timePos(true);
-      scramblediv.style.marginLeft = '4px';
       sessionsdiv.classList.add('none');
-      multiScram.style.gridColumn = 'span var(--grid-cols) / auto';
-      BWdiv.style.float = 'right';
       scramOverflowShadow();
     }, 500);
   }
@@ -712,7 +708,7 @@ function checknxn(moveset) { // for nxnxn cubes
 }
 
 function checkpyr1() { // turn the big corners for pyraminx
-  const tempmove = pyrsmoves[Math.trunc(Math.random()*pyrsmoves.length)];
+  const tempmove = pyrsmoves[Math.trunc(Math.random() * pyrsmoves.length)];
   if (tscramble.length && tempmove.charAt(0) !== tscramble[0].charAt(0)) { tscramble.unshift(tempmove); }
 }
 

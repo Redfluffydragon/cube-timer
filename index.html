@@ -39,7 +39,7 @@
         <table id="timetable">
           <thead>
             <tr>
-              <td id="blank">#</td>
+              <td id="blank" class="number">#</td>
               <td class="header">Time</td>
               <td class="header">Ao5</td>
               <td class="header">Ao12</td>
@@ -51,26 +51,31 @@
           <tbody id="timebody">
           </tbody>
         </table>
+        <div id="sessions" class="threeWide transOneSec">
+          <div class="dropup">
+            <div id="sesdrop" class="dropupcontent"><p class="top bottom">Session 1</p></div>
+            <button id="sesslc" class="sesedit dropupbtn" title="current session">Session 1 </button>
+          </div>
+          <button id="sesopt"class="sesedit" title="session options">Options</button>
+          <button id="timenter" class="sesedit">Add Times</button>
+        </div>
       </div>
 
       <div id="settings">
-        <div class="rdropdown">
-          <button class="rdropbtn" id="cubeButton" title="Switch cube">Cube</button>
-          <div class="rdropcontent" id="cubeDrop">
-            <p class="cubeselect top">2x2</p>
-            <p class="cubeselect">3x3</p>
-            <p class="cubeselect">4x4</p>
-            <p class="cubeselect">5x5</p>
-            <p class="cubeselect">6x6</p>
-            <p class="cubeselect">7x7</p>
-            <p class="cubeselect">Megaminx</p>
-            <p class="cubeselect">Pyraminx</p>
-            <p class="cubeselect">Skewb</p>
-            <p class="cubeselect">Square-1</p>
-            <p class="cubeselect bottom">Clock</p>
-          </div>
+        <div id="icons">
+          <button id="settingsIconSize" class="imgBtn">
+            <img src="img/settingsicon.png" id="settingsIcon" alt="More settings icon"/>
+          </button>
+          <button id="iconsize" class="imgBtn">
+            <img src="img/lightmode.png" id="lighticon" alt="Light/dark mode icon" title="light/dark mode">
+          </button>
         </div>
-        
+
+        <div id="bestworst">
+          <p class="topstats">Best:&nbsp;<span id="best">-</span></p>
+          <p class="topstats">Worst:&nbsp;<span id="worst">-</span></p>
+        </div>
+
         <div id="hsSpot">
           <div id="inspectSet" class="rdropdown">
             <button class="rdropbtn" id="inspectButton">Inspection</button>
@@ -91,37 +96,31 @@
           </div>
         </div>
 
-        <div id="icons">
-          <div id="settingsIconSize">
-            <img src="img/settingsicon.png" id="settingsIcon" alt="More settings icon"/>
+        <div class="rdropdown">
+          <button class="rdropbtn" id="cubeButton" title="Switch cube">Cube</button>
+          <div class="rdropcontent" id="cubeDrop">
+            <p class="cubeselect top">2x2</p>
+            <p class="cubeselect">3x3</p>
+            <p class="cubeselect">4x4</p>
+            <p class="cubeselect">5x5</p>
+            <p class="cubeselect">6x6</p>
+            <p class="cubeselect">7x7</p>
+            <p class="cubeselect">Megaminx</p>
+            <p class="cubeselect">Pyraminx</p>
+            <p class="cubeselect">Skewb</p>
+            <p class="cubeselect">Square-1</p>
+            <p class="cubeselect bottom">Clock</p>
           </div>
-          <div id="iconsize">
-            <img src="img/lightmode.png" id="lighticon" alt="Light/dark mode icon" title="light/dark mode">
-          </div>
-        </div>
-
-        <div id="bestworst">
-          <h4 class="topstats">Best:&nbsp;<span id="best">-</span></h4>
-          <h4 class="topstats">Worst:&nbsp;<span id="worst">-</span></h4>
         </div>
       </div>
 
       <div id="scramblediv">
-        <p id="scrambletxt" class="transOneSec scram" title="Just a random move scrambler." overflow="false"></p>
+        <p id="scrambletxt" class="transOneSec scram" title="Just a random move scrambler."></p>
       </div>
     
-      <div id="centerac" class="timegrid">
+      <div class="timegrid">
         <p id="time" class="zOne time">0.00</p>
         <p id="insptime" class="red none time">15</p>
-      </div>
-
-      <div id="sessions" class="threeWide transOneSec">
-        <div class="dropup">
-          <div id="sesdrop" class="dropupcontent"><p class="top bottom">Session 1</p></div>
-          <button id="sesslc" class="sesedit dropupbtn" title="current session">Session 1 </button>
-        </div>
-        <button id="sesopt"class="sesedit" title="session options">Options</button>
-        <button id="timenter" class="sesedit">Add Times</button>
       </div>
 
       <div id="multiScram">
@@ -135,7 +134,7 @@
       <button id="undobtn" class="sesedit none" title="Undo button"><img class="undoIcon" src="img/undoicon.png" alt="undo the last done action"></button>
     </div>
 
-    <p id="timealert" class="none">8s</p> 
+    <p id="timealert" class="none">8s</p>
   
     <img src="img/outicon.png" id="outicon">
 
