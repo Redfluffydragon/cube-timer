@@ -13,9 +13,15 @@ body {
   padding: 0;
   background: white;
   position: fixed;
-  --fill-sometimes: 2  / -1;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+  --fill-sometimes: 2  / -1;
+  --shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
   --five-rad: 0;
+}
+
+body[lmode = false] {
+  --shadow: 5px 5px 15px rgba(255, 255, 255, 0.3);
 }
 
 img, svg {
@@ -122,6 +128,7 @@ img, svg {
   z-index: 10;
   top: calc(100% + 4px);
   font-size: 1.1em;
+  box-shadow: var(--shadow);
 }
 
 .rdropcontent p {
@@ -438,7 +445,7 @@ input, textarea, select {
   background: rgb(180, 180, 180);
   margin: 5px;
   font-size: 1.1em;
-  box-shadow: 5px 5px 5px gray;
+  box-shadow: var(--shadow);
   padding: 5px 15px;
 }
 
