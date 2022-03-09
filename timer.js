@@ -196,6 +196,8 @@ const moddedTimes = gotem('modded', []);
 const sessions = gotem('sessions', [{name: 'Session 1', description: 'Default session'}]);
 let session = gotem('currses', sessions[0].name);
 
+let lightMode = gotem('lightMode', true);
+
 const storeSettings = gotem('settings', {
   announce: true,
   delayAndInspect: true,
@@ -203,7 +205,6 @@ const storeSettings = gotem('settings', {
   BWperSess: false,
   hideWhileTiming: true,
   multiScram: true,
-  lmode: true,
   timein: false,
   cornerStyle: 'r',
   morechecked: false,
@@ -432,6 +433,7 @@ const whichUnload = (navigator.userAgent.match(/iPad/i) || navigator.userAgent.m
 addEventListener(whichUnload, () => {
   localStorage.setItem('all', JSON.stringify(alltimes));
   localStorage.setItem('settings', JSON.stringify(storeSettings));
+  localStorage.setItem('lightMode', JSON.stringify(lightMode));
   localStorage.setItem('scrambles', JSON.stringify(scrambles));
   localStorage.setItem('scrambleNum', JSON.stringify(scrambleNum));
   localStorage.setItem('currses', JSON.stringify(session));
@@ -856,7 +858,7 @@ function timeout() { // do the holding delay, and colors
   runTimeout = requestAnimationFrame(timeout);
   if ((new Date() - timeoutStartTime) >= storeSettings.startdelay) {
     timerState = 'waiting';
-    time.classList.add(storeSettings.lmode ? 'green' : 'magenta');
+    time.classList.add(lightMode ? 'green' : 'magenta');
     insptime.classList.remove('orange');
     insptime.classList.add('green');
   }
@@ -903,10 +905,10 @@ function down() { // spacebar down
       if (!storeSettings.inspectTime || timerState === 'inspecting') { // start delay timer
         timeoutStartTime = new Date();
         runTimeout = requestAnimationFrame(timeout);
-        time.classList.add(storeSettings.lmode ? 'red' : 'cyan');
+        time.classList.add(lightMode ? 'red' : 'cyan');
         insptime.classList.add('orange');
       }
-      else { time.classList.add(storeSettings.lmode ? 'green' : 'magenta'); }
+      else { time.classList.add(lightMode ? 'green' : 'magenta'); }
       onstart = true;
     }
     else if (timerState === 'started') { fin(); }
@@ -987,8 +989,8 @@ function undo() { // undo the last-done deletion
 }
 
 function runmode(notStart) { // switch dark/light mode
-  notStart && (storeSettings.lmode = !storeSettings.lmode);
-  document.body.setAttribute('lmode', storeSettings.lmode);
+  notStart && (lightMode = !lightMode);
+  document.documentElement.setAttribute('lmode', lightMode);
 }
 
 function changeCorners(e, style) { // corner style
