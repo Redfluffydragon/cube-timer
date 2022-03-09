@@ -69,14 +69,13 @@ img, svg {
   grid-column: var(--fill-sometimes);
   grid-row: span 4 / auto;
   text-align: center;
-  z-index: 1;
   height: 100%;
 }
 
 #scrambletxt {
   font-family: monospace;
   font-size: 2.5em;
-  z-index: 3;
+  position: relative;
   max-height: 100%;
   overflow: auto;
   white-space: pre-line;
