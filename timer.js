@@ -42,14 +42,14 @@ const moves4 = [];
 const moves6 = [];
 const pyrsmoves = [];
 
-for (let i = 0; i < faces.length*mods.length; i++) {
-  moves3.push(faces[Math.trunc(i/3)] + mods[i%3]); // run through and push all permutations of the faces and mods arrays
-  moves4.push(faces[Math.trunc(i/3)] + 'w' + mods[i%3]); // only the new ones for 4x4 and 5x5
-  moves6.push('3' + faces[Math.trunc(i/3)] + 'w' + mods[i%3]); // only the new ones for 6x6 and 7x7
+for (let i = 0; i < faces.length * mods.length; i++) {
+  moves3.push(faces[Math.trunc(i / 3)] + mods[i % 3]); // run through and push all permutations of the faces and mods arrays
+  moves4.push(faces[Math.trunc(i / 3)] + 'w' + mods[i % 3]); // only the new ones for 4x4 and 5x5
+  moves6.push('3' + faces[Math.trunc(i / 3)] + 'w' + mods[i % 3]); // only the new ones for 6x6 and 7x7
 }
 
-for (let i = 0; i < fewerFaces.length*2; i++) {
-  pyrsmoves.push(fewerFaces[Math.trunc(i/2)] + mods[i%2]); // same for pyraminx
+for (let i = 0; i < fewerFaces.length * 2; i++) {
+  pyrsmoves.push(fewerFaces[Math.trunc(i / 2)] + mods[i % 2]); // same for pyraminx
 }
 
 const allmoves4 = moves3.concat(moves4);
@@ -237,13 +237,13 @@ document.addEventListener('click', e => {
     colorIndicator(cubeselect, storeSettings.cube);
   }
   else if (match('.delaytime')) {
-    storeSettings.startdelay = parseFloat(e.target.textContent.slice(0, -1))*1000;
+    storeSettings.startdelay = parseFloat(e.target.textContent.slice(0, -1)) * 1000;
     colorIndicator(delaytime, e.target.textContent);
   }
   else if (match('.modtime')) {
     if (match('#thetwo')) {
       if (thetwo.classList.contains('disabled')) { return; }
-      allthistime.time = Math.trunc((allthistime.plustwo ? allthistime.time-2 : allthistime.time+2)*100)/100;
+      allthistime.time = Math.trunc((allthistime.plustwo ? allthistime.time - 2 : allthistime.time + 2) * 100) / 100;
       allthistime.plustwo = !allthistime.plustwo;
     }
     else if (match('#thednf')) {
@@ -276,7 +276,7 @@ document.addEventListener('click', e => {
   }
   else if (match('#nextScram')) {
     scrambleNum++;
-    if (scrambleNum > scrambles.length-1) { scramble(); }
+    if (scrambleNum > scrambles.length - 1) { scramble(); }
     else { scrambletxt.textContent = scrambles[scrambleNum]; }
     scramNum.textContent = scrambleNum + 1;
   }
@@ -321,8 +321,8 @@ document.addEventListener('click', e => {
       if (e.name === session) {
         sesremoved.length = 0;
         sesremoved.push(sessions.splice(i, 1)[0]);
-        let neyes = i-1; // switch to next available session after deleting the current one
-        let peyes = i+1;
+        let neyes = i - 1; // switch to next available session after deleting the current one
+        let peyes = i + 1;
         if (neyes !== -1) session = sessions[neyes].name;
         else if (neyes === -1 && sessions[peyes] != null) session = sessions[peyes].name;
         else {
@@ -488,13 +488,13 @@ function draw() { // to redraw things after modifying
       tempRow.push(tempCell);
     }
 
-    e.number = i+1;
-    tempRow[0].textContent = i+1 + (e.comment ? '*' : null); // number, and asterisk if commented on
+    e.number = i + 1;
+    tempRow[0].textContent = i + 1 + (e.comment ? '*' : null); // number, and asterisk if commented on
     tempRow[1].textContent = e.dnf ? 'DNF' : // check dnf first
-        e.plustwo ? toMinutes(e.time)+'+' : toMinutes(e.time); // then check +2
+        e.plustwo ? toMinutes(e.time) + '+' : toMinutes(e.time); // then check +2
 
-    const avgofiv = average(i+1, 5);
-    const avgotwe = average(i+1, 12);
+    const avgofiv = average(i + 1, 5);
+    const avgotwe = average(i + 1, 12);
     e.ao5 = avgofiv;
     e.ao12 = avgotwe;
     tempRow[2].textContent = avgofiv;
@@ -537,7 +537,7 @@ function afterLoad() {
   checkmore.checked = storeSettings.morechecked;
   storeSettings.morechecked && (inmore.textContent = '[less]');
 
-  colorIndicator(delaytime, (storeSettings.startdelay/1000)+'s');
+  colorIndicator(delaytime, (storeSettings.startdelay / 1000) + 's');
 
   changeCorners(null, storeSettings.cornerStyle);
 
@@ -547,13 +547,14 @@ function afterLoad() {
   colorIndicator(cubeselect, storeSettings.cube);
 
   draw();
+
   if (isMobile) {
     document.addEventListener('touchstart', () => { // set up sounds to play whenever on mobile
       eightSecSound.play();
       eightSecSound.pause();
       twelveSecSound.play();
       twelveSecSound.pause();
-    }, {once: true, useCapture: false});
+    }, { once: true, useCapture: false });
     undobtn.classList.remove('none'); // and show undo button
     undobtn.addEventListener('click', undo, false);
   }
@@ -567,7 +568,7 @@ function closeNdraw() { // just put them in one function
 function timeClicks(e) { // for clicks on the time table
   if (e.target.parentNode.rowIndex >= 0) {
     const rvrsrow = displaytimes.length - e.target.parentNode.rowIndex + 1; // reverse the row index
-    tempallidx = alltimes.indexOf(displaytimes[rvrsrow-1]);
+    tempallidx = alltimes.indexOf(displaytimes[rvrsrow - 1]);
     allthistime = alltimes[tempallidx];
 
     timepops.classList.remove('none');
@@ -636,7 +637,7 @@ function addNewTime() {
 function checkTime(time) { // check if a time is valid, and return it in seconds
   const colonCount = time.split(':');
   if (time < 60) { return parseFloat(time); }
-  else if (colonCount.length === 2) { return (parseInt(colonCount[0])*60 + parseFloat(colonCount[1])); }
+  else if (colonCount.length === 2) { return (parseInt(colonCount[0]) * 60 + parseFloat(colonCount[1])); }
   return false;
 }
 
@@ -691,9 +692,9 @@ function timesInOut(doSwitch) { // move the time table in and out, and associate
 // Just a random move scrambler.
 function checknxn(moveset) { // for nxnxn cubes
   // p is for previous move, t is for temporary move (the one this is checking)
-  const tempmove = moveset[Math.trunc(Math.random()*moveset.length)];
-  const pmove = tscramble[tscramble.length-1];
-  const twoBackMove = tscramble[tscramble.length-2];
+  const tempmove = moveset[Math.trunc(Math.random() * moveset.length)];
+  const pmove = tscramble[tscramble.length - 1];
+  const twoBackMove = tscramble[tscramble.length - 2];
 
   let charOneTwoBack;
   let twoCharP;
@@ -731,10 +732,10 @@ function checkpyrall() { // combine pyraminx scramble bits
 }
 
 function checkmeg() { // megaminx
-  for (let i = 0; i < slen/11; i++) {
+  for (let i = 0; i < slen / 11; i++) {
     for (let j = 0; j < 10; j++) {
       const moveMod = Math.random() < 0.5 ? '++' : '--';
-      const move = j%2 ? 'D' : 'R';
+      const move = j % 2 ? 'D' : 'R';
       tscramble.push(move + moveMod);
     }
     Math.random() < 0.5 ? tscramble.push('U\r\n') : tscramble.push(`U'\r\n`);
@@ -742,13 +743,13 @@ function checkmeg() { // megaminx
 }
 
 function checksqu() {// probably doesn't work. I don't know what moves aren't allowed for squan.
-  const onerand = Math.round((Math.random()*11)-5);
-  const tworand = Math.round((Math.random()*11)-5);
+  const onerand = Math.round((Math.random() * 11) - 5);
+  const tworand = Math.round((Math.random() * 11) - 5);
   let firstnum;
   let secondnum;
   if (tscramble.length) {
-    firstnum = tscramble[tscramble.length-1].charAt(1);
-    secondnum = tscramble[tscramble.length-1].charAt(3);
+    firstnum = tscramble[tscramble.length - 1].charAt(1);
+    secondnum = tscramble[tscramble.length - 1].charAt(3);
   }
   if ((onerand !== firstnum || tworand !== secondnum) &&
       (onerand !== secondnum || tworand !== firstnum) &&
@@ -760,9 +761,9 @@ function checksqu() {// probably doesn't work. I don't know what moves aren't al
 function checkclo() { // clock
   addfour(clocksl4, 0, false);
   for (let i of clocks) {
-    const clkstr = JSON.stringify(Math.round((Math.random()*11)-5));
+    const clkstr = JSON.stringify(Math.round((Math.random() * 11) - 5));
     const rvrsclock = clkstr.length > 1 ? clkstr.charAt(1) + clkstr.charAt(0) : clkstr.charAt(0) + '+';
-    i !== 'y2' ? tscramble.unshift(i+rvrsclock) : tscramble.unshift(i);
+    i !== 'y2' ? tscramble.unshift(i + rvrsclock) : tscramble.unshift(i);
   }
 }
 
@@ -784,9 +785,9 @@ function average(startpoint, leng) {
   let sum;
   let avgAll = [];
 
-  if (startpoint > (leng-1)) {
-    for (let i = 1; i < leng+1; i++) {
-      const tempTime = displaytimes[startpoint-i].time;
+  if (startpoint > (leng - 1)) {
+    for (let i = 1; i < leng + 1; i++) {
+      const tempTime = displaytimes[startpoint - i].time;
       if (tempTime !== 0) { avgAll.push(tempTime); } // don't push dnfs
     }
   }
@@ -797,15 +798,15 @@ function average(startpoint, leng) {
 
   avgAll.length && (sum = avgAll.reduce((previous, current) => current += previous));
 
-  const avg = Math.trunc((sum/avgAll.length)*100)/100;
+  const avg = Math.trunc((sum / avgAll.length) * 100) / 100;
   return isNaN(avg) ? '' : toMinutes(avg);
 }
 
 function toMinutes(time) { // seconds to colon format
   if (time < 60) { return time.toFixed(2); }
   else if (time >= 60 && time < 3600) {
-    const minutes = Math.trunc(time/60);
-    let secondsafter = (time - (60*minutes)).toFixed(2);
+    const minutes = Math.trunc(time / 60);
+    let secondsafter = (time - (60 * minutes)).toFixed(2);
     secondsafter < 10 && (secondsafter = '0' + secondsafter);
 
     return `${minutes}:${secondsafter}`;
@@ -815,7 +816,7 @@ function toMinutes(time) { // seconds to colon format
 
 function inspection() { // display inspection countdown, as well as 8s, 12s, +2, and DNF by timeout
   runInspect = requestAnimationFrame(inspection);
-  const displayctdn = countdown[Math.trunc((new Date() - inspectStartTime)/1000)];
+  const displayctdn = countdown[Math.trunc((new Date() - inspectStartTime) / 1000)];
   insptime.textContent = displayctdn;
   if (displayctdn === 7) { // 8 second alert
     timealert.classList.remove('none');
@@ -850,7 +851,7 @@ function inspection() { // display inspection countdown, as well as 8s, 12s, +2,
 
 function stopwatch() { // counts time
   runStopwatch = requestAnimationFrame(stopwatch)
-  counter = (Math.trunc((new Date() - timerStartTime)/10)/100);
+  counter = (Math.trunc((new Date() - timerStartTime) / 10) / 100);
   time.textContent = toMinutes(counter).toString().slice(0, -1); // don't show hundredths while running
 }
 
@@ -977,7 +978,7 @@ function undo() { // undo the last-done deletion
         sessions.push({name: i.name, description: i.description});
       }
     }
-    session = sesremoved[sesremoved.length-1].name;
+    session = sesremoved[sesremoved.length - 1].name;
     sesremoved.length = 0;
     sessionStorage.removeItem('sesremoved');
     msg = 'Undone!'
@@ -1039,7 +1040,7 @@ function newSession() { // create a new session
     sameAlert.textContent = null;
     sesname.value = null;
     sescrip.value = null;
-    session = sessions[sessions.length-1].name;
+    session = sessions[sessions.length - 1].name;
     closeNdraw();
   }
 }
