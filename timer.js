@@ -381,7 +381,7 @@ document.addEventListener('click', e => {
   else if (match('#lighticon')) { runmode(true); }
   else if (match('#sescreate')) { newSession(); }
   else if (match('#infobtn')) { showPop(infopopup); }
-  else if (e.target.closest('.moveTable')) { console.log('move table'); timesInOut(true); }
+  else if (e.target.closest('.moveTable')) { timesInOut(true); }
   else if (multiMatch(e, '#rcorners', '#scorners')) { changeCorners(e); }
   else if (multiMatch(e, '#timeclose', '#settingsClose')) { closeNdraw(); }
   else if (multiMatch(e, '#infoclose', '#timentercanc')) { closeAll(); }
