@@ -863,7 +863,7 @@ function timeout() { // do the holding delay, and colors
   runTimeout = requestAnimationFrame(timeout);
   if ((new Date() - timeoutStartTime) >= storeSettings.startdelay) {
     timerState = 'waiting';
-    time.classList.add(lightMode ? 'green' : 'magenta');
+    time.classList.add('green');
     insptime.classList.remove('orange');
     insptime.classList.add('green');
   }
@@ -910,10 +910,10 @@ function down() { // spacebar down
       if (!storeSettings.inspectTime || timerState === 'inspecting') { // start delay timer
         timeoutStartTime = new Date();
         runTimeout = requestAnimationFrame(timeout);
-        time.classList.add(lightMode ? 'red' : 'cyan');
+        time.classList.add('red');
         insptime.classList.add('orange');
       }
-      else { time.classList.add(lightMode ? 'green' : 'magenta'); }
+      else { time.classList.add('green'); }
       onstart = true;
     }
     else if (timerState === 'started') { fin(); }
@@ -921,7 +921,7 @@ function down() { // spacebar down
 }
 
 function up() { // spacebar up
-  time.classList.remove('red', 'green', 'cyan', 'magenta');
+  time.classList.remove('red', 'green');
   insptime.classList.remove('orange');
   if (!popup && !dnf) {
     if (timerState !== 'started' && timerState !== 'waiting') { // if delay hasn't run out yet

@@ -11,25 +11,42 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  background: white;
+  background: var(--bg);
   position: fixed;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text);
 
   --fill-sometimes: 2 / -1;
-  --shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
   --five-rad: 0;
   --three-rad: 0;
+  --shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+  
+  --text: black;
+  --bg: white;
 
+  --invert: invert(0);
+
+  --btn-bg: rgb(215, 215, 215);
   --overlay-bg: rgb(180, 180, 180);
   --table-bg-primary: rgb(242, 242, 242);
   --table-bg-secondary: white;
+
 }
 
-body[lmode=false] {
-  --shadow: 5px 5px 15px rgba(255, 255, 255, 0.3);
+html[lmode=false] body {
+  --text: rgb(215, 215, 215);
+  --bg: black;
+
+  --invert: invert(1);
+
+  --btn-bg: rgb(40, 40, 40);
+  --overlay-bg: rgb(55, 55, 55);
+  --table-bg-primary: rgb(35, 35, 35);
+  --table-bg-secondary: rgb(15, 15, 15);
 }
 
-img, svg {
+img {
+  filter: var(--invert);
   display: block;
 }
 
@@ -59,7 +76,7 @@ img, svg {
 }
 
 #onlytime {
-  background: white;
+  background: var(--bg);
 }
 
 #timealert {
@@ -89,6 +106,7 @@ img, svg {
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+  color: var(--text);
 }
 
 #scrambletxt[overflow=true] {
@@ -181,7 +199,7 @@ img, svg {
 #timetable {
   display: block;
   text-align: left;
-  color: black;
+  color: var(--text);
   padding: 2px 0 0 2px;
   text-decoration: none;
   overflow: hidden;
@@ -192,8 +210,8 @@ img, svg {
   border-radius: var(--three-rad);
 }
 
-.header {
-  background: rgb(215, 215, 215);
+.header, #blank {
+  background: var(--btn-bg);
   text-align: center;
 }
 
@@ -205,11 +223,6 @@ img, svg {
 
 .number {
   padding: 0 0.5ch;
-}
-
-#blank {
-  width: 2.1vw;
-  background: rgb(215, 215, 215);
 }
 
 .idAll:nth-child(even) {
@@ -232,6 +245,7 @@ img, svg {
 .moveTable.out {
   position: absolute;
   left: 3px;
+  background: var(--btn-bg);
   top: 4px;
 }
 
@@ -402,13 +416,13 @@ img, svg {
 }
 
 button {
-  background: rgb(215, 215, 215);
+  background: var(--btn-bg);
   border: none;
   font-size: 1.1em;
   padding: 1ch 1.2ch;
   cursor: pointer;
   margin: 0.5ch;
-  color: black;
+  color: var(--text);
 }
 
 input, textarea, select {
@@ -428,7 +442,7 @@ input, textarea, select {
   height: 100vh;
   top: 0;
   left: 0;
-  background: white;
+  background: var(--bg);
   z-index: 0;
 }
 
@@ -804,16 +818,8 @@ input, textarea, select {
   color: red;
 }
 
-.cyan {
-  color: cyan;
-}
-
 .green {
   color: rgb(0, 255, 0);
-}
-
-.magenta {
-  color: rgb(255, 0, 255);
 }
 
 .orange {
@@ -851,26 +857,6 @@ input, textarea, select {
 
 .threeWide {
   grid-column: span 3 / auto;
-}
-
-html[lmode=false] body {
-  background: black;
-  filter: invert(100%);
-
-  --overlay-bg: rgb(200, 200, 200);
-  --table-bg-primary: rgb(220, 220, 220);
-  --table-bg-secondary: rgb(240, 240, 240);
-}
-
-html[lmode=false] input,
-html[lmode=false] #insptime,
-html[lmode=false] #timealert {
-  filter: invert(100%);
-}
-
-body[round=true] {
-  --five-rad: 5px;
-  --three-rad: 3px;
 }
 
 button, .rdropcontent, .pointer, .dropupcontent, .popup, input, textarea {
