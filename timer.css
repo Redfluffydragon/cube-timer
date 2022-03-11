@@ -191,7 +191,7 @@ a {
   gap: 2ch;
   height: 100%;
   justify-content: space-between;
-  padding-right: 1ch;
+  padding: 0.5ch;
   background: var(--bg);
   margin-right: 1.7rem;
 }
@@ -210,7 +210,6 @@ a {
 }
 
 #timetable {
-  padding: 2px 0 0 2px;
   text-align: center;
   font-size: 1.25rem;
   width: 100%;
@@ -291,16 +290,10 @@ a {
 }
 
 #sessions {
-  margin: 0;
-  margin-left: 1ch;
-  margin-bottom: 0.5ch;
+  margin: 0 0 0.5ch;
   padding: 0;
   z-index: 2;
   justify-self: end;
-}
-
-#sessions button {
-  margin-bottom: 0.6vmin;
 }
 
 .sesedit {
