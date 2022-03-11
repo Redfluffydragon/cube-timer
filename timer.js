@@ -509,8 +509,7 @@ function draw() { // to redraw things after modifying
   const whichSpot = storeSettings.delayAndInspect ? document.getElementById('hsSpot') : document.getElementById('popSpot');
   whichSpot.appendChild(inspectSet);
   whichSpot.appendChild(delaySet);
-  BWdiv.classList[storeSettings.showBW ? 'remove' : 'add']('none');
-  bestworst(storeSettings.BWperSess ? displaytimes : alltimes);
+  BWdiv.style.display = storeSettings.showBW ? '' : 'none';
   multiScram.classList[storeSettings.multiScram ? 'remove' : 'add']('opZero');
 
   // sessions
@@ -1013,18 +1012,20 @@ function changeCorners(e, style) { // corner style
 }
 
 function closeAll() { // close everything
-  timepopup.matches('.inlineBlock') && (allthistime.comment = comment.value);
-
-  for (let i of popups) { i.classList.remove('inlineBlock'); } // close all popups
-  timepops.classList.add('none');
-  shadow.classList.remove('initial');
-  shadow.style.zIndex = '';
+  timepopup.matches('.inlineBlock') && (allThisTime.comment = comment.value);
 
   if (setpopup.matches('.inlineBlock')) {
     for (let i in settingsSettings) {
       storeSettings[i] = settingsSettings[i].checked;
     }
   }
+
+  // close all modals
+  for (let i of modals) { i.classList.remove('inlineBlock'); }
+
+  timepops.classList.add('none');
+  shadow.classList.remove('initial');
+  shadow.style.zIndex = '';
 
   centerpop.classList.add('none');
 
