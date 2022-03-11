@@ -380,6 +380,7 @@ a {
   background: transparent;
   border: 1px solid black;
   text-align: center;
+  width: 100%;
 }
 
 #sesoptpopup {
@@ -465,6 +466,7 @@ input, textarea, select {
 #centerpop {
   position: absolute;
   width: 100%;
+  padding-top: 2ch;
   top: 0;
   left: 0;
   text-align: center;
@@ -474,7 +476,7 @@ input, textarea, select {
 #overtop {
   position: absolute;
   text-align: center;
-  z-index: 7;
+  z-index: 15;
   top: 0;
   width: 100%;
 }
@@ -614,13 +616,13 @@ input, textarea, select {
 
 #codeLink {
   margin-bottom: 15px;
-  display: inline-block;
+  display: inline;
 }
 
 #undone {
   position: relative;
   top: 45vh;
-  color: rgb(255, 255, 255);
+  color: white;
   border-radius: 10px;
   background: rgb(80, 80, 80);
 }
