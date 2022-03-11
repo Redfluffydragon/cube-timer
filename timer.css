@@ -578,8 +578,8 @@ input, textarea, select {
 
 #infobtn {
   border-radius: 50%;
-  width: calc(20px + 1vw);
-  height: calc(20px + 1vw);
+  width: 2rem;
+  aspect-ratio: 1;
   position: absolute;
   bottom: 0.6vh;
   right: 0.6vh;
