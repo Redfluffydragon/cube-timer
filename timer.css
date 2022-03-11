@@ -294,7 +294,7 @@ a {
 
 #timeTableShadow {
   z-index: 15;
-  background: #000000b1;
+  background: rgba(0, 0, 0, 0.475);
 }
 
 #sessions {
