@@ -62,6 +62,10 @@ img {
   display: block;
 }
 
+body[round=true] {
+  --five-rad: 5px;
+  --three-rad: 3px;
+}
 
 a {
   color: var(--link);
