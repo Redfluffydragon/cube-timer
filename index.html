@@ -228,40 +228,31 @@
 
       <div id="timenterpopup" class="popup">
         <h3>Manually add times</h3>
-        <table>
-          <tr><td>Time*:</td> <td><input id="timentertoo"></td></tr>
-          <tr><td>Cube:</td> <td><input id="cubenter"></td></tr>
-          <tr><td>Scramble:</td> <td><input id="scramenter"></td></tr>
-          <tr><td>Date:</td> <td><input id="datenter" type="date"></td></tr>
-          <tr><td>Comment:</td> <td><textarea id="commenter"></textarea></td></tr>
-        </table>
+        <div class="grid">
+          <label for="timentertoo">Time*:</label> <input id="timentertoo">
+          <label for="cubenter">Cube:</label> <input id="cubenter">
+          <label for="scramenter">Scramble:</label> <input id="scramenter">
+          <label for="datenter">Date:</label> <input id="datenter" type="date">
+          <label for="commenter">Comment:</label> <textarea id="commenter"></textarea>
+        </div>
         <button id="timentercanc">Cancel</button>
         <button id="dothenter">Add</button>
       </div>
       
       <div id="sesoptpopup" class="popup">
-        <h3><input id="changesesname"value="Session 1" maxlength="50"></input></h3>
+        <h3><input id="changesesname"value="Session 1" maxlength="50"/></h3>
         <p id="sameAlertAgain"></p>
-        <label>Description:</label><textarea id="seesescrip" class="sesinput"></textarea>
+        <label>Description:</label>
+        <textarea id="seesescrip" class="sesinput"></textarea>
         <div id="optbuttons">
-          <table>
-            <tr>
-              <td><button class="deletebtn" id="deleteallses">Delete all sessions</button></td>
-              <td><button class="deletebtn" id="deleteses">Delete session</button></td>
-            </tr>
-            <tr>
-              <td><button class="clearbtn" id="clearallses">Clear all sessions</button></td>
-              <td><button class="clearbtn" id="clearses">Clear session</button></td>
-            </tr>
-            <tr>
-              <td><button class="exportbtn" id="exportallses" title="Export as CSV">Export all<span class="csv"> (csv)</span></button></td>
-              <td><button class="exportbtn" id="exportses" title="Export as CSV">Export session<span class="csv"> (csv)</span></button></td>
-            </tr>
-            <tr>
-              <td><button id="newses" title="create a new session">New session</button></td>
-              <td><button id="saveses">Save</button></td>
-            </tr>
-          </table>
+          <button class="deletebtn" id="deleteallses">Delete all sessions</button></td>
+          <button class="deletebtn" id="deleteses">Delete session</button>
+          <button class="clearbtn" id="clearallses">Clear all sessions</button>
+          <button class="clearbtn" id="clearses">Clear session</button>
+          <button class="exportbtn" id="exportallses" title="Export as CSV">Export all<span class="csv"> (csv)</span></button>
+          <button class="exportbtn" id="exportses" title="Export as CSV">Export session<span class="csv"> (csv)</span></button>
+          <button id="newses" title="create a new session">New session</button>
+          <button id="saveses">Save</button>
         </div>
       </div>
 
