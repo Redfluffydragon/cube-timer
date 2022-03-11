@@ -36,6 +36,7 @@ body {
   --overlay-bg: rgb(180, 180, 180);
   --table-bg-primary: rgb(242, 242, 242);
   --table-bg-secondary: white;
+  --inset-shadow: inset 0 -10px 5px -10px #333, inset 0 10px 5px -10px #333;
 
   --hover: rgb(150, 150, 150);
   --selected: rgb(140, 140, 140);
@@ -52,6 +53,7 @@ html[lmode=false] body {
   --overlay-bg: rgb(55, 55, 55);
   --table-bg-primary: rgb(35, 35, 35);
   --table-bg-secondary: rgb(15, 15, 15);
+  --inset-shadow: inset 0 -10px 7px -10px rgb(204, 204, 204), inset 0 10px 7px -10px rgb(204, 204, 204);
 
   --hover: rgb(80, 80, 80);
   --selected: rgb(90, 90, 90);
@@ -127,7 +129,7 @@ a {
 }
 
 #scrambletxt[overflow=true] {
-  box-shadow: inset 0 -10px 5px -10px #333, inset 0 10px 5px -10px #333;
+  box-shadow: var(--inset-shadow);
 }
 
 #scrambletxt::-webkit-scrollbar {
