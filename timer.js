@@ -212,6 +212,12 @@ const storeSettings = gotem('settings', {
   cube: '3x3',
 });
 
+// This auto hides the time table if it's in overlay mode, but saves the position if not
+if (window.innerWidth <= 800) {
+  storeSettings.timein = true;
+}
+timesInOut(false);
+
 const scrambles = gotem('scrambles', []);
 let scrambleNum = gotem('scrambleNum', 0);
 
