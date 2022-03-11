@@ -1,5 +1,34 @@
 'use strict';
 
+const storeSettings = gotem('settings', {
+  announce: true,
+  delayAndInspect: true,
+  showBW: true,
+  BWperSess: false,
+  hideWhileTiming: true,
+  multiScram: true,
+  timein: false,
+  cornerStyle: 'r',
+  morechecked: false,
+  startdelay: 300,
+  inspectTime: true,
+  cube: '3x3',
+});
+
+// Elements that might need to be moved on page load
+const ttsize = document.getElementById('ttsize');
+const outicon = document.getElementById('outicon');
+const timeTableShadow = document.getElementById('timeTableShadow');
+const sessionsdiv = document.getElementById('sessions');
+const scrambletxt = document.getElementById('scrambletxt');
+
+// This auto hides the time table if it's in overlay mode, but saves the position if not
+if (window.innerWidth <= 800) {
+  storeSettings.timein = true;
+}
+timesInOut(false);
+applySettings();
+
 navigator.serviceWorker && navigator.serviceWorker.register('/cube-timer/sw.js', { scope: '/cube-timer/' });
 
 // for stopwatch
@@ -93,9 +122,7 @@ let findSession; // for editing sessions
 
 // elements
 // for scrambles
-const scrambletxt = document.getElementById('scrambletxt');
 const scramNum = document.getElementById('scramNum');
-const multiScram = document.getElementById('multiScram');
 
 // dropdowns
 const cubeButton = document.getElementById('cubeButton');
@@ -111,10 +138,7 @@ const delayDrop = document.getElementById('delayDrop');
 const delaytime = document.getElementsByClassName('delaytime');
 
 // timetable
-const ttsize = document.getElementById('ttsize');
 const timebody = document.getElementById('timebody');
-const outicon = document.getElementById('outicon');
-const timeTableShadow = document.getElementById('timeTableShadow');
 
 // time
 const time = document.getElementById('time');
@@ -138,7 +162,6 @@ const seeCube = document.getElementById('seecube');
 
 const best = document.getElementById('best');
 const worst = document.getElementById('worst');
-const BWdiv = document.getElementById('bestworst');
 
 // sessions and new times and sessions
 const sesslc = document.getElementById('sesslc');
@@ -149,7 +172,6 @@ const sesname = document.getElementById('sesname');
 const sescrip = document.getElementById('sescrip');
 const changesesname = document.getElementById('changesesname');
 const seesescrip = document.getElementById('seesescrip');
-const sessionsdiv = document.getElementById('sessions');
 const undobtn = document.getElementById('undobtn');
 const timenterpopup = document.getElementById('timenterpopup');
 const timentertoo = document.getElementById('timentertoo');
@@ -181,27 +203,6 @@ const sessions = gotem('sessions', [{ name: 'Session 1', description: 'Default s
 let session = gotem('currses', sessions[0].name);
 
 let lightMode = gotem('lightMode', true);
-
-const storeSettings = gotem('settings', {
-  announce: true,
-  delayAndInspect: true,
-  showBW: true,
-  BWperSess: false,
-  hideWhileTiming: true,
-  multiScram: true,
-  timein: false,
-  cornerStyle: 'r',
-  morechecked: false,
-  startdelay: 300,
-  inspectTime: true,
-  cube: '3x3',
-});
-
-// This auto hides the time table if it's in overlay mode, but saves the position if not
-if (window.innerWidth <= 800) {
-  storeSettings.timein = true;
-}
-timesInOut(false);
 
 const scrambles = gotem('scrambles', []);
 let scrambleNum = gotem('scrambleNum', 0);
@@ -492,14 +493,9 @@ function draw() { // to redraw things after modifying
     allTimes[saveBack].ao12 = avgotwe;
   }
 
-  // apply settings
-  const whichSpot = storeSettings.delayAndInspect ? document.getElementById('hsSpot') : document.getElementById('popSpot');
-  whichSpot.appendChild(document.getElementById('inspectSet'));
-  whichSpot.appendChild(document.getElementById('delaySet'));
+  applySettings();
 
-  BWdiv.style.display = storeSettings.showBW ? '' : 'none';
   bestworst(storeSettings.BWperSess ? displayTimes : allTimes);
-  multiScram.classList[storeSettings.multiScram ? 'remove' : 'add']('opZero');
 
   // sessions
   sesdrop.innerHTML = '';
@@ -654,6 +650,16 @@ function dropDown(button, content, e) { // toggle dropdowns on button click
     return button.id;
   }
   return false;
+}
+
+function applySettings() {
+  const whichSpot = storeSettings.delayAndInspect ? document.getElementById('hsSpot') : document.getElementById('popSpot');
+  whichSpot.appendChild(document.getElementById('inspectSet'));
+  whichSpot.appendChild(document.getElementById('delaySet'));
+
+  document.getElementById('bestworst').style.display = storeSettings.showBW ? '' : 'none';
+
+  document.getElementById('multiScram').classList[storeSettings.multiScram ? 'remove' : 'add']('opZero');
 }
 
 function timePos(center) { // center and uncenter time and insptime
