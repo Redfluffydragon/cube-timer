@@ -528,9 +528,10 @@ function draw() { // to redraw things after modifying
 }
 
 function afterLoad() {
+  scramOverflowShadow();
   setTimeout(() => {
-    scramOverflowShadow();
-    timesInOut(false);
+    ttsize.classList.add('transOneSec');
+    sessionsdiv.classList.add('transOneSec');
   }, 10);
 
   colorIndicator(inspselect, storeSettings.inspectTime ? '15s (WCA)' : 'None');
@@ -697,7 +698,7 @@ function timesInOut(doSwitch) { // move the time table in and out, and associate
       sessionsdiv.classList.add('none');
       scramOverflowShadow();
       ttsize.style.zIndex = 'unset';
-    }, 500);
+    }, doSwitch ? 500 : 0);
   }
   doSwitch && (storeSettings.timein = !storeSettings.timein);
 }
