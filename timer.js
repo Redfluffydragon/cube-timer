@@ -192,8 +192,6 @@ const isMobile = (typeof window.orientation !== 'undefined') || (navigator.userA
 // All the variables that need to be gotten on reload/load, and associated functions
 const allTimes = gotem('all', []);
 
-const moddedTimes = gotem('modded', []);
-
 const sessions = gotem('sessions', [{ name: 'Session 1', description: 'Default session' }]);
 let session = gotem('currses', sessions[0].name);
 
@@ -436,7 +434,6 @@ addEventListener(whichUnload, () => {
   localStorage.setItem('scrambleNum', JSON.stringify(scrambleNum));
   localStorage.setItem('currses', JSON.stringify(session));
   localStorage.setItem('sessions', JSON.stringify(sessions));
-  localStorage.setItem('modded', JSON.stringify(moddedTimes));
 
   sessionStorage.setItem('sesremoved', JSON.stringify(sesRemoved));
   sessionStorage.setItem('removed', JSON.stringify(removed));
