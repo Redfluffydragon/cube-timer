@@ -142,13 +142,8 @@ a {
   font-size: 1.1em;
 }
 
-#multiScram p {
-  display: inline;
-  color: black;
-}
-
-#multiScram u {
-  cursor: pointer;
+#multiScram button {
+  padding: 0.5ch 1ch;
 }
 
 .rdropdown {
