@@ -38,6 +38,7 @@ body {
   --table-bg-secondary: white;
 
   --hover: rgb(150, 150, 150);
+  --selected: rgb(140, 140, 140);
 }
 
 html[lmode=false] body {
@@ -53,6 +54,7 @@ html[lmode=false] body {
   --table-bg-secondary: rgb(15, 15, 15);
 
   --hover: rgb(80, 80, 80);
+  --selected: rgb(90, 90, 90);
 }
 
 img {
@@ -828,12 +830,8 @@ input, textarea, select {
   display: none;
 }
 
-.oneforty {
-  background: rgb(140, 140, 140);
-}
-
-.twotwenty {
-  background: rgb(220, 220, 220)
+.selected {
+  background: var(--selected);
 }
 
 .red {

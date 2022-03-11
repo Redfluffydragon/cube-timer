@@ -460,7 +460,7 @@ function gotem(key, value, type = localStorage) { // wrapper function for gettin
 
 function colorIndicator(array, value) { // mark selection in dropdowns
   for (let i of array) { // mark the right one (darker gray), and unmark all the other ones
-    i.classList[i.textContent === value ? 'add' : 'remove']('oneforty');
+    i.classList[i.textContent === value ? 'add' : 'remove']('selected');
   }
 };
 
@@ -578,10 +578,10 @@ function timeClicks(e) { // for clicks on the time table
     storeSettings.morechecked && morepopup.classList.add('inlineBlock');
 
     const timetoshine = allthistime.dnf ? 'DNF' : toMinutes(allthistime.time);
-    thednf.classList[allthistime.dnf ? 'add' : 'remove']('oneforty');
-    thetwo.classList[allthistime.dnf ? 'add' : 'remove']('oneforty');
+    thednf.classList[allthistime.dnf ? 'add' : 'remove']('selected');
+    thetwo.classList[allthistime.dnf ? 'add' : 'remove']('selected');
 
-    thetwo.classList[allthistime.plustwo ? 'add' : 'remove']('oneforty');
+    thetwo.classList[allthistime.plustwo ? 'add' : 'remove']('selected');
     showEditTime.textContent = `${rvrsrow} (${timetoshine})`;
 
     // set up popup with correct data
