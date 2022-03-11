@@ -596,8 +596,14 @@ function timeClicks(e) { // for clicks on the time table
 
 function closeModal(e) { // close modals
   if (!e.target.closest('.popup') && popup) {
-    closeNdraw();
-    closing = true;
+    if (sespopup.classList.contains('inlineBlock')) {
+      sespopup.classList.remove('inlineBlock');
+      shadow.style.zIndex = '';
+    }
+    else {
+      closeNdraw();
+      closing = true;
+    }
   }
 }
 
