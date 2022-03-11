@@ -400,11 +400,11 @@ document.addEventListener('click', e => {
 }, false);
 
 document.addEventListener('touchstart', e => {
-  if (multiMatch(e, '#touch', '#time', '#insptime', '#onlytime')) { touchdown(e); }
+  if (multiMatch(e, '#time', '#insptime', '#onlytime')) { touchdown(e); }
 }, { passive: false, useCapture: false });
 
 document.addEventListener('touchend', e => {
-  if (multiMatch(e, '#touch', '#time', '#insptime', '#onlytime')) { up(); }
+  if (multiMatch(e, '#time', '#insptime', '#onlytime')) { up(); }
 }, { passive: false, useCapture: false });
 
 addEventListener('keydown', e => {

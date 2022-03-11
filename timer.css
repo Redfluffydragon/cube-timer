@@ -472,16 +472,6 @@ input, textarea, select {
   z-index: 100;
 }
 
-#touch {
-  position: absolute;
-  width: 100vw;
-  height: 100vh;
-  top: 0;
-  left: 0;
-  background: var(--bg);
-  z-index: 0;
-}
-
 #centerpop {
   position: absolute;
   width: 100%;
