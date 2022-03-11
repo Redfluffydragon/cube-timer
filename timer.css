@@ -259,12 +259,12 @@ a {
 .moveTable.out {
   left: 3px;
   background: var(--btn-bg);
-  border-radius: var(--three-rad) 1.5rem 1.5rem var(--three-rad);
+  border-radius: 0 1.5rem 1.5rem 0;
 }
 
 .moveTable.in {
   left: 100%;
-  border-radius: var(--three-rad) 1.5rem 1.5rem var(--three-rad);
+  border-radius: 0 1.5rem 1.5rem 0;
   background: var(--btn-bg);
 }
 
