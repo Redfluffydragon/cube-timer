@@ -821,10 +821,10 @@ button, .rdropcontent, .pointer, .dropupcontent, .popup, input, textarea {
   grid-column: span 3 / auto;
 }
 
-.top {
+.rdropcontent p:first-child, .dropupcontent p:first-child {
   border-radius: var(--five-rad) var(--five-rad) 0 0;
 }
 
-.bottom {
+.rdropcontent p:last-child, .dropupcontent p:last-child {
   border-radius: 0 0 var(--five-rad) var(--five-rad);
 }

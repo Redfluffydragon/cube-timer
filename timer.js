@@ -127,15 +127,15 @@ const scramNum = document.getElementById('scramNum');
 // dropdowns
 const cubeButton = document.getElementById('cubeButton');
 const cubeDrop = document.getElementById('cubeDrop');
-const cubeselect = document.getElementsByClassName('cubeselect');
+const cubeselect = cubeDrop.querySelectorAll('p');
 
 const inspectButton = document.getElementById('inspectButton');
 const inspectDrop = document.getElementById('inspectDrop');
-const inspselect = document.getElementsByClassName('inspselect');
+const inspselect = inspectDrop.querySelectorAll('p');
 
 const delayButton = document.getElementById('delayButton');
 const delayDrop = document.getElementById('delayDrop');
-const delaytime = document.getElementsByClassName('delaytime');
+const delaytime = delayDrop.querySelectorAll('p');
 
 // timetable
 const timebody = document.getElementById('timebody');
@@ -213,11 +213,11 @@ document.addEventListener('click', e => {
   if (e.target.closest('#timebody') && !closing) {
     timeClicks(e);
   }
-  else if (match('.inspselect')) {
+  else if (match('#inspectDrop p')) {
     storeSettings.inspectTime = !(e.target.textContent === 'None');
     colorIndicator(inspselect, e.target.textContent);
   }
-  else if (match('.cubeselect') && storeSettings.cube !== e.target.textContent) {
+  else if (match('#cubeDrop p') && storeSettings.cube !== e.target.textContent) {
     storeSettings.cube = e.target.textContent;
     cubeButton.textContent = storeSettings.cube;
     scrambles.length = 0;
@@ -226,7 +226,7 @@ document.addEventListener('click', e => {
     scramble();
     colorIndicator(cubeselect, storeSettings.cube);
   }
-  else if (match('.delaytime')) {
+  else if (match('#delayDrop p')) {
     storeSettings.startdelay = parseFloat(e.target.textContent.slice(0, -1)) * 1000;
     colorIndicator(delaytime, e.target.textContent);
   }
@@ -507,8 +507,6 @@ function draw() { // to redraw things after modifying
   }
   sesslc.textContent = session;
   sesslc.style.minWidth = sesdrop.offsetWidth + 'px';
-  document.querySelector('#sesdrop p:nth-child(1)').classList.add('top');
-  document.querySelector('#sesdrop p:last-child').classList.add('bottom');
 }
 
 function afterLoad() {
