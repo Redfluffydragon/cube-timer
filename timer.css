@@ -287,6 +287,11 @@ a {
   transform: translate(40%, -50%) rotate(45deg);
 }
 
+#timeTableShadow {
+  z-index: 15;
+  background: #000000b1;
+}
+
 #sessions {
   margin: 0;
   margin-left: 1ch;
@@ -726,6 +731,10 @@ input, textarea, select {
   #ttsize {
     z-index: 50;
     height: 100%;
+  }
+
+  #timeTableShadow {
+    display: block;
   }
 
   #sessions {
