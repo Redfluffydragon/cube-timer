@@ -710,6 +710,10 @@ input, textarea, select {
     grid-row: -2;
   }
 
+  #ttsize, .moveTable.in {
+    box-shadow: var(--shadow);
+  }
+
   #ttsize {
     z-index: 50;
     height: 100%;
