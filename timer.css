@@ -433,22 +433,13 @@ a {
   margin-bottom: 2ch;
 }
 
-#optbuttons tr td {
-  margin: 0;
-  row-gap: 0;
-  padding: 0 auto;
-  border-spacing: 0;
-}
-
-#timenterpopup table {
-  text-align: right;
-  margin: 4px;
-}
-
 #timenterpopup textarea {
-  vertical-align: top;
-  max-width: 50vw;
+  max-width: min(100%, 80vw);
   max-height: 40vh;
+}
+
+#timenterpopup input {
+  width: 100%;
 }
 
 button {
@@ -496,6 +487,7 @@ input, textarea, select {
   font-size: 1.1em;
   box-shadow: var(--shadow);
   padding: 5px 15px;
+  max-width: 94vh;
 }
 
 .coverall {
@@ -532,7 +524,7 @@ input, textarea, select {
   max-height: 80vh;
   overflow: auto;
   width: max-content;
-  max-width: 45vw;
+  max-width: min(50ch, 94vw);
 }
 
 #timepops {
@@ -715,23 +707,7 @@ input, textarea, select {
   z-index: 1;
 }
 
-@media screen and (max-width: 1051px) {
-  #sesoptpopup button {
-    width: 25vw;
-  }
-}
-
-@media screen and (max-width: 950px) {
-  #morepopup {
-    max-width: 55vw;
-  }
-}
-
 @media screen and (max-width: 800px) {
-  #morepopup {
-    max-width: 94vw;
-  }
-
   .timegrid, #settings, #scramblediv, #multiScram {
     grid-column: 1 / -1;
   }
@@ -767,21 +743,12 @@ input, textarea, select {
     -webkit-overflow-scrolling: touch;
   }
 
-  #sesname, #sescrip {
-    width: 48vw;
-  }
-
-  #seesescrip {
-    width: 58vw;
-  }
-
-  #sesoptpopup button {
-    width: 45vw;
+  .popup .grid button {
+    padding: 0.5ch;
   }
 
   .popup {
-    padding: 5px 3px;
-    margin: 5px 3px;
+    padding: 5px;
   }
 }
 
