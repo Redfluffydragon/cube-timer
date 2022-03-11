@@ -118,6 +118,7 @@ const delaytime = document.getElementsByClassName('delaytime');
 const ttsize = document.getElementById('ttsize');
 const timebody = document.getElementById('timebody');
 const outicon = document.getElementById('outicon');
+const timeTableShadow = document.getElementById('timeTableShadow');
 
 // time
 const time = document.getElementById('time');
@@ -381,7 +382,7 @@ document.addEventListener('click', e => {
   else if (match('#lighticon')) { runmode(true); }
   else if (match('#sescreate')) { newSession(); }
   else if (match('#infobtn')) { showModal(infopopup); }
-  else if (e.target.closest('.moveTable')) { timesInOut(true); }
+  else if (e.target.closest('.moveTable') || e.target.matches('#timeTableShadow')) { timesInOut(true); }
   else if (multiMatch(e, '#rcorners', '#scorners')) { changeCorners(e); }
   else if (multiMatch(e, '#timeclose', '#settingsClose')) { closeNdraw(); }
   else if (multiMatch(e, '#infoclose', '#timentercanc')) { closeAll(); }
@@ -670,6 +671,7 @@ function timesInOut(doSwitch) { // move the time table in and out, and associate
     ttsize.style.zIndex = '';
     timePos(false);
     sessionsdiv.classList.remove('none');
+    timeTableShadow.style.display = '';
     setTimeout(() => {
       ttsize.style.gridRow = '';
       ttsize.classList.remove('transXsixty');
@@ -683,6 +685,7 @@ function timesInOut(doSwitch) { // move the time table in and out, and associate
     ttsize.classList.add('transXsixty');
     sessionsdiv.classList.add('transXhundred');
     outicon.classList.remove('none');
+    timeTableShadow.style.display = 'none';
     setTimeout(() => {
       timePos(true);
       sessionsdiv.classList.add('none');
