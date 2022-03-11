@@ -74,7 +74,6 @@ a {
 .allGrid {
   width: 100%;
   height: 100%;
-  display: grid;
   place-items: center;
   grid-template-rows: repeat(8, 1fr);
   grid-template-columns: 35ch repeat(6, 1fr);
@@ -347,8 +346,8 @@ a {
   margin-bottom: 4px;
 }
 
-#sespopup ul {
-  list-style-type: none;
+#sespopup .grid {
+  grid-template-columns: 12ch 1fr;
 }
 
 #sescrip {
@@ -371,10 +370,6 @@ a {
   margin-left: 2vw;
 }
 
-#sescancel {
-  background: transparent;
-}
-
 #changesesname {
   border-radius: 5px;
   background: transparent;
@@ -393,10 +388,7 @@ a {
 }
 
 #optbuttons {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
   margin: 5px auto;
-  gap: 1ch;
 }
 
 #optbuttons button {
@@ -571,6 +563,11 @@ input, textarea, select {
 
 .grid {
   display: grid;
+}
+
+.twoCols {
+  grid-template-columns: 1fr 1fr;
+  gap: 1ch;
 }
 
 .topstats {

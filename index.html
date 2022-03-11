@@ -35,7 +35,7 @@
     <audio src="sound/twelve.mp3" id="twelveSecSound"></audio>
     
     <div id="onlytime" class="coverall zfour"></div>
-    <div class="allGrid">
+    <div class="allGrid grid">
       <div id="timeTableShadow" class="coverall"></div>
       <div id="ttsize" class="transOneSec">
         <button id="" class="moveTable in imgBtn" title="Slide time table in"></button>
@@ -245,7 +245,7 @@
         <p id="sameAlertAgain"></p>
         <label>Description:</label>
         <textarea id="seesescrip" class="sesinput"></textarea>
-        <div id="optbuttons">
+        <div id="optbuttons" class="grid twoCols">
           <button class="deletebtn" id="deleteallses">Delete all sessions</button></td>
           <button class="deletebtn" id="deleteses">Delete session</button>
           <button class="clearbtn" id="clearallses">Clear all sessions</button>
@@ -285,10 +285,10 @@
       <div id="sespopup" class="popup">
         <h3>New Session</h3>
           <p id="sameAlert"></p>
-          <ul>
-            <li><label>Name: </label><input id="sesname"class="sesinput" maxlength="50"></li>
-            <li><label>Description: <textarea id="sescrip" class="sesinput"></textarea></label></li>
-          </ul>
+          <div class="grid">
+            <label>Name: </label><input id="sesname"class="sesinput" maxlength="50">
+            <label>Description:</label><textarea id="sescrip" class="sesinput"></textarea>
+          </div>
         <button id="sescancel">Cancel</button>
         <button id="sescreate">Create</button>
       </div>    
