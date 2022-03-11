@@ -497,7 +497,7 @@ input, textarea, select {
   margin-top: 12px;
 }
 
-#timepopup button {
+#timepopup button:not(#inmore) {
   display: block;
   margin: 19px auto 5px;
 }
@@ -534,8 +534,9 @@ input, textarea, select {
 
 #inmore {
   font-size: 0.8em;
-  position: relative;
-  cursor: pointer;
+  display: inline;
+  margin: 0;
+  background: none;
 }
 
 .imgBtn {
