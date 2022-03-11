@@ -879,7 +879,7 @@ function fin() { // finish timing, save result
   cancelAnimationFrame(runStopwatch);
   cancelAnimationFrame(runInspect);
 
-  time.className = 'time'; // remove all other classes
+  time.classList.remove('green', 'red', 'zfour', 'none');
   timePos(false); // uncenter time
   time.textContent = toMinutes(counter); // show hundredths of a second
   insptime.classList.remove('orange', 'green');
