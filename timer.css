@@ -87,7 +87,6 @@ a {
 .time {
   font-size: calc(500% + 19vmin);
   position: relative;
-  width: min-content;
   margin: 0;
 }
 
@@ -154,10 +153,10 @@ a {
 .rdropcontent {
   display: none;
   position: absolute;
-  background: var(--overlay-bg);
   z-index: 10;
   top: calc(100% + 4px);
   font-size: 1.25rem;
+  background: var(--overlay-bg);
   box-shadow: var(--shadow);
 }
 
