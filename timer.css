@@ -73,7 +73,7 @@ a {
   display: grid;
   place-items: center;
   grid-template-rows: repeat(8, 1fr);
-  grid-template-columns: 29ch repeat(6, 1fr);
+  grid-template-columns: 35ch repeat(6, 1fr);
 }
 
 .timegrid {
