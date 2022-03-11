@@ -195,6 +195,8 @@ a {
   height: 100%;
   justify-content: space-between;
   padding-right: 1ch;
+  max-width: 32ch;
+  background: var(--bg);
 }
 
 .scrollTable {
