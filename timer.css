@@ -76,7 +76,7 @@ a {
   height: 100%;
   place-items: center;
   grid-template-rows: repeat(8, 1fr);
-  grid-template-columns: 35ch repeat(6, 1fr);
+  grid-template-columns: 37ch repeat(6, 1fr);
 }
 
 .timegrid {
@@ -192,8 +192,8 @@ a {
   height: 100%;
   justify-content: space-between;
   padding-right: 1ch;
-  max-width: 32ch;
   background: var(--bg);
+  margin-right: 1.7rem;
 }
 
 .scrollTable {
@@ -210,14 +210,10 @@ a {
 }
 
 #timetable {
-  display: block;
-  text-align: left;
-  color: var(--text);
   padding: 2px 0 0 2px;
-  text-decoration: none;
-  overflow: hidden;
   text-align: center;
   font-size: 1.25rem;
+  width: 100%;
 }
 
 #timetable td {
