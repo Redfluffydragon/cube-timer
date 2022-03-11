@@ -172,7 +172,6 @@ const sesname = document.getElementById('sesname');
 const sescrip = document.getElementById('sescrip');
 const changesesname = document.getElementById('changesesname');
 const seesescrip = document.getElementById('seesescrip');
-const undobtn = document.getElementById('undobtn');
 const timenterpopup = document.getElementById('timenterpopup');
 const timentertoo = document.getElementById('timentertoo');
 const enterTimeInputs = {
@@ -375,6 +374,7 @@ document.addEventListener('click', e => {
   else if (multiMatch(e, '#rcorners', '#scorners')) { changeCorners(e); }
   else if (multiMatch(e, '#timeclose', '#settingsClose')) { closeNdraw(); }
   else if (multiMatch(e, '#infoclose', '#timentercanc')) { closeAll(); }
+  else if (e.target.closest('#undobtn')) { undo (); }
 
   // for dropdown buttons
   const onButton =
@@ -541,8 +541,6 @@ function afterLoad() {
       twelveSecSound.play();
       twelveSecSound.pause();
     }, { once: true, useCapture: false });
-    undobtn.classList.remove('none'); // and show undo button
-    undobtn.addEventListener('click', undo, false);
   }
 }
 

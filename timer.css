@@ -622,10 +622,13 @@ input, textarea, select {
 
 #undobtn {
   padding: 3px;
-  border-radius: 50%;
   margin-bottom: 3px;
-  position: relative;
-  place-self: end;
+  border-radius: 50%;
+  position: absolute;
+  right: 2.3em;
+  bottom: 0;
+  display: none;
+  z-index: 9;
 }
 
 #settings {
@@ -737,9 +740,7 @@ input, textarea, select {
   }
 
   #undobtn {
-    position: absolute;
-    right: 2em;
-    bottom: 0;
+    display: initial;
   }
 }
 
@@ -769,9 +770,7 @@ input, textarea, select {
   }
 
   #undobtn {
-    position: absolute;
-    right: 2em;
-    bottom: 0;
+    display: initial;
   }
 }
 
