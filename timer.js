@@ -512,8 +512,8 @@ function draw() { // to redraw things after modifying
 }
 
 function afterLoad() {
-  scramOverflowShadow();
   setTimeout(() => {
+    scramOverflowShadow();
     ttsize.classList.add('transOneSec');
     sessionsdiv.classList.add('transOneSec');
   }, 10);
