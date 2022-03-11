@@ -348,10 +348,8 @@ a {
 }
 
 #sescrip {
-  vertical-align: top;
   margin: 4px;
-  width: 20vw;
-  height: 7vh;
+  height: 5em;
   resize: none;
 }
 
@@ -416,18 +414,11 @@ a {
   font-size: 0.9em;
 }
 
-#sesoptpopup button {
-  display: inline-block;
-  margin: 4px auto;
-  width: 17vw;
-}
-
 #seesescrip {
-  vertical-align: top;
-  margin: 4px;
-  width: 96%;
+  margin-top: 4px;
+  width: 100%;
   resize: none;
-  height: 10vh;
+  height: 5em;
 }
 
 #timenterpopup .grid {
@@ -539,7 +530,6 @@ input, textarea, select {
   width: 96%;
   height: 12vh;
   resize: none;
-  vertical-align: top;
   margin-bottom: 4px;
 }
 
