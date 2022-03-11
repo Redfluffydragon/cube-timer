@@ -688,17 +688,13 @@ input, textarea, select {
 }
 
 @media screen and (max-width: 800px) {
-  .timegrid, #settings, #scramblediv, #multiScram {
-    grid-column: 1 / -1;
+  body {
+    --fill-sometimes: -1 / 1;
   }
 
   #settings {
     justify-content: center;
     margin-left: 2.3em;
-  }
-
-  #scramblediv {
-    grid-row: span 4 / auto;
   }
 
   #multiScram {
@@ -826,10 +822,6 @@ input, textarea, select {
 
 .opZero {
   opacity: 0;
-}
-
-.zOne {
-  z-index: 1;
 }
 
 .zfour {
