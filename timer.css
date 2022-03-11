@@ -637,18 +637,11 @@ input, textarea, select {
 }
 
 #undobtn {
-  padding: 0;
+  padding: 3px;
   border-radius: 50%;
-  height: calc(19px + 0.7vw);
-  width: calc(19px + 0.7vw);
-  margin: 0 3px 3px 0;
+  margin-bottom: 3px;
   position: relative;
   place-self: end;
-}
-
-.undoIcon {
-  width: 80%;
-  height: 80%;
 }
 
 #settings {
