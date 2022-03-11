@@ -289,7 +289,7 @@ document.addEventListener('click', e => {
     timentertoo.focus();
   }
   else if (match('#settingsIcon')) {
-    for (let i in settingsSettings) { settingsSettings[i].checked = storeSettings[i]; }
+    for (const i in settingsSettings) { settingsSettings[i].checked = storeSettings[i]; }
     storeSettings.cornerStyle === 'r' ?
       document.getElementById('rcorners').checked = true :
       document.getElementById('scorners').checked = true;
@@ -354,7 +354,7 @@ document.addEventListener('click', e => {
   }
   else if (match('#saveses')) {
     if (checkSession(changesesname.value, document.getElementById('sameAlertAgain'))) {
-      for (let i of allTimes) { i.session === session && (i.session = changesesname.value); }
+      for (const i of allTimes) { i.session === session && (i.session = changesesname.value); }
       sessions.find(e => {
         if (e.name === session) {
           e.name = changesesname.value;
@@ -447,7 +447,7 @@ function gotem(key, value, type = localStorage) { // wrapper function for gettin
 };
 
 function colorIndicator(array, value) { // mark selection in dropdowns
-  for (let i of array) { // mark the right one (darker gray), and unmark all the other ones
+  for (const i of array) { // mark the right one (darker gray), and unmark all the other ones
     i.classList[i.textContent === value ? 'add' : 'remove']('selected');
   }
 };
@@ -460,13 +460,13 @@ function draw() { // to redraw things after modifying
   else { scramble(); }
 
   displayTimes.length = 0;
-  for (let i of allTimes) { i.session === session && (displayTimes.push(i)); } // get all saved times for tehe current session
+  for (const i of allTimes) { i.session === session && (displayTimes.push(i)); } // get all saved times for tehe current session
 
   const columnClass = ['number', 'times', 'avgofive', 'avgotwelve'];
 
   // clear the table
   timebody.innerHTML = '';
-  for (let [i, e] of displayTimes.entries()) {
+  for (const [i, e] of displayTimes.entries()) {
     const row = timebody.insertRow(0);
     row.className = 'idAll';
     const tempRow = [];
@@ -503,7 +503,7 @@ function draw() { // to redraw things after modifying
 
   // sessions
   sesdrop.innerHTML = '';
-  for (let i of sessions) {
+  for (const i of sessions) {
     const sesnode = document.createElement('p');
     sesnode.textContent = i.name;
     sesnode.classList.add('sesselect');
@@ -598,7 +598,7 @@ function closeModal(e) { // close modals
 
 function bestworst(array) { // get the best and worst times, not including dnfs
   const justTimes = [];
-  for (let i of array) { i.time && justTimes.push(i.time); }
+  for (const i of array) { i.time && justTimes.push(i.time); }
   const worstTime = Math.max(...justTimes);
   const bestTime = Math.min(...justTimes);
   best.textContent = !isNaN(JSON.stringify(bestTime)) ? toMinutes(bestTime) : '-';
@@ -642,7 +642,7 @@ function checkTime(time) { // check if a time is valid, and return it in seconds
 }
 
 function multiMatch(e, ...targets) { // match function for multiple possible matches
-  for (let i of targets) {
+  for (const i of targets) {
     if (e.target.matches(i)) { return true; }
   }
   return false;
@@ -762,7 +762,7 @@ function scrambleSquan() { // probably doesn't work. I don't know what moves are
 
 function scrambleClock() {
   addFour(clocksL4, 0, false);
-  for (let i of clocks) {
+  for (const i of clocks) {
     const clkstr = JSON.stringify(Math.round((Math.random() * 11) - 5));
     const rvrsclock = clkstr.length > 1 ? clkstr.charAt(1) + clkstr.charAt(0) : clkstr.charAt(0) + '+';
     i !== 'y2' ? tscramble.unshift(i + rvrsclock) : tscramble.unshift(i);
@@ -969,7 +969,7 @@ function undo() { // undo the last-done deletion
   let msg = 'Nothing to undo';
   if (removed.length) {
     const getIdx = removed[0].index;
-    for (let i of removed) {
+    for (const i of removed) {
       allTimes[getIdx] == null ? allTimes.push(i.time) : allTimes.splice(getIdx, 0, i.time);
     }
     removed.length = 0;
@@ -977,7 +977,7 @@ function undo() { // undo the last-done deletion
     msg = 'Undone!'
   }
   if (sesRemoved.length) {
-    for (let i of sesRemoved) {
+    for (const i of sesRemoved) {
       if (!sessions.includes(i)) { // fix duplicating sessions with one (not all)
         sessions.push({ name: i.name, description: i.description });
       }
@@ -1007,13 +1007,13 @@ function closeAll() { // close everything
   timepopup.matches('.inlineBlock') && (allThisTime.comment = comment.value);
 
   if (setpopup.matches('.inlineBlock')) {
-    for (let i in settingsSettings) {
+    for (const i in settingsSettings) {
       storeSettings[i] = settingsSettings[i].checked;
     }
   }
 
   // close all modals
-  for (let i of document.getElementsByClassName('popup')) { i.classList.remove('inlineBlock'); }
+  for (const i of document.getElementsByClassName('popup')) { i.classList.remove('inlineBlock'); }
 
   timepops.classList.add('none');
   shadow.classList.remove('initial');
@@ -1025,13 +1025,13 @@ function closeAll() { // close everything
 }
 
 function closeDrops(button) {
-  for (let i of document.getElementsByClassName('rdropcontent')) {
+  for (const i of document.getElementsByClassName('rdropcontent')) {
     i.parentElement.getElementsByClassName('rdropbtn')[0].id !== button && i.classList.remove('block');
   }
 }
 
 function checkSession(name, alertElement) { // check for duplicate names
-  for (let i of sessions) {
+  for (const i of sessions) {
     if (name === i.name) {
       alertElement.textContent = `You've already used that name.`;
       return false;
@@ -1054,17 +1054,17 @@ function newSession() { // create a new session
 // for csv export:
 function saveCurrentSession() { // get just the current session
   const sesremoves = [];
-  for (let i of allTimes) {
+  for (const i of allTimes) {
     i.session === session && sesremoves.push(i);
   }
-  for (let i of sesremoves) {
+  for (const i of sesremoves) {
     const rmvidx = allTimes.indexOf(i);
     removed.push({ time: allTimes.splice(rmvidx, 1)[0], index: rmvidx, session: session });
   }
 }
 
 function saveAllTimes() { // get everything
-  for (let [idx, el] of allTimes.entries()) {
+  for (const [idx, el] of allTimes.entries()) {
     removed.push({ time: el, index: idx });
   }
   allTimes.length = 0;
@@ -1076,15 +1076,15 @@ function saveAllTimes() { // get everything
 function createArray(array) { // create array of arrays from array of objects, with headers from keys
   let returnarray = [];
   let columnNames = [];
-  for (let i in array[0]) { // capitalize the keys, for column titles - assume keys are the same for all elements
+  for (const i in array[0]) { // capitalize the keys, for column titles - assume keys are the same for all elements
     const titleCase = i.charAt(0).toUpperCase() + i.slice(1);
     columnNames.push(titleCase);
   }
   returnarray.push(columnNames);
-  for (let i of array) { // for each element in the array
+  for (const i of array) { // for each element in the array
     let temparray = []; // initialize a temporary array (I'm not sure why it has to be initialized here, but it does)
     // push the value from each key in the current element to the temporary array
-    for (let j in array[0]) { temparray.push(`"${i[j].toString()}"`) };
+    for (const j in array[0]) { temparray.push(`"${i[j].toString()}"`) };
     returnarray.push(temparray); // push the temporary array to the final array
   }
   return returnarray;
@@ -1094,7 +1094,7 @@ function createCsv(array, name) { // create csv file from 2d array
   const makeIntoArray = createArray(array); // get 2d array from array of objects
   let csvFile = 'data:text/csv;charset=utf-8,';
   // concatenate each smaller array onto the csv file, and add a newline after each
-  for (let i of makeIntoArray) { csvFile += i + '\n' };
+  for (const i of makeIntoArray) { csvFile += i + '\n' };
   const encoded = encodeURI(csvFile);
   const linkDownload = document.createElement('a'); // create a download link, and simulate a click on it
   linkDownload.setAttribute('href', encoded);
