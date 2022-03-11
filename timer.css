@@ -754,6 +754,20 @@ input, textarea, select {
   #morepopup {
     max-height: 50vh;
   }
+
+  .timegrid, #scramblediv {
+    grid-row: span 3 / auto;
+  }
+
+  .time {
+    font-size: calc(490% + 15vmin);
+  }
+
+  #undobtn {
+    position: absolute;
+    right: 2em;
+    bottom: 0;
+  }
 }
 
 @media screen and (max-width: 300px) {
