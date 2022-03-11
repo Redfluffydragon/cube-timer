@@ -428,7 +428,7 @@ addEventListener('keyup', e => {
   e.key === ' ' && up();
 }, false);
 
-addEventListener('load', afterLoad, false);
+addEventListener('load', afterLoad, { once: true, useCapture: false });
 
 const whichUnload = (navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPhone/i)) ? 'pagehide' : 'beforeunload';
 addEventListener(whichUnload, () => {
