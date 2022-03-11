@@ -161,8 +161,7 @@ a {
 }
 
 .rdropcontent p {
-  color: black;
-  padding: 0.5vw 1vw 0.8vw;
+  padding: 0.5ch 1ch;
   display: block;
   margin: 0;
   cursor: pointer;
@@ -326,8 +325,7 @@ a {
 }
 
 #sesdrop p {
-  color: black;
-  padding: 0.5vw 1vw 0.8vw;
+  padding: 0.5ch 1ch;
   display: block;
   text-decoration: none;
   margin: 0;
