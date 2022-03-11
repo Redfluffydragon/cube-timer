@@ -468,6 +468,8 @@ input, textarea, select {
   box-shadow: var(--shadow);
   padding: 5px 15px;
   max-width: 94vh;
+  max-height: calc(100vh - 5em);
+  overflow: auto;
 }
 
 .coverall {
@@ -648,6 +650,8 @@ input, textarea, select {
 
 #cubeDrop {
   right: 0;
+  max-height: calc(100vh - 6em);
+  overflow: auto;
 }
 
 #setpopup ul {
@@ -736,12 +740,6 @@ input, textarea, select {
 }
 
 @media all and (orientation: landscape) and (max-height: 420px) {
-  #cubeDrop {
-    max-height: 80vh;
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
-  }
-
   #setpopup h3 {
     margin: 5px auto 5px;
   }
