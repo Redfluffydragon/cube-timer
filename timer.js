@@ -292,7 +292,7 @@ document.addEventListener('click', e => {
   else if (match('#newses')) {
     showModal(sespopup);
     sesname.focus();
-    shadow.style.zIndex = '7'; // even further up to cover everything except the new session div
+    shadow.style.zIndex = 101; // even further up to cover everything except the new session div
   }
   else if (match('#sescancel')) {
     sespopup.classList.remove('inlineBlock');

@@ -462,14 +462,14 @@ input, textarea, select {
   top: 0;
   left: 0;
   text-align: center;
-  z-index: 101;
+  z-index: 100;
 }
 
 #overtop {
   position: absolute;
   text-align: center;
-  z-index: 15;
-  top: 0;
+  z-index: 102;
+  top: 2ch;
   width: 100%;
 }
 
