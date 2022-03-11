@@ -166,9 +166,9 @@
           <td id="seecube"></td>
         </tr>
         </table>
-        <label>Comments: </label>
+        <label for="comment">Comments: </label>
         <textarea id="comment" resize></textarea>
-        <label id="alwsmore" class="inlineBlock"><input id="checkmore" type="checkbox">Always show more</label>
+        <label id="alwsmore" for="checkmore" class="inlineBlock"><input id="checkmore" type="checkbox">Always show more</label>
       </div>
       </div>
 
@@ -176,48 +176,48 @@
         <h3>Settings</h3>
         <ul>
           <li>
-            <label>
+            <label for="countAnnounce">
               <input type="checkbox" checked id="countAnnounce">
               Countdown announcer
             </label>
             </li>
           <li>
-            <label>
+            <label for="showSettings">
               <input type="checkbox" checked id="showSettings">
               Delay & inspection on main screen
             </label>
           </li>
           <li>
-            <label>
+            <label for="showBW">
               <input type="checkbox" checked id="showBW">
               Show best/worst
             </label>
           </li>
           <li>
-            <label>
+            <label for="BWSesAll">
               <input type="checkbox" id="BWSesAll">
               Best/worst per session
             </label>
           </li>
           <li>
-            <label>
+            <label for="hideThings">
               <input type="checkbox" checked id="hideThings">
               Hide things while timing
             </label>
           </li>
           <li>
-            <label>
+            <label for="showMScram">
               <input type="checkbox" checked id="showMScram">
               Multiple scrambles
             </label>
           </li>
           <li>Corner style:</li>
           <li class="indented">
-            <label>
+            <label for="rcorners">
               <input id="rcorners" type="radio" name="corners" checked>
               Round
             </label>
-            <label>
+            <label for="scorners">
               <input id="scorners" type="radio" name="corners">
               Sharp
             </label>
@@ -243,7 +243,7 @@
       <div id="sesoptpopup" class="popup">
         <h3><input id="changesesname"value="Session 1" maxlength="50"/></h3>
         <p id="sameAlertAgain"></p>
-        <label>Description:</label>
+        <label for="seesescrip">Description:</label>
         <textarea id="seesescrip" class="sesinput"></textarea>
         <div id="optbuttons" class="grid twoCols">
           <button class="deletebtn" id="deleteallses">Delete all sessions</button></td>
@@ -286,8 +286,8 @@
         <h3>New Session</h3>
           <p id="sameAlert"></p>
           <div class="grid">
-            <label>Name: </label><input id="sesname"class="sesinput" maxlength="50">
-            <label>Description:</label><textarea id="sescrip" class="sesinput"></textarea>
+            <label for="sesname">Name: </label><input id="sesname"class="sesinput" maxlength="50">
+            <label for="sescrip">Description:</label><textarea id="sescrip" class="sesinput"></textarea>
           </div>
         <button id="sescancel">Cancel</button>
         <button id="sescreate">Create</button>
