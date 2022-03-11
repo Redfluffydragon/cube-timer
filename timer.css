@@ -766,6 +766,16 @@ input, textarea, select {
   }
 }
 
+@media screen and (max-width: 300px) {
+  .moveTable.in {
+    top: 100%;
+    transform: translate(-100%, -100%);
+    background: none;
+    box-shadow: none;
+    z-index: 52;
+  }
+}
+
 .initial {
   display: initial;
 }
