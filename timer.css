@@ -73,6 +73,30 @@ a {
   color: var(--link);
 }
 
+button {
+  background: var(--btn-bg);
+  border: none;
+  font-size: 1.1em;
+  padding: 1ch 1.2ch;
+  cursor: pointer;
+  margin: 0.5ch;
+  color: inherit;
+}
+
+input, textarea, select {
+  padding: 4px;
+  border: 0.5px solid rgb(150, 150, 150);
+  font: inherit;
+}
+
+button, .rdropcontent, .pointer, .dropupcontent, .popup, input, textarea {
+  border-radius: var(--five-rad);
+}
+
+.relative {
+  position: relative;
+}
+
 .allGrid {
   width: 100%;
   height: 100%;
@@ -88,7 +112,6 @@ a {
 
 .time {
   font-size: calc(500% + 19vmin);
-  position: relative;
   margin: 0;
 }
 
@@ -118,13 +141,10 @@ a {
 #scrambletxt {
   font-family: monospace;
   font-size: 2.5rem;
-  position: relative;
   max-height: 100%;
   overflow: auto;
   white-space: pre-line;
   margin: 4px 4px 0;
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
 
@@ -132,7 +152,7 @@ a {
   box-shadow: var(--inset-shadow);
 }
 
-#scrambletxt::-webkit-scrollbar {
+#scrambletxt::-webkit-scrollbar, .scrollTable::-webkit-scrollbar {
   display: none;
 }
 
@@ -146,10 +166,6 @@ a {
 
 #multiScram button {
   padding: 0.5ch 1ch;
-}
-
-.rdropdown {
-  position: relative;
 }
 
 .rdropcontent {
@@ -170,11 +186,8 @@ a {
 }
 
 .rdropbtn {
-  border: none;
   margin: 0;
-  position: relative;
   z-index: 1;
-  cursor: pointer;
 }
 
 .rdropcontent p:hover {
@@ -204,10 +217,6 @@ a {
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-}
-
-.scrollTable::-webkit-scrollbar {
-  display: none;
 }
 
 #timetable {
@@ -306,14 +315,12 @@ a {
 
 .dropup {
   display: inline-block;
-  position: relative;
   z-index: 3;
 }
 
 .dropupcontent {
   display: none;
   background: var(--overlay-bg);
-  position: relative;
   bottom: 4px;
 }
 
@@ -419,22 +426,6 @@ a {
 
 #timenterpopup input {
   width: 100%;
-}
-
-button {
-  background: var(--btn-bg);
-  border: none;
-  font-size: 1.1em;
-  padding: 1ch 1.2ch;
-  cursor: pointer;
-  margin: 0.5ch;
-  color: var(--text);
-}
-
-input, textarea, select {
-  padding: 4px;
-  border: 0.5px solid rgb(150, 150, 150);
-  font: inherit;
 }
 
 #shadow {
@@ -563,9 +554,7 @@ input, textarea, select {
 
 .topstats {
   padding-right: 12px;
-  position: relative;
   font-size: 1.1em;
-  display: inline;
 }
 
 #bestworst * {
@@ -577,12 +566,10 @@ input, textarea, select {
   width: 2rem;
   aspect-ratio: 1;
   position: absolute;
-  bottom: 0.6vh;
-  right: 0.6vh;
+  bottom: 0.5ch;
+  right: 0.5ch;
   margin: 0;
   z-index: 2;
-  cursor: pointer;
-  /* display: none; */
 }
 
 #infopopup h3 {
@@ -597,8 +584,7 @@ input, textarea, select {
 
 #infopopup button {
   display: block;
-  margin-left: 33%;
-  margin-bottom: 4px;
+  margin: auto auto 4px 33%;
   width: 33%;
 }
 
@@ -608,16 +594,12 @@ input, textarea, select {
 }
 
 #undone {
-  position: relative;
   top: 45vh;
   color: white;
   border-radius: 10px;
   background: rgb(80, 80, 80);
-}
-
-#undotxt {
-  margin: 6px;
-  font-weight: 200;
+  padding: 0 2ch;
+  font-weight: 600;
 }
 
 #undobtn {
@@ -632,8 +614,7 @@ input, textarea, select {
 }
 
 #settings {
-  margin-top: 1ch;
-  margin-right: 1ch;
+  margin: 1ch 1ch 0 2.3em;
   grid-column: var(--fill-sometimes);
   grid-row: 1 / 2;
   align-self: start;
@@ -641,11 +622,11 @@ input, textarea, select {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: right;
+  justify-content: center;
   gap: 1ch;
 }
 
-#settings > div:not(.rdropdown) {
+#settings > div {
   display: flex;
   gap: 1ch;
   align-items: center;
@@ -696,11 +677,6 @@ input, textarea, select {
 @media screen and (max-width: 800px) {
   body {
     --fill-sometimes: -1 / 1;
-  }
-
-  #settings {
-    justify-content: center;
-    margin-left: 2.3em;
   }
 
   #multiScram {
@@ -843,10 +819,6 @@ input, textarea, select {
 
 .threeWide {
   grid-column: span 3 / auto;
-}
-
-button, .rdropcontent, .pointer, .dropupcontent, .popup, input, textarea {
-  border-radius: var(--five-rad);
 }
 
 .top {
