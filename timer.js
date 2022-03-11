@@ -94,9 +94,7 @@ let findSession; // for editing sessions
 // elements
 // for scrambles
 const scrambletxt = document.getElementById('scrambletxt');
-const scramblediv = document.getElementById('scramblediv');
 const scramNum = document.getElementById('scramNum');
-const scramPlur = document.getElementById('scramPlur');
 const multiScram = document.getElementById('multiScram');
 
 // dropdowns
@@ -104,12 +102,10 @@ const cubeButton = document.getElementById('cubeButton');
 const cubeDrop = document.getElementById('cubeDrop');
 const cubeselect = document.getElementsByClassName('cubeselect');
 
-const inspectSet = document.getElementById('inspectSet');
 const inspectButton = document.getElementById('inspectButton');
 const inspectDrop = document.getElementById('inspectDrop');
 const inspselect = document.getElementsByClassName('inspselect');
 
-const delaySet = document.getElementById('delaySet');
 const delayButton = document.getElementById('delayButton');
 const delayDrop = document.getElementById('delayDrop');
 const delaytime = document.getElementsByClassName('delaytime');
@@ -128,7 +124,6 @@ const onlytime = document.getElementById('onlytime');
 
 // modals
 const centerpop = document.getElementById('centerpop');
-const showEditTime = document.getElementById('showEditTime');
 const timepopup = document.getElementById('timepopup');
 const timepops = document.getElementById('timepops');
 const shadow = document.getElementById('shadow');
@@ -150,26 +145,21 @@ const sesslc = document.getElementById('sesslc');
 const sesdrop = document.getElementById('sesdrop');
 const sesModal = document.getElementById('sespopup');
 const sameAlert = document.getElementById('sameAlert');
-const sameAlertAgain = document.getElementById('sameAlertAgain');
 const sesname = document.getElementById('sesname');
 const sescrip = document.getElementById('sescrip');
-const sesoptpopup = document.getElementById('sesoptpopup');
 const changesesname = document.getElementById('changesesname');
 const seesescrip = document.getElementById('seesescrip');
 const sessionsdiv = document.getElementById('sessions');
 const undobtn = document.getElementById('undobtn');
 const timenterpopup = document.getElementById('timenterpopup');
 const timentertoo = document.getElementById('timentertoo');
-const cubenter = document.getElementById('cubenter');
-const scramenter = document.getElementById('scramenter');
-const datenter = document.getElementById('datenter');
-const commenter = document.getElementById('commenter');
-const enterArr = [timentertoo, cubenter, scramenter, datenter, commenter];
-
-const infopopup = document.getElementById('infopopup');
-
-const undone = document.getElementById('undone');
-const undotxt = document.getElementById('undotxt');
+const enterTimeInputs = {
+  timentertoo: timentertoo,
+  cube: document.getElementById('cubenter'),
+  scramble: document.getElementById('scramenter'), 
+  date: document.getElementById('datenter'),
+  comment: document.getElementById('commenter'),
+};
 
 // settings
 const setpopup = document.getElementById('setpopup')
@@ -181,11 +171,6 @@ const settingsSettings = { // object for the settings options checkboxes
   hideWhileTiming: document.getElementById('hideThings'),
   multiScram: document.getElementById('showMScram'),
 };
-
-const modals = document.getElementsByClassName('popup');
-
-const rcorners = document.getElementById('rcorners');
-const scorners = document.getElementById('scorners');
 
 const isMobile = (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1);
 
@@ -305,7 +290,9 @@ document.addEventListener('click', e => {
   }
   else if (match('#settingsIcon')) {
     for (let i in settingsSettings) { settingsSettings[i].checked = storeSettings[i]; }
-    rcorners.id.charAt(0) === storeSettings.cornerStyle ? rcorners.checked = true : scorners.checked = true;
+    storeSettings.cornerStyle === 'r' ?
+      document.getElementById('rcorners').checked = true :
+      document.getElementById('scorners').checked = true;
     showModal(setpopup);
   }
   else if (match('#deleteallses') && confirm('Delete all sessions?')) {
@@ -353,7 +340,7 @@ document.addEventListener('click', e => {
     createCsv(displayTimes, session);
   }
   else if (match('#sesopt')) {
-    showModal(sesoptpopup);
+    showModal(document.getElementById('sesoptpopup'));
     changesesname.value = session;
     sessions.find(e => e.name === session && (findSession = e));
     seesescrip.value = findSession.description;
@@ -366,7 +353,7 @@ document.addEventListener('click', e => {
     inmore.textContent = inmore.textContent === '[more]' ? '[less]' : '[more]';
   }
   else if (match('#saveses')) {
-    if (checkSession(changesesname.value, sameAlertAgain)) {
+    if (checkSession(changesesname.value, document.getElementById('sameAlertAgain'))) {
       for (let i of allTimes) { i.session === session && (i.session = changesesname.value); }
       sessions.find(e => {
         if (e.name === session) {
@@ -382,7 +369,7 @@ document.addEventListener('click', e => {
   }
   else if (match('#lighticon')) { runmode(true); }
   else if (match('#sescreate')) { newSession(); }
-  else if (match('#infobtn')) { showModal(infopopup); }
+  else if (match('#infobtn')) { showModal(document.getElementById('infopopup')); }
   else if (e.target.closest('.moveTable') || e.target.matches('#timeTableShadow')) { timesInOut(true); }
   else if (multiMatch(e, '#rcorners', '#scorners')) { changeCorners(e); }
   else if (multiMatch(e, '#timeclose', '#settingsClose')) { closeNdraw(); }
@@ -507,8 +494,9 @@ function draw() { // to redraw things after modifying
 
   // apply settings
   const whichSpot = storeSettings.delayAndInspect ? document.getElementById('hsSpot') : document.getElementById('popSpot');
-  whichSpot.appendChild(inspectSet);
-  whichSpot.appendChild(delaySet);
+  whichSpot.appendChild(document.getElementById('inspectSet'));
+  whichSpot.appendChild(document.getElementById('delaySet'));
+
   BWdiv.style.display = storeSettings.showBW ? '' : 'none';
   bestworst(storeSettings.BWperSess ? displayTimes : allTimes);
   multiScram.classList[storeSettings.multiScram ? 'remove' : 'add']('opZero');
@@ -584,10 +572,10 @@ function timeClicks(e) { // for clicks on the time table
     thetwo.classList[allThisTime.dnf ? 'add' : 'remove']('selected');
 
     thetwo.classList[allThisTime.plustwo ? 'add' : 'remove']('selected');
-    showEditTime.textContent = `${reverseRow} (${timetoshine})`;
+    document.getElementById('showEditTime').textContent = `${reverseRow} (${timetoshine})`;
 
     // set up popup with correct data
-    scramPlur.textContent = allThisTime.scramble.includes(';') ? 'Scrambles: ' : 'Scramble: ';
+    document.getElementById('scramPlur').textContent = allThisTime.scramble.includes(';') ? 'Scrambles: ' : 'Scramble: ';
     seeScramble.textContent = allThisTime.scramble;
     seeDate.textContent = allThisTime.date;
     seeCube.textContent = allThisTime.cube;
@@ -632,15 +620,15 @@ function addNewTime() {
   if (timentertoo.value !== '' && checkTime(timentertoo.value)) {
     allTimes.push({
       time: checkTime(timentertoo.value),
-      cube: cubenter.value,
+      cube: enterTimeInputs.cube.value,
       session: session,
-      scramble: scramenter.value,
-      date: datenter.value,
-      comment: commenter.value,
+      scramble: enterTimeInputs.scramble.value,
+      date: enterTimeInputs.date.value,
+      comment: enterTimeInputs.comment.value,
       dnf: false,
       plustwo: false
     });
-    for (let i of enterArr) { i.value = null; }
+    for (const i in enterTimeInputs) { enterTimeInputs[i].value = null; }
     closeNdraw();
   }
   else { alert(`I don't recognize that time.`); }
@@ -999,8 +987,8 @@ function undo() { // undo the last-done deletion
     sessionStorage.removeItem('sesremoved');
     msg = 'Undone!'
   }
-  undotxt.textContent = msg;
-  showModal(undone);
+  document.getElementById('undotxt').textContent = msg;
+  showModal(document.getElementById('undone'));
   setTimeout(closeAll, 400);
   draw();
 }
@@ -1025,7 +1013,7 @@ function closeAll() { // close everything
   }
 
   // close all modals
-  for (let i of modals) { i.classList.remove('inlineBlock'); }
+  for (let i of document.getElementsByClassName('popup')) { i.classList.remove('inlineBlock'); }
 
   timepops.classList.add('none');
   shadow.classList.remove('initial');
