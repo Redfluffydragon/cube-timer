@@ -732,6 +732,12 @@ input, textarea, select {
   .popup {
     padding: 5px;
   }
+
+  #undobtn {
+    position: absolute;
+    right: 2em;
+    bottom: 0;
+  }
 }
 
 @media all and (orientation: landscape) and (max-height: 420px) {
