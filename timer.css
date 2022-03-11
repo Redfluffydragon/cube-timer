@@ -240,23 +240,40 @@ img {
 
 .moveTable {
   height: 3rem;
-}
-
-.moveTable.out {
   position: absolute;
-  left: 3px;
-  background: var(--btn-bg);
   top: 4px;
 }
 
-#inoutcell {
-  padding: 0;
-  position: absolute;
+.moveTable.out {
+  left: 3px;
+  background: var(--btn-bg);
+  border-radius: var(--three-rad) 1.5rem 1.5rem var(--three-rad);
 }
 
-#inicon, #outicon {
-  aspect-ratio: unset;
-  border-radius: var(--three-rad);
+.moveTable.in {
+  left: 100%;
+  border-radius: var(--three-rad) 1.5rem 1.5rem var(--three-rad);
+  background: var(--btn-bg);
+}
+
+.moveTable::after {
+  content: '';
+  border-left: 3px solid var(--text);
+  border-bottom: 3px solid var(--text);
+  position: absolute;
+  height: 1rem;
+  width: 1rem;
+  top: 50%;
+  left: 0;
+  transform-origin: center;
+}
+
+.moveTable.out::after {
+  transform: translate(-12%, -50%) rotate(-135deg);
+}
+
+.moveTable.in::after {
+  transform: translate(40%, -50%) rotate(45deg);
 }
 
 #sessions {
