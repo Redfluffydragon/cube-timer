@@ -216,6 +216,7 @@ a {
   text-decoration: none;
   overflow: hidden;
   text-align: center;
+  font-size: 1.25rem;
 }
 
 #timetable td {
@@ -228,7 +229,6 @@ a {
 }
 
 .header, .times, .avgofive, .avgotwelve {
-  font-size: 1.1rem;
   min-width: 7ch;
   padding: 5px 3px;
 }
