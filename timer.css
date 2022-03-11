@@ -27,6 +27,7 @@ body {
   --shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
   
   --text: black;
+  --link: rgb(1, 55, 137);
   --bg: white;
 
   --invert: invert(0);
@@ -40,6 +41,7 @@ body {
 
 html[lmode=false] body {
   --text: rgb(215, 215, 215);
+  --link: rgb(150, 192, 248);
   --bg: black;
 
   --invert: invert(1);
@@ -53,6 +55,11 @@ html[lmode=false] body {
 img {
   filter: var(--invert);
   display: block;
+}
+
+
+a {
+  color: var(--link);
 }
 
 .allGrid {
