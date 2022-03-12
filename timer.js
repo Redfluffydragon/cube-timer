@@ -398,7 +398,7 @@ document.addEventListener('touchend', e => {
 }, { passive: false, useCapture: false });
 
 addEventListener('keydown', e => {
-  if (e.key === ' ') { down(); }
+  if (e.key === ' ' && !document.activeElement.matches('button')) { down(); }
   else if (e.key === 'Escape') { closeAll(); }
   else if (e.key === 'z' && e.ctrlKey && !modalOpen) { undo(); }
   else if (e.key === 'Enter') {
@@ -414,7 +414,7 @@ addEventListener('keydown', e => {
 }, false);
 
 addEventListener('keyup', e => {
-  e.key === ' ' && up();
+  e.key === ' ' && !document.activeElement.matches('button') && up();
 }, false);
 
 addEventListener('load', afterLoad, { once: true, useCapture: false });
