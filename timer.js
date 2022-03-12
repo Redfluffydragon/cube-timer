@@ -399,7 +399,7 @@ document.addEventListener('touchend', e => {
 
 addEventListener('keydown', e => {
   if (e.key === ' ' && !document.activeElement.matches('button')) { down(); }
-  else if (e.key === 'Escape') { closeAll(); }
+  else if (e.key === 'Escape') { closeAll(); time.textContent = '0.00'}
   else if (e.key === 'z' && e.ctrlKey && !modalOpen) { undo(); }
   else if (e.key === 'Enter') {
     sesModal.matches('.inlineBlock') && newSession();
