@@ -878,7 +878,7 @@ function fin() { // finish timing, save result
   cancelAnimationFrame(runInspect);
 
   time.classList.remove('green', 'red', 'zfour', 'none');
-  timePos(false); // uncenter time
+  timePos(storeSettings.timein); // uncenter time if the time table is on screen
   time.textContent = toMinutes(counter); // show hundredths of a second
   insptime.classList.remove('orange', 'green');
   onlytime.classList.remove('initial');
