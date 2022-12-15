@@ -1,6 +1,6 @@
 let APP_PREFIX = 'cube-timer_';
 
-let VERSION = '1.0.2.2';
+let VERSION = '1.1.0.0';
 
 let CACHE_NAME = APP_PREFIX + VERSION;
 
@@ -13,8 +13,6 @@ let URLS = [
   '/cube-timer/img/undoicon.png',
   '/cube-timer/img/settingsicon.png',
   '/cube-timer/img/lightmode.png',
-  '/cube-timer/img/inicon.png',
-  '/cube-timer/img/outicon.png',
   '/cube-timer/img/infoicon.png',
   '/cube-timer/sound/eight.mp3',
   '/cube-timer/sound/twelve.mp3',

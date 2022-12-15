@@ -1,24 +1,53 @@
 'use strict';
 
-navigator.serviceWorker && navigator.serviceWorker.register('/cube-timer/sw.js', {scope: '/cube-timer/'});
+const storeSettings = gotem('settings', {
+  announce: true,
+  delayAndInspect: true,
+  showBW: true,
+  BWperSess: false,
+  hideWhileTiming: true,
+  multiScram: true,
+  timein: false,
+  cornerStyle: 'r',
+  morechecked: false,
+  startdelay: 300,
+  inspectTime: true,
+  cube: '3x3',
+});
 
-//for stopwatch
-let counter; //holds the time
+// Elements that might need to be moved on page load
+const ttsize = document.getElementById('ttsize');
+const outicon = document.getElementById('outicon');
+const timeTableShadow = document.getElementById('timeTableShadow');
+const sessionsdiv = document.getElementById('sessions');
+const scrambletxt = document.getElementById('scrambletxt');
+
+// This auto hides the time table if it's in overlay mode, but saves the position if not
+if (window.innerWidth <= 800) {
+  storeSettings.timein = true;
+}
+timesInOut(false);
+applySettings();
+
+navigator.serviceWorker && navigator.serviceWorker.register('/cube-timer/sw.js', { scope: '/cube-timer/' });
+
+// for stopwatch
+let counter; // holds the time
 let timerStartTime;
 let runStopwatch;
 let timerState = 'stopped';
 
-const displaytimes = []; //just the times from current session - for display
-let tempallidx;
-let allthistime;
+const displayTimes = []; // just the times from current session - for display
+let currentTimeIdx;
+let allThisTime;
 
-let removed = gotem('removed', [], sessionStorage); //removed times
-let sesremoved = gotem('sesremoved', [], sessionStorage); //removed sessions
+let removed = gotem('removed', [], sessionStorage); // removed times
+let sesRemoved = gotem('sesremoved', [], sessionStorage); // removed sessions
 
-let keydown = false; //so it doesn't just start on keydown and stop on keyup
-let onstart = false; //starting or stopping
+let keydown = false; // so it doesn't just start on keydown and stop on keyup
+let onstart = false; // starting or stopping
 
-//for inspection time countdown
+// for inspection time countdown
 let timeoutStartTime;
 let runTimeout;
 let inspectStartTime;
@@ -33,7 +62,7 @@ const twelveSecSound = document.getElementById('twelveSecSound');
 let played8 = false;
 let played12 = false;
 
-//scramble generator variables
+// scramble generator variables
 const faces = ['F', 'U', 'L', 'R', 'D', 'B'];
 const fewerFaces = ['L', 'R', 'B', 'U'];
 const mods = ['', `'`, '2'];
@@ -42,27 +71,27 @@ const moves4 = [];
 const moves6 = [];
 const pyrsmoves = [];
 
-for (let i = 0; i < faces.length*mods.length; i++) {
-  moves3.push(faces[Math.trunc(i/3)] + mods[i%3]); //run through and push all permutations of the faces and mods arrays
-  moves4.push(faces[Math.trunc(i/3)] + 'w' + mods[i%3]); //only the new ones for 4x4 and 5x5
-  moves6.push('3' + faces[Math.trunc(i/3)] + 'w' + mods[i%3]); //only the new ones for 6x6 and 7x7
+for (let i = 0; i < faces.length * mods.length; i++) {
+  moves3.push(faces[Math.trunc(i / 3)] + mods[i % 3]); // run through and push all permutations of the faces and mods arrays
+  moves4.push(faces[Math.trunc(i / 3)] + 'w' + mods[i % 3]); // only the new ones for 4x4 and 5x5
+  moves6.push('3' + faces[Math.trunc(i / 3)] + 'w' + mods[i % 3]); // only the new ones for 6x6 and 7x7
 }
 
-for (let i = 0; i < fewerFaces.length*2; i++) {
-  pyrsmoves.push(fewerFaces[Math.trunc(i/2)] + mods[i%2]); //same for pyraminx
+for (let i = 0; i < fewerFaces.length * 2; i++) {
+  pyrsmoves.push(fewerFaces[Math.trunc(i / 2)] + mods[i % 2]); // same for pyraminx
 }
 
-const allmoves4 = moves3.concat(moves4);
-const allmoves6 = moves6.concat(allmoves4);
-const pyrpmoves = ['l', 'r', 'b', 'u']; //the corner turns for pyraminx
-const clocksl4 = ['UL', 'DL', 'DR', 'UR']; //last four moves for clock
-const clocksf4 = ['ALL', 'L', 'D', 'R', 'U']; //repeating series in clock scramble
-const clocks = clocksf4.concat('y2').concat(clocksf4).concat(clocksl4); //concat all together
+const allMoves4 = moves3.concat(moves4);
+const allMoves6 = moves6.concat(allMoves4);
+const pyrpMoves = ['l', 'r', 'b', 'u']; // the corner turns for pyraminx
+const clocksL4 = ['UL', 'DL', 'DR', 'UR']; // last four moves for clock
+const clocksF4 = ['ALL', 'L', 'D', 'R', 'U']; // repeating series in clock scramble
+const clocks = clocksF4.concat('y2').concat(clocksF4).concat(clocksL4); // concat all together
 
 const tscramble = [];
-let slen; //scramble length
+let slen; // scramble length
 
-const oppositeSides = { //opposite sides for nxnxn cubes
+const oppositeSides = { // opposite sides for nxnxn cubes
   R: 'L',
   L: 'R',
   U: 'D',
@@ -71,108 +100,91 @@ const oppositeSides = { //opposite sides for nxnxn cubes
   B: 'F'
 }
 
-const scramblers = { //object with all the scrambler functions in it, to replace a giant switch
-  '2x2': () => { slen = 10; checknxn(moves3); },
-  '3x3': () => { slen = 20; checknxn(moves3); },
-  '4x4': () => { slen = 45; checknxn(allmoves4); },
-  '5x5': () => { slen = 60; checknxn(allmoves4); },
-  '6x6': () => { slen = 70; checknxn(allmoves6); },
-  '7x7': () => { slen = 65; checknxn(allmoves6); },
-  'Megaminx': () => { slen = 77; checkmeg(); },
-  'Pyraminx': () => { slen = 10; checkpyrall(); },
-  'Skewb': () => { slen = 10; checkpyr1(); },
-  'Square-1': () => { slen = 15; checksqu(); },
-  'Clock': () => { slen = 0; checkclo(); },
+const scramblers = { // object with all the scrambler functions in it, to replace a giant switch
+  '2x2': () => { slen = 10; scrambleNxN(moves3); },
+  '3x3': () => { slen = 20; scrambleNxN(moves3); },
+  '4x4': () => { slen = 45; scrambleNxN(allMoves4); },
+  '5x5': () => { slen = 60; scrambleNxN(allMoves4); },
+  '6x6': () => { slen = 70; scrambleNxN(allMoves6); },
+  '7x7': () => { slen = 65; scrambleNxN(allMoves6); },
+  'Megaminx': () => { slen = 77; scrambleMegaminx(); },
+  'Pyraminx': () => { slen = 10; scramblePyraminx(); },
+  'Skewb': () => { slen = 10; scrambleFourSides(); },
+  'Square-1': () => { slen = 15; scrambleSquan(); },
+  'Clock': () => { slen = 0; scrambleClock(); },
 }
 
-//modals open or closed
-let popup = false;
+// modals open or closed
+let modalOpen = false;
 let closing = false;
 
-let findSession; //for editing sessions
+let findSession; // for editing sessions
 
-//elements
-//for scrambles
-const scrambletxt = document.getElementById('scrambletxt');
-const scramblediv = document.getElementById('scramblediv');
+// elements
+// for scrambles
 const scramNum = document.getElementById('scramNum');
-const scramPlur = document.getElementById('scramPlur');
-const multiScram = document.getElementById('multiScram');
 
-//dropdowns
+// dropdowns
 const cubeButton = document.getElementById('cubeButton');
 const cubeDrop = document.getElementById('cubeDrop');
-const cubeselect = document.getElementsByClassName('cubeselect');
+const cubeselect = cubeDrop.querySelectorAll('p');
 
-const inspectSet = document.getElementById('inspectSet');
 const inspectButton = document.getElementById('inspectButton');
 const inspectDrop = document.getElementById('inspectDrop');
-const inspselect = document.getElementsByClassName('inspselect');
+const inspselect = inspectDrop.querySelectorAll('p');
 
-const delaySet = document.getElementById('delaySet');
 const delayButton = document.getElementById('delayButton');
 const delayDrop = document.getElementById('delayDrop');
-const delaytime = document.getElementsByClassName('delaytime');
+const delaytime = delayDrop.querySelectorAll('p');
 
-//timetable
-const ttsize = document.getElementById('ttsize');
+// timetable
 const timebody = document.getElementById('timebody');
-const outicon = document.getElementById('outicon');
 
-//time
+// time
 const time = document.getElementById('time');
 const insptime = document.getElementById('insptime');
 const timealert = document.getElementById('timealert');
 const onlytime = document.getElementById('onlytime');
 
-//modals
+// modals
 const centerpop = document.getElementById('centerpop');
-const showEditTime = document.getElementById('showEditTime');
 const timepopup = document.getElementById('timepopup');
 const timepops = document.getElementById('timepops');
 const shadow = document.getElementById('shadow');
 const thetwo = document.getElementById('thetwo');
-const thednf = document.getElementById('thednf'); 
+const thednf = document.getElementById('thednf');
 const comment = document.getElementById('comment');
 const checkmore = document.getElementById('checkmore');
 const morepopup = document.getElementById('morepopup');
-const seescramble = document.getElementById('seescramble');
-const seedate = document.getElementById('seedate');
-const seecube = document.getElementById('seecube');
+const seeScramble = document.getElementById('seescramble');
+const seeDate = document.getElementById('seedate');
+const seeCube = document.getElementById('seecube');
 
 const best = document.getElementById('best');
 const worst = document.getElementById('worst');
-const BWdiv = document.getElementById('bestworst');
 
-//sessions and new times and sessions
+// sessions and new times and sessions
 const sesslc = document.getElementById('sesslc');
 const sesdrop = document.getElementById('sesdrop');
-const sespopup = document.getElementById('sespopup');
+const sesModal = document.getElementById('sespopup');
 const sameAlert = document.getElementById('sameAlert');
-const sameAlertAgain = document.getElementById('sameAlertAgain');
 const sesname = document.getElementById('sesname');
 const sescrip = document.getElementById('sescrip');
-const sesoptpopup = document.getElementById('sesoptpopup');
 const changesesname = document.getElementById('changesesname');
 const seesescrip = document.getElementById('seesescrip');
-const sessionsdiv = document.getElementById('sessions');
-const undobtn = document.getElementById('undobtn');
 const timenterpopup = document.getElementById('timenterpopup');
 const timentertoo = document.getElementById('timentertoo');
-const cubenter = document.getElementById('cubenter');
-const scramenter = document.getElementById('scramenter');
-const datenter = document.getElementById('datenter');
-const commenter = document.getElementById('commenter');
-const enterArr = [timentertoo, cubenter, scramenter, datenter, commenter];
+const enterTimeInputs = {
+  timentertoo: timentertoo,
+  cube: document.getElementById('cubenter'),
+  scramble: document.getElementById('scramenter'), 
+  date: document.getElementById('datenter'),
+  comment: document.getElementById('commenter'),
+};
 
-const infopopup = document.getElementById('infopopup');
-
-const undone = document.getElementById('undone');
-const undotxt = document.getElementById('undotxt');
-
-//settings
+// settings
 const setpopup = document.getElementById('setpopup')
-const settingsSettings = { // object holding the settings options checkboxes
+const settingsSettings = { // object for the settings options checkboxes
   announce: document.getElementById('countAnnounce'),
   delayAndInspect: document.getElementById('showSettings'),
   showBW: document.getElementById('showBW'),
@@ -181,52 +193,31 @@ const settingsSettings = { // object holding the settings options checkboxes
   multiScram: document.getElementById('showMScram'),
 };
 
-const popups = document.getElementsByClassName('popup');
-
-const rcorners = document.getElementById('rcorners');
-const scorners = document.getElementById('scorners');
-
 const isMobile = (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1);
 
-//All the variables that need to be gotten on reload/load, and associated functions
-const alltimes = gotem('all', []);
+// All the variables that need to be gotten on reload/load, and associated functions
+const allTimes = gotem('all', []);
 
-const moddedTimes = gotem('modded', []);
-
-const sessions = gotem('sessions', [{name: 'Session 1', description: 'Default session'}]);
+const sessions = gotem('sessions', [{ name: 'Session 1', description: 'Default session' }]);
 let session = gotem('currses', sessions[0].name);
 
-const storeSettings = gotem('settings', {
-  announce: true,
-  delayAndInspect: true,
-  showBW: true,
-  BWperSess: false,
-  hideWhileTiming: true,
-  multiScram: true,
-  lmode: true,
-  timein: false,
-  cornerStyle: 'r',
-  morechecked: false,
-  startdelay: 300,
-  inspectTime: true,
-  cube: '3x3',
-});
+let lightMode = gotem('lightMode', true);
 
 const scrambles = gotem('scrambles', []);
 let scrambleNum = gotem('scrambleNum', 0);
 
-//event listeners
+// event listeners
 document.addEventListener('click', e => {
   closeModal(e);
-  const match = t => e.target.matches(t); //shorter match function
+  const match = t => e.target.matches(t); // shorter match function
   if (e.target.closest('#timebody') && !closing) {
     timeClicks(e);
   }
-  else if (match('.inspselect')) {
+  else if (match('#inspectDrop p')) {
     storeSettings.inspectTime = !(e.target.textContent === 'None');
     colorIndicator(inspselect, e.target.textContent);
   }
-  else if (match('.cubeselect') && storeSettings.cube !== e.target.textContent) {
+  else if (match('#cubeDrop p') && storeSettings.cube !== e.target.textContent) {
     storeSettings.cube = e.target.textContent;
     cubeButton.textContent = storeSettings.cube;
     scrambles.length = 0;
@@ -235,38 +226,35 @@ document.addEventListener('click', e => {
     scramble();
     colorIndicator(cubeselect, storeSettings.cube);
   }
-  else if (match('.delaytime')) {
-    storeSettings.startdelay = parseFloat(e.target.textContent.slice(0, -1))*1000;
+  else if (match('#delayDrop p')) {
+    storeSettings.startdelay = parseFloat(e.target.textContent.slice(0, -1)) * 1000;
     colorIndicator(delaytime, e.target.textContent);
   }
   else if (match('.modtime')) {
     if (match('#thetwo')) {
-      if (thetwo.classList.contains('disabled')) { return; }
-      allthistime.time = Math.trunc((allthistime.plustwo ? allthistime.time-2 : allthistime.time+2)*100)/100;
-      allthistime.plustwo = !allthistime.plustwo;
+      if (thetwo.matches('.disabled')) { return; }
+      allThisTime.plustwo = !allThisTime.plustwo;
+      allThisTime.time = allThisTime.originalTime + (allThisTime.plustwo ? 2 : 0);
+      thetwo.classList.toggle('selected');
     }
     else if (match('#thednf')) {
-      if (allthistime.dnf) {
-        moddedTimes.find((e, i) => {
-          if (e.date === allthistime.date) {
-            thetwo.classList.remove('disabled');
-            alltimes.splice(tempallidx, 0, moddedTimes.splice(i, 1)[0]);
-            alltimes[tempallidx].dnf = false;
-          }
-        });
+      thednf.classList.toggle('selected');
+      if (allThisTime.dnf) {
+        allThisTime.time = allThisTime.originalTime + (allThisTime.plustwo ? 2 : 0);
+        allThisTime.dnf = false;
+        thetwo.classList.remove('disabled');
       }
       else {
         thetwo.classList.add('disabled');
-        moddedTimes.push(allthistime);
-        allthistime.time = 0;
-        allthistime.dnf = true;
+        allThisTime.time = 0;
+        allThisTime.dnf = true;
       }
     }
-    else if (match('#thedel') && confirm('Remove this time?')){
-      removed = [{time: alltimes.splice(tempallidx, 1)[0], index: tempallidx}];
+    else if (match('#thedel') && confirm('Remove this time?')) {
+      removed = [{ time: allTimes.splice(currentTimeIdx, 1)[0], index: currentTimeIdx }];
+      closeAll();
     }
     draw();
-    closeAll();
   }
   else if (match('.sesselect')) {
     session = e.target.textContent;
@@ -275,7 +263,7 @@ document.addEventListener('click', e => {
   }
   else if (match('#nextScram')) {
     scrambleNum++;
-    if (scrambleNum > scrambles.length-1) { scramble(); }
+    if (scrambleNum > scrambles.length - 1) { scramble(); }
     else { scrambletxt.textContent = scrambles[scrambleNum]; }
     scramNum.textContent = scrambleNum + 1;
   }
@@ -288,46 +276,48 @@ document.addEventListener('click', e => {
     storeSettings.morechecked = checkmore.checked;
   }
   else if (match('#newses')) {
-    showPop(sespopup);
+    showModal(sesModal);
     sesname.focus();
-    shadow.style.zIndex = '7'; //even further up to cover everything except the new session div
+    shadow.style.zIndex = 101; // even further up to cover everything except the new session div
   }
   else if (match('#sescancel')) {
-    sespopup.classList.remove('inlineBlock');
+    sesModal.classList.remove('inlineBlock');
     shadow.style.zIndex = '';
   }
   else if (match('#timenter')) {
-    showPop(timenterpopup);
+    showModal(timenterpopup);
     timentertoo.focus();
   }
   else if (match('#settingsIcon')) {
-    for (let i in settingsSettings) { settingsSettings[i].checked = storeSettings[i]; }
-    rcorners.id.charAt(0) === storeSettings.cornerStyle ? rcorners.checked = true : scorners.checked = true;
-    showPop(setpopup);
+    for (const i in settingsSettings) { settingsSettings[i].checked = storeSettings[i]; }
+    storeSettings.cornerStyle === 'r' ?
+      document.getElementById('rcorners').checked = true :
+      document.getElementById('scorners').checked = true;
+    showModal(setpopup);
   }
   else if (match('#deleteallses') && confirm('Delete all sessions?')) {
-    justAll();
-    sesremoved = sessions;
+    saveAllTimes();
+    sesRemoved = sessions;
     sessions.length = 0;
-    sessions.push({name: 'Session 1', description: 'Default session'});
+    sessions.push({ name: 'Session 1', description: 'Default session' });
     session = 'Session 1';
     sesslc.textContent = session;
     closeNdraw();
   }
   else if (match('#deleteses') && confirm('Delete this session?')) {
-    justAsession();
+    saveCurrentSession();
     sessions.find((e, i) => {
       if (e.name === session) {
-        sesremoved.length = 0;
-        sesremoved.push(sessions.splice(i, 1)[0]);
-        let neyes = i-1; //switch to next available session after deleting the current one
-        let peyes = i+1;
+        sesRemoved.length = 0;
+        sesRemoved.push(sessions.splice(i, 1)[0]);
+        let neyes = i - 1; // switch to next available session after deleting the current one
+        let peyes = i + 1;
         if (neyes !== -1) session = sessions[neyes].name;
         else if (neyes === -1 && sessions[peyes] != null) session = sessions[peyes].name;
         else {
           sessions.length = 0;
-          alltimes.length = 0;
-          sessions.push({name: 'Session 1', description: 'Default session'});
+          allTimes.length = 0;
+          sessions.push({ name: 'Session 1', description: 'Default session' });
           session = 'Session 1';
         }
       }
@@ -336,21 +326,21 @@ document.addEventListener('click', e => {
     closeNdraw();
   }
   else if (match('#clearallses') && confirm('Do you want to clear all times?')) {
-    justAll();
+    saveAllTimes(); // For undo
     closeNdraw();
   }
   else if (match('#clearses') && confirm('Clear this session?')) {
-    justAsession();
+    saveCurrentSession();
     closeNdraw();
   }
   else if (match('#exportallses')) {
-    createCsv(alltimes, 'Cube Timer - all times');
+    createCsv(allTimes, 'Cube Timer - all times');
   }
   else if (match('#exportses')) {
-    createCsv(displaytimes, session);
+    createCsv(displayTimes, session);
   }
   else if (match('#sesopt')) {
-    showPop(sesoptpopup);
+    showModal(document.getElementById('sesoptpopup'));
     changesesname.value = session;
     sessions.find(e => e.name === session && (findSession = e));
     seesescrip.value = findSession.description;
@@ -363,8 +353,8 @@ document.addEventListener('click', e => {
     inmore.textContent = inmore.textContent === '[more]' ? '[less]' : '[more]';
   }
   else if (match('#saveses')) {
-    if (checkSession(changesesname.value, sameAlertAgain)) {
-      for (let i of alltimes) { i.session === session && (i.session = changesesname.value); }
+    if (checkSession(changesesname.value, document.getElementById('sameAlertAgain'))) {
+      for (const i of allTimes) { i.session === session && (i.session = changesesname.value); }
       sessions.find(e => {
         if (e.name === session) {
           e.name = changesesname.value;
@@ -379,134 +369,137 @@ document.addEventListener('click', e => {
   }
   else if (match('#lighticon')) { runmode(true); }
   else if (match('#sescreate')) { newSession(); }
-  else if (match('#infobtn')) { showPop(infopopup); }
-  else if (multiMatch(e, '#outicon', '#inicon')) { timesInOut(true); }
+  else if (match('#infobtn')) { showModal(document.getElementById('infopopup')); }
+  else if (e.target.closest('.moveTable') || e.target.matches('#timeTableShadow')) { timesInOut(true); }
   else if (multiMatch(e, '#rcorners', '#scorners')) { changeCorners(e); }
   else if (multiMatch(e, '#timeclose', '#settingsClose')) { closeNdraw(); }
   else if (multiMatch(e, '#infoclose', '#timentercanc')) { closeAll(); }
+  else if (e.target.closest('#undobtn')) { undo (); }
 
-  //for dropdown buttons
-  const onButton = 
-  dropDown(cubeButton, cubeDrop, e) ||
-  dropDown(inspectButton, inspectDrop, e) ||
-  dropDown(delayButton, delayDrop, e) ||
-  dropDown(sesslc, sesdrop, e);
+  // for dropdown buttons
+  const onButton =
+    dropDown(cubeButton, cubeDrop, e) ||
+    dropDown(inspectButton, inspectDrop, e) ||
+    dropDown(delayButton, delayDrop, e) ||
+    dropDown(sesslc, sesdrop, e);
 
-  //close dropdowns if clicked anywhere not on the content, and don't close if clicked on the button for that dropdown
-  if (!match('.rdropdown')) {  closeDrops(onButton); }
+  // close dropdowns if clicked anywhere not on the content, and don't close if clicked on the button for that dropdown
+  if (!match('.rdropdown')) { closeDrops(onButton); }
   if (!match('#sesslc')) { sesdrop.classList.remove('block'); }
   closing = false;
 }, false);
 
 document.addEventListener('touchstart', e => {
-  if (multiMatch(e, '#touch', '#time', '#insptime', '#onlytime')) { touchdown(e); }
-}, {passive: false, useCapture: false});
+  if (multiMatch(e, '#time', '#insptime', '#onlytime')) { touchdown(e); }
+}, { passive: false, useCapture: false });
 
 document.addEventListener('touchend', e => {
-  if (multiMatch(e, '#touch', '#time', '#insptime', '#onlytime')) { up(); }
-}, {passive: false, useCapture: false});
+  if (multiMatch(e, '#time', '#insptime', '#onlytime')) { up(); }
+}, { passive: false, useCapture: false });
 
-window.addEventListener('keydown', e => {
-  const key = e.keyCode;
-  if (key === 32) { down(); } //space
-  else if (key === 27) { closeAll(); } //esc
-  else if (key === 90 && e.ctrlKey && !popup) { undo(); } //z to undo
-  else if (key === 13) { //enter
-    sespopup.matches('.inlineBlock') && newSession();
+addEventListener('keydown', e => {
+  if (e.key === ' ' && !document.activeElement.matches('button')) { down(); }
+  else if (e.key === 'Escape') { closeAll(); time.textContent = '0.00'}
+  else if (e.key === 'z' && e.ctrlKey && !modalOpen) { undo(); }
+  else if (e.key === 'Enter') {
+    sesModal.matches('.inlineBlock') && newSession();
     timenterpopup.matches('.inlineBlock') && timentertoo.value !== '' && addNewTime();
   }
-  //2 and d, for +2 and DNF (only while time editing modal is open)
+  // For +2 and DNF (only while time editing modal is open)
   else if (timepopup.matches('.inlineBlock') && !morepopup.matches('.inlineBlock')) {
-    key === 50 && (allthistime.plustwo = !allthistime.plustwo);
-    key === 68 && (allthistime.dnf = !allthistime.dnf);
+    e.key === '2' && (allThisTime.plustwo = !allThisTime.plustwo);
+    e.key === 'd' && (allThisTime.dnf = !allThisTime.dnf);
     closeNdraw();
   }
 }, false);
 
-window.addEventListener('keyup', e => {
-  e.keyCode === 32 && up();
+addEventListener('keyup', e => {
+  e.key === ' ' && !document.activeElement.matches('button') && up();
 }, false);
 
-window.addEventListener('load', afterLoad, false);
+addEventListener('load', afterLoad, { once: true, useCapture: false });
 
 const whichUnload = (navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPhone/i)) ? 'pagehide' : 'beforeunload';
-window.addEventListener(whichUnload, () => {
-  localStorage.setItem('all', JSON.stringify(alltimes));
+addEventListener(whichUnload, () => {
+  localStorage.setItem('all', JSON.stringify(allTimes));
   localStorage.setItem('settings', JSON.stringify(storeSettings));
+  localStorage.setItem('lightMode', JSON.stringify(lightMode));
   localStorage.setItem('scrambles', JSON.stringify(scrambles));
   localStorage.setItem('scrambleNum', JSON.stringify(scrambleNum));
   localStorage.setItem('currses', JSON.stringify(session));
   localStorage.setItem('sessions', JSON.stringify(sessions));
-  localStorage.setItem('modded', JSON.stringify(moddedTimes));
 
-  sessionStorage.setItem('sesremoved', JSON.stringify(sesremoved));
+  sessionStorage.setItem('sesremoved', JSON.stringify(sesRemoved));
   sessionStorage.setItem('removed', JSON.stringify(removed));
 }, false);
 
-window.addEventListener('resize', scramOverflowShadow, false);
+addEventListener('resize', scramOverflowShadow, false);
 
-function gotem(item, defalt, type = localStorage) { //wrapper function for getting stuff from localStorage
-  const getthething = type.getItem(item);
-  return getthething == null ? defalt : JSON.parse(getthething);
+/**
+ * Get an item from local- or sessionStorage, and if it doesn't exist, set it to the default
+ * @param {string} key The storage key for the item
+ * @param {*} value The default value to be set if the store does not exist yet
+ * @param {localStorage | sessionStorage} [type] Local or session storage
+ * @returns The item from storage, or the default if there was nothing set
+ */
+function gotem(key, value, type = localStorage) { // wrapper function for getting stuff from localStorage
+  const getthething = type.getItem(key);
+  return getthething == null ? value : JSON.parse(getthething);
 };
 
-function colorIndicator(array, value) { //mark selection in dropdowns
-  for (let i of array) { //mark the right one (darker gray), and unmark all the other ones
-    i.classList[i.textContent === value ? 'add' : 'remove']('oneforty');
+function colorIndicator(array, value) { // mark selection in dropdowns
+  for (const i of array) { // mark the right one (darker gray), and unmark all the other ones
+    i.classList[i.textContent === value ? 'add' : 'remove']('selected');
   }
 };
 
-function draw() { //to redraw things after modifying
-  if (scrambles.length) { //multiple scrambles or not
+function draw() { // to redraw things after modifying
+  if (scrambles.length) { // multiple scrambles or not
     scrambletxt.textContent = scrambles[scrambleNum];
     scramNum.textContent = scrambleNum + 1;
   }
   else { scramble(); }
 
-  displaytimes.length = 0;
-  for (let i of alltimes) { i.session === session && (displaytimes.push(i)); } //get all saved times for tehe current session
+  displayTimes.length = 0;
+  for (const i of allTimes) { i.session === session && (displayTimes.push(i)); } // get all saved times for tehe current session
 
   const columnClass = ['number', 'times', 'avgofive', 'avgotwelve'];
 
-  //clear the table
-  timebody.innerHTML = '';  
-  for (let [i, e] of displaytimes.entries()) {
+  // clear the table
+  timebody.innerHTML = '';
+  for (const [i, e] of displayTimes.entries()) {
     const row = timebody.insertRow(0);
     row.className = 'idAll';
     const tempRow = [];
-    for (let i = 0; i < 4; i++) { //make a row
+    for (let i = 0; i < 4; i++) { // make a row
       const tempCell = row.insertCell(i);
       tempCell.className = columnClass[i];
       tempRow.push(tempCell);
     }
 
-    e.number = i+1;
-    tempRow[0].textContent = i+1 + (e.comment ? '*' : null); //number, and asterisk if commented on
-    tempRow[1].textContent = e.dnf ? 'DNF' : //check dnf first
-        e.plustwo ? toMinutes(e.time)+'+' : toMinutes(e.time); //then check +2
+    e.number = i + 1;
+    tempRow[0].textContent = i + 1 + (e.comment ? '*' : null); // number, and asterisk if commented on
+    tempRow[1].textContent = e.dnf ? 'DNF' : // check dnf first
+      e.plustwo ? toMinutes(e.time) + '+' : toMinutes(e.time); // then check +2
 
-    const avgofiv = average(i+1, 5);
-    const avgotwe = average(i+1, 12);
+    const avgofiv = average(i + 1, 5);
+    const avgotwe = average(i + 1, 12);
     e.ao5 = avgofiv;
     e.ao12 = avgotwe;
     tempRow[2].textContent = avgofiv;
     tempRow[3].textContent = avgotwe;
-    const saveBack = alltimes.indexOf(e);
-    alltimes[saveBack].ao5 = avgofiv;
-    alltimes[saveBack].ao12 = avgotwe;
+    const saveBack = allTimes.indexOf(e);
+    allTimes[saveBack].ao5 = avgofiv;
+    allTimes[saveBack].ao12 = avgotwe;
   }
 
-  //apply settings
-  const whichSpot = storeSettings.delayAndInspect ? document.getElementById('hsSpot') : document.getElementById('popSpot');
-  whichSpot.appendChild(inspectSet);
-  whichSpot.appendChild(delaySet);
-  BWdiv.classList[storeSettings.showBW ? 'remove' : 'add']('none');
-  bestworst(storeSettings.BWperSess ? displaytimes : alltimes);
-  multiScram.classList[storeSettings.multiScram ? 'remove' : 'add']('opZero');
+  applySettings();
 
-  //sessions
+  bestworst(storeSettings.BWperSess ? displayTimes : allTimes);
+
+  // sessions
   sesdrop.innerHTML = '';
-  for (let i of sessions) {
+  for (const i of sessions) {
     const sesnode = document.createElement('p');
     sesnode.textContent = i.name;
     sesnode.classList.add('sesselect');
@@ -514,22 +507,21 @@ function draw() { //to redraw things after modifying
   }
   sesslc.textContent = session;
   sesslc.style.minWidth = sesdrop.offsetWidth + 'px';
-  document.querySelector('#sesdrop p:nth-child(1)').classList.add('top');
-  document.querySelector('#sesdrop p:last-child').classList.add('bottom');
 }
 
 function afterLoad() {
-  window.setTimeout(() => {
+  setTimeout(() => {
     scramOverflowShadow();
-    timesInOut(false);
-  }, 0);
+    ttsize.classList.add('transOneSec');
+    sessionsdiv.classList.add('transOneSec');
+  }, 10);
 
   colorIndicator(inspselect, storeSettings.inspectTime ? '15s (WCA)' : 'None');
 
   checkmore.checked = storeSettings.morechecked;
   storeSettings.morechecked && (inmore.textContent = '[less]');
 
-  colorIndicator(delaytime, (storeSettings.startdelay/1000)+'s');
+  colorIndicator(delaytime, (storeSettings.startdelay / 1000) + 's');
 
   changeCorners(null, storeSettings.cornerStyle);
 
@@ -539,107 +531,116 @@ function afterLoad() {
   colorIndicator(cubeselect, storeSettings.cube);
 
   draw();
+
   if (isMobile) {
-    document.addEventListener('touchstart', () => { //set up sounds to play whenever on mobile
+    document.addEventListener('touchstart', () => { // set up sounds to play whenever on mobile
       eightSecSound.play();
       eightSecSound.pause();
       twelveSecSound.play();
       twelveSecSound.pause();
-    }, {once: true, useCapture: false});
-    undobtn.classList.remove('none'); //and show undo button
-    undobtn.addEventListener('click', undo, false);
+    }, { once: true, useCapture: false });
   }
 }
 
-function closeNdraw() { //just put them in one function
+function closeNdraw() { // just put them in one function
   closeAll();
   draw();
 }
 
-function timeClicks(e) { //for clicks on the time table
+function timeClicks(e) { // for clicks on the time table
   if (e.target.parentNode.rowIndex >= 0) {
-    const rvrsrow = displaytimes.length - e.target.parentNode.rowIndex + 1; //reverse the row index
-    tempallidx = alltimes.indexOf(displaytimes[rvrsrow-1]);
-    allthistime = alltimes[tempallidx];
+    const reverseRow = displayTimes.length - e.target.parentNode.rowIndex + 1; // reverse the row index
+    currentTimeIdx = allTimes.indexOf(displayTimes[reverseRow - 1]);
+    allThisTime = allTimes[currentTimeIdx];
 
     timepops.classList.remove('none');
-    showPop(timepopup);
+    showModal(timepopup);
     inmore.textContent = storeSettings.morechecked ? '[less]' : '[more]';
 
     storeSettings.morechecked && morepopup.classList.add('inlineBlock');
 
-    const timetoshine = allthistime.dnf ? 'DNF' : toMinutes(allthistime.time);
-    thednf.classList[allthistime.dnf ? 'add' : 'remove']('oneforty');
-    thetwo.classList[allthistime.dnf ? 'add' : 'remove']('oneforty');
-    
-    thetwo.classList[allthistime.plustwo ? 'add' : 'remove']('oneforty');
-    showEditTime.textContent = `${rvrsrow} (${timetoshine})`;
+    const timetoshine = allThisTime.dnf ? 'DNF' : toMinutes(allThisTime.time);
+    thednf.classList[allThisTime.dnf ? 'add' : 'remove']('selected');
+    thetwo.classList[allThisTime.dnf ? 'add' : 'remove']('selected');
 
-    //set up popup with correct data
-    scramPlur.textContent = allthistime.scramble.includes(';') ? 'Scrambles: ' : 'Scramble: ';
-    seescramble.textContent = allthistime.scramble;
-    seedate.textContent = allthistime.date;
-    seecube.textContent =  allthistime.cube;
-    allthistime.comment != null && (comment.value = allthistime.comment);
+    thetwo.classList[allThisTime.plustwo ? 'add' : 'remove']('selected');
+    document.getElementById('showEditTime').textContent = `${reverseRow} (${timetoshine})`;
+
+    // set up popup with correct data
+    document.getElementById('scramPlur').textContent = allThisTime.scramble.includes(';') ? 'Scrambles: ' : 'Scramble: ';
+    seeScramble.textContent = allThisTime.scramble;
+    seeDate.textContent = allThisTime.date;
+    seeCube.textContent = allThisTime.cube;
+    comment.value = allThisTime.comment;
   }
 }
 
-function closeModal(e) { //close modals
-  if (!e.target.closest('.popup') && popup) {
-    closeNdraw();
-    closing = true;
+function closeModal(e) { // close modals
+  if (!e.target.closest('.popup') && modalOpen) {
+    if (sesModal.classList.contains('inlineBlock')) {
+      sesModal.classList.remove('inlineBlock');
+      shadow.style.zIndex = '';
+    }
+    else {
+      closeNdraw();
+      closing = true;
+    }
   }
 }
 
-function bestworst(array) { //get the best and worst times, not including dnfs
+function bestworst(array) { // get the best and worst times, not including dnfs
   const justTimes = [];
-  for (let i of array) { i.time && justTimes.push(i.time); }
+  for (const i of array) { i.time && justTimes.push(i.time); }
   const worstTime = Math.max(...justTimes);
   const bestTime = Math.min(...justTimes);
   best.textContent = !isNaN(JSON.stringify(bestTime)) ? toMinutes(bestTime) : '-';
   worst.textContent = !isNaN(JSON.stringify(worstTime)) ? toMinutes(worstTime) : '-';
 }
 
-function showPop(div) { //open a modal
+/**
+ * Show and modal and the shadow and everything
+ * @param {HTMLElement} modal The modal to show
+ */
+function showModal(modal) { // open a modal
   centerpop.classList.remove('none');
-  div.classList.add('inlineBlock');
+  modal.classList.add('inlineBlock');
   shadow.classList.add('initial');
-  popup = true;
+  modalOpen = true;
 }
 
 function addNewTime() {
-  if (timentertoo.value !== '' && checkTime(timentertoo.value) != null) {
-    alltimes.push({
+  if (timentertoo.value !== '' && checkTime(timentertoo.value)) {
+    allTimes.push({
       time: checkTime(timentertoo.value),
-      cube: cubenter.value,
+      cube: enterTimeInputs.cube.value,
       session: session,
-      scramble: scramenter.value,
-      date: datenter.value,
-      comment: commenter.value,
+      scramble: enterTimeInputs.scramble.value,
+      date: enterTimeInputs.date.value,
+      comment: enterTimeInputs.comment.value,
       dnf: false,
       plustwo: false
     });
-    for (let i of enterArr) { i.value = null; }
+    for (const i in enterTimeInputs) { enterTimeInputs[i].value = null; }
     closeNdraw();
   }
   else { alert(`I don't recognize that time.`); }
 }
 
-function checkTime(time) { //check if a time is valid, and return it in seconds
+function checkTime(time) { // check if a time is valid, and return it in seconds
   const colonCount = time.split(':');
   if (time < 60) { return parseFloat(time); }
-  else if (colonCount.length === 2) { return (parseInt(colonCount[0])*60 + parseFloat(colonCount[1])); }
-  return null;
+  else if (colonCount.length === 2) { return (parseInt(colonCount[0]) * 60 + parseFloat(colonCount[1])); }
+  return false;
 }
 
-function multiMatch(e, ...targets) { //match function for multiple possible matches
-  for (let i of targets) {
+function multiMatch(e, ...targets) { // match function for multiple possible matches
+  for (const i of targets) {
     if (e.target.matches(i)) { return true; }
   }
   return false;
 }
 
-function dropDown(button, content, e) { //toggle dropdowns on button click
+function dropDown(button, content, e) { // toggle dropdowns on button click
   if (e.target === button) {
     content.classList.toggle('block');
     return button.id;
@@ -647,47 +648,57 @@ function dropDown(button, content, e) { //toggle dropdowns on button click
   return false;
 }
 
-function timePos(center) { //center and uncenter time and insptime
-  ttsize.classList[center ? 'add' : 'remove']('none');
-  document.body.style.setProperty('--fill-sometimes', center ? 'span var(--grid-cols) / auto' : '');
+function applySettings() {
+  const whichSpot = storeSettings.delayAndInspect ? document.getElementById('hsSpot') : document.getElementById('popSpot');
+  whichSpot.appendChild(document.getElementById('inspectSet'));
+  whichSpot.appendChild(document.getElementById('delaySet'));
+
+  document.getElementById('bestworst').style.display = storeSettings.showBW ? '' : 'none';
+
+  document.getElementById('multiScram').classList[storeSettings.multiScram ? 'remove' : 'add']('opZero');
 }
 
-function timesInOut(swtch) { //move the time table in and out, and associated transitions
-  if (storeSettings.timein === swtch) { //move time table onto screen
+function timePos(center) { // center and uncenter time and insptime
+  ttsize.classList[center ? 'add' : 'remove']('none');
+  document.body.style.setProperty('--fill-sometimes', center ? '1 / -1' : '');
+}
+
+function timesInOut(doSwitch) { // move the time table in and out, and associated transitions
+  if (storeSettings.timein === doSwitch) { // move time table onto screen
+    ttsize.style.zIndex = '';
     timePos(false);
     sessionsdiv.classList.remove('none');
-    scramblediv.style.marginLeft = '';
-    window.setTimeout(() => {
+    timeTableShadow.style.display = '';
+    setTimeout(() => {
+      ttsize.style.gridRow = '';
       ttsize.classList.remove('transXsixty');
       sessionsdiv.classList.remove('transXhundred');
-      multiScram.style.gridColumn = '';
       outicon.classList.add('none');
-      BWdiv.style.float = '';
       scramOverflowShadow();
-    }, 0);
+    }, 10);
   }
-  else { //move time table off screen
+  else { // move time table off screen
+    ttsize.style.gridRow = 'none';
     ttsize.classList.add('transXsixty');
     sessionsdiv.classList.add('transXhundred');
     outicon.classList.remove('none');
-    window.setTimeout(() => {
+    timeTableShadow.style.display = 'none';
+    setTimeout(() => {
       timePos(true);
-      scramblediv.style.marginLeft = '4px';
       sessionsdiv.classList.add('none');
-      multiScram.style.gridColumn = 'span var(--grid-cols) / auto';
-      BWdiv.style.float = 'right';
       scramOverflowShadow();
-    }, 500);
+      ttsize.style.zIndex = 'unset';
+    }, doSwitch ? 500 : 0);
   }
-  swtch && (storeSettings.timein = !storeSettings.timein);
+  doSwitch && (storeSettings.timein = !storeSettings.timein);
 }
 
-//Just a random move scrambler.
-function checknxn(moveset) { //for nxnxn cubes
-  //p is for previous move, t is for temporary move (the one this is checking)
-  const tempmove = moveset[Math.trunc(Math.random()*moveset.length)];
-  const pmove = tscramble[tscramble.length-1];
-  const twoBackMove = tscramble[tscramble.length-2];
+// Just a random move scrambler.
+function scrambleNxN(moveset) { // for nxnxn cubes
+  // p is for previous move, t is for temporary move (the one this is checking)
+  const tempmove = moveset[Math.trunc(Math.random() * moveset.length)];
+  const pmove = tscramble[tscramble.length - 1];
+  const twoBackMove = tscramble[tscramble.length - 2];
 
   let charOneTwoBack;
   let twoCharP;
@@ -705,62 +716,62 @@ function checknxn(moveset) { //for nxnxn cubes
   }
 }
 
-function checkpyr1() { // turn the big corners for pyraminx
-  const tempmove = pyrsmoves[Math.trunc(Math.random()*pyrsmoves.length)];
-  if (tscramble.length && tempmove.charAt(0) !== tscramble[0].charAt(0)) { tscramble.unshift(tempmove); }
+function scrambleFourSides() { // turn the big corners for pyraminx
+  const tempmove = pyrsmoves[Math.trunc(Math.random() * pyrsmoves.length)];
+  if (tempmove.charAt(0) !== tscramble?.[0]?.charAt(0)) { tscramble.unshift(tempmove); }
 }
 
-function addfour(moveset, chancemod = 0.1, apostrophe = true) { //add zero to four moves at the end (pyra and clock)
+function addFour(moveset, chancemod = 0.1, apostrophe = true) { // add zero to four moves at the end (pyra and clock)
   for (let i = 0; i < 4; i++) {
-    if (Math.random() < (0.5 + chancemod)) { //50/50, plus chancemod makes it more likely to get one
+    if (Math.random() < (0.5 + chancemod)) { // 50/50, plus chancemod makes it more likely to get one
       if (Math.random() < 0.5 || !apostrophe) { tscramble.unshift(moveset[i]); }
       else { tscramble.unshift(moveset[i] + `'`); }
     }
   }
 }
 
-function checkpyrall() { //combine pyraminx scramble bits
-  addfour(pyrpmoves);
-  while (tscramble.length < 10) { checkpyr1(); }
+function scramblePyraminx() { // combine pyraminx scramble bits
+  addFour(pyrpMoves);
+  while (tscramble.length < 10) { scrambleFourSides(); }
 }
 
-function checkmeg() { //megaminx
-  for (let i = 0; i < slen/11; i++) {
+function scrambleMegaminx() {
+  for (let i = 0; i < slen / 11; i++) {
     for (let j = 0; j < 10; j++) {
       const moveMod = Math.random() < 0.5 ? '++' : '--';
-      const move = j%2 ? 'D' : 'R';
+      const move = j % 2 ? 'D' : 'R';
       tscramble.push(move + moveMod);
     }
     Math.random() < 0.5 ? tscramble.push('U\r\n') : tscramble.push(`U'\r\n`);
   }
 }
 
-function checksqu() {//probably doesn't work. I don't know what moves aren't allowed for squan.
-  const onerand = Math.round((Math.random()*11)-5);
-  const tworand = Math.round((Math.random()*11)-5);
+function scrambleSquan() { // probably doesn't work. I don't know what moves aren't allowed for squan.
+  const onerand = Math.round((Math.random() * 11) - 5);
+  const tworand = Math.round((Math.random() * 11) - 5);
   let firstnum;
   let secondnum;
   if (tscramble.length) {
-    firstnum = tscramble[tscramble.length-1].charAt(1);
-    secondnum = tscramble[tscramble.length-1].charAt(3);
+    firstnum = tscramble[tscramble.length - 1].charAt(1);
+    secondnum = tscramble[tscramble.length - 1].charAt(3);
   }
   if ((onerand !== firstnum || tworand !== secondnum) &&
-      (onerand !== secondnum || tworand !== firstnum) &&
-      (onerand !== 0 || tworand !== 0)) { //there are probably other exclusions
-        tscramble.push(`(${onerand},${tworand})`);
-      }
-}
-
-function checkclo() { //clock
-  addfour(clocksl4, 0, false);
-  for (let i of clocks) {
-    const clkstr = JSON.stringify(Math.round((Math.random()*11)-5));
-    const rvrsclock = clkstr.length > 1 ? clkstr.charAt(1) + clkstr.charAt(0) : clkstr.charAt(0) + '+';
-    i !== 'y2' ? tscramble.unshift(i+rvrsclock) : tscramble.unshift(i);
+    (onerand !== secondnum || tworand !== firstnum) &&
+    (onerand !== 0 || tworand !== 0)) { // there are probably other exclusions
+    tscramble.push(`(${onerand},${tworand})`);
   }
 }
 
-function scramble() { //do the scrambles
+function scrambleClock() {
+  addFour(clocksL4, 0, false);
+  for (const i of clocks) {
+    const clkstr = JSON.stringify(Math.round((Math.random() * 11) - 5));
+    const rvrsclock = clkstr.length > 1 ? clkstr.charAt(1) + clkstr.charAt(0) : clkstr.charAt(0) + '+';
+    i !== 'y2' ? tscramble.unshift(i + rvrsclock) : tscramble.unshift(i);
+  }
+}
+
+function scramble() { // do the scrambles
   tscramble.length = 0;
   do { scramblers[storeSettings.cube](); }
   while (tscramble.length < slen)
@@ -770,7 +781,7 @@ function scramble() { //do the scrambles
   scramOverflowShadow();
 }
 
-function scramOverflowShadow() { //put an inset shadow on scramble when it's scrollable
+function scramOverflowShadow() { // put an inset shadow on scramble when it's scrollable
   scrambletxt.setAttribute('overflow', (scrambletxt.scrollHeight !== scrambletxt.clientHeight));
 }
 
@@ -778,28 +789,28 @@ function average(startpoint, leng) {
   let sum;
   let avgAll = [];
 
-  if (startpoint > (leng-1)) {
-    for (let i = 1; i < leng+1; i++) {
-      const tempTime = displaytimes[startpoint-i].time;
-      if (tempTime !== 0) { avgAll.push(tempTime); } //don't push dnfs
+  if (startpoint > (leng - 1)) {
+    for (let i = 1; i < leng + 1; i++) {
+      const tempTime = displayTimes[startpoint - i].time;
+      if (tempTime !== 0) { avgAll.push(tempTime); } // don't push dnfs
     }
   }
 
-  avgAll.splice(avgAll.indexOf(Math.max(...avgAll)), 1); //remove max
+  avgAll.splice(avgAll.indexOf(Math.max(...avgAll)), 1); // remove max
 
-  avgAll.splice(avgAll.indexOf(Math.min(...avgAll)), 1); //remove min
+  avgAll.splice(avgAll.indexOf(Math.min(...avgAll)), 1); // remove min
 
   avgAll.length && (sum = avgAll.reduce((previous, current) => current += previous));
 
-  const avg = Math.trunc((sum/avgAll.length)*100)/100;
+  const avg = Math.trunc((sum / avgAll.length) * 100) / 100;
   return isNaN(avg) ? '' : toMinutes(avg);
 }
 
-function toMinutes(time) { //seconds to colon format
+function toMinutes(time) { // seconds to colon format
   if (time < 60) { return time.toFixed(2); }
   else if (time >= 60 && time < 3600) {
-    const minutes = Math.trunc(time/60);
-    let secondsafter = (time - (60*minutes)).toFixed(2);
+    const minutes = Math.trunc(time / 60);
+    let secondsafter = (time - (60 * minutes)).toFixed(2);
     secondsafter < 10 && (secondsafter = '0' + secondsafter);
 
     return `${minutes}:${secondsafter}`;
@@ -807,80 +818,82 @@ function toMinutes(time) { //seconds to colon format
   return `You're slow`;
 }
 
-function inspection() { //display inspection countdown, as well as 8s, 12s, +2, and DNF by timeout
+function inspection() { // display inspection countdown, as well as 8s, 12s, +2, and DNF by timeout
   runInspect = requestAnimationFrame(inspection);
-  const displayctdn = countdown[Math.trunc((new Date() - inspectStartTime)/1000)];
-  insptime.textContent = displayctdn;
-  if (displayctdn === 7) { //8 second alert
+  const countdownText = countdown[Math.trunc((new Date() - inspectStartTime) / 1000)];
+  insptime.textContent = countdownText;
+  if (countdownText === 7) { // 8 second alert
     timealert.classList.remove('none');
     timealert.textContent = '8s!';
-    if (!played8 && storeSettings.announce) { //eight second alert
+    if (!played8 && storeSettings.announce) { // eight second alert
       eightSecSound.play();
-      played8 = true; //so it only plays the sound once during the second it's showing 7
+      played8 = true; // so it only plays the sound once during the second it's showing 7
     }
   }
-  else if (displayctdn === 3) { //twelve second alert
+  else if (countdownText === 3) { // twelve second alert
     timealert.textContent = '12s!';
     if (!played12 && storeSettings.announce) {
       twelveSecSound.play();
       played12 = true;
     }
   }
-  else if (displayctdn === '+2') { //plus two by timeout
+  else if (countdownText === '+2') { // plus two by timeout
     plustwo = true;
     timealert.classList.add('none');
   }
-  else if (displayctdn === 'DNF') { //dnf by timeout
+  else if (countdownText === 'DNF') { // dnf by timeout
     dnf = true;
     plustwo = false;
-    cancelAnimationFrame(runTimeout); //stop the delay, if holding
+    cancelAnimationFrame(runTimeout); // stop the delay, if holding
   }
-  else if (displayctdn == null) { //reset the timer and finish
+  else if (countdownText == null) { // reset the timer and finish
     time.textContent = '0.00';
     counter = 0;
     fin();
   }
 }
 
-function stopwatch() { //counts time
+function stopwatch() { // counts time
   runStopwatch = requestAnimationFrame(stopwatch)
-  counter = (Math.trunc((new Date() - timerStartTime)/10)/100);
-  time.textContent = toMinutes(counter).toString().slice(0, -1); //don't show hundredths while running
+  counter = (Math.trunc((new Date() - timerStartTime) / 10) / 100);
+  time.textContent = toMinutes(counter).toString().slice(0, -1); // don't show hundredths while running
 }
 
-function timeout() { //do the holding delay, and colors
+function timeout() { // do the holding delay, and colors
   runTimeout = requestAnimationFrame(timeout);
   if ((new Date() - timeoutStartTime) >= storeSettings.startdelay) {
     timerState = 'waiting';
-    time.classList.add(storeSettings.lmode ? 'green' : 'magenta');
+    time.classList.add('green');
     insptime.classList.remove('orange');
     insptime.classList.add('green');
   }
 }
 
-function fin() { //finish timing, save result
+function fin() { // finish timing, save result
   timerState = 'stopped';
   played8 = false;
   played12 = false;
-  keydown = true; //for if holding space when it times out
+  keydown = true; // for if holding space when it times out
   cancelAnimationFrame(runStopwatch);
   cancelAnimationFrame(runInspect);
 
-  time.className = 'zOne time'; //remove all other classes
-  timePos(false); //uncenter time
-  time.textContent = toMinutes(counter); //show hundredths of a second
+  time.classList.remove('green', 'red', 'zfour', 'none');
+  timePos(storeSettings.timein); // uncenter time if the time table is on screen
+  time.textContent = toMinutes(counter); // show hundredths of a second
   insptime.classList.remove('orange', 'green');
   onlytime.classList.remove('initial');
-  timealert.classList.add('none'); //should only be showing at this point if they DNFed by timeout
-  alltimes.push({
+  timealert.classList.add('none'); // should only be showing at this point if they DNFed by timeout
+  allTimes.push({
     number: null,
     time: counter + (plustwo ? 2 : 0),
+    originalTime: counter,
     cube: storeSettings.cube,
     session: session,
     scramble: scrambles.join(';\r\n'),
     date: new Date().toString(),
     dnf: dnf,
     plustwo: plustwo,
+    comment: '',
   });
 
   dnf = false;
@@ -889,40 +902,40 @@ function fin() { //finish timing, save result
   scrambleNum = 0;
   scramNum.textContent = 1;
 
-  scramble(); //new scramble
+  scramble(); // new scramble
   draw();
 }
 
-function down() { //spacebar down
-  if (!popup && !dnf) {
+function down() { // spacebar down
+  if (!modalOpen && !dnf) {
     if (!onstart && timerState !== 'started') {
-      if (!storeSettings.inspectTime || timerState === 'inspecting') { //start delay timer
+      if (!storeSettings.inspectTime || timerState === 'inspecting') { // start delay timer
         timeoutStartTime = new Date();
         runTimeout = requestAnimationFrame(timeout);
-        time.classList.add(storeSettings.lmode ? 'red' : 'cyan');
+        time.classList.add('red');
         insptime.classList.add('orange');
       }
-      else { time.classList.add(storeSettings.lmode ? 'green' : 'magenta'); }
+      else { time.classList.add('green'); }
       onstart = true;
     }
     else if (timerState === 'started') { fin(); }
   }
 }
-  
-function up() { //spacebar up
-  time.classList.remove('red', 'green', 'cyan', 'magenta');
+
+function up() { // spacebar up
+  time.classList.remove('red', 'green');
   insptime.classList.remove('orange');
-  if (!popup && !dnf) {
-    if (timerState !== 'started' && timerState !== 'waiting') { //if delay hasn't run out yet
-      cancelAnimationFrame(runTimeout); //reset the hold delay
+  if (!modalOpen && !dnf) {
+    if (timerState !== 'started' && timerState !== 'waiting') { // if delay hasn't run out yet
+      cancelAnimationFrame(runTimeout); // reset the hold delay
       onstart = false;
     }
     if (!keydown) {
-      if (timerState === 'waiting') { //go! (start the stopwatch)
+      if (timerState === 'waiting') { // go! (start the stopwatch)
         timerStartTime = new Date();
         runStopwatch = requestAnimationFrame(stopwatch);
         storeSettings.hideWhileTiming && onlytime.classList.add('initial');
-        timePos(true); //center time
+        timePos(true); // center time
         insptime.classList.add('none');
         time.classList.remove('none');
         time.classList.add('zfour');
@@ -931,16 +944,16 @@ function up() { //spacebar up
         cancelAnimationFrame(runTimeout);
         timerState = 'started';
       }
-      else if (storeSettings.inspectTime && timerState !== 'inspecting') { //go! (start inspection time)
+      else if (storeSettings.inspectTime && timerState !== 'inspecting') { // go! (start inspection time)
         timePos(true);
         timerState = 'inspecting';
         time.classList.add('none');
         insptime.classList.remove('none');
-        storeSettings.hideWhileTiming && onlytime.classList.add('initial'); //check for hide all or not
+        storeSettings.hideWhileTiming && onlytime.classList.add('initial'); // check for hide all or not
         inspectStartTime = new Date();
         runInspect = requestAnimationFrame(inspection);
       }
-      //close any open dropdowns
+      // close any open dropdowns
       closeDrops();
       sesdrop.classList.remove('block');
     }
@@ -948,77 +961,79 @@ function up() { //spacebar up
   }
 }
 
-function touchdown(e) { //preventDefault() for touch
+function touchdown(e) { // preventDefault() for touch
   e.preventDefault();
   closeAll();
   down();
 }
 
-function undo() { //undo the last-done deletion
+function undo() { // undo the last-done deletion
   let msg = 'Nothing to undo';
   if (removed.length) {
     const getIdx = removed[0].index;
-    for (let i of removed) {
-      alltimes[getIdx] == null ? alltimes.push(i.time) : alltimes.splice(getIdx, 0, i.time);
+    for (const i of removed) {
+      allTimes[getIdx] == null ? allTimes.push(i.time) : allTimes.splice(getIdx, 0, i.time);
     }
     removed.length = 0;
     sessionStorage.removeItem('removed');
     msg = 'Undone!'
   }
-  if (sesremoved.length) {
-    for (let i of sesremoved) {
+  if (sesRemoved.length) {
+    for (const i of sesRemoved) {
       if (!sessions.includes(i)) { // fix duplicating sessions with one (not all)
-        sessions.push({name: i.name, description: i.description});
+        sessions.push({ name: i.name, description: i.description });
       }
     }
-    session = sesremoved[sesremoved.length-1].name;
-    sesremoved.length = 0;
+    session = sesRemoved[sesRemoved.length - 1].name;
+    sesRemoved.length = 0;
     sessionStorage.removeItem('sesremoved');
     msg = 'Undone!'
   }
-  undotxt.textContent = msg;
-  showPop(undone);
+  document.getElementById('undotxt').textContent = msg;
+  showModal(document.getElementById('undone'));
   setTimeout(closeAll, 400);
   draw();
 }
 
-function runmode(notstart) { // switch dark/light mode
-  notstart && (storeSettings.lmode = !storeSettings.lmode);
-  document.body.setAttribute('lmode', storeSettings.lmode);
+function runmode(notStart) { // switch dark/light mode
+  notStart && (lightMode = !lightMode);
+  document.documentElement.setAttribute('lmode', lightMode);
 }
 
-function changeCorners(e, style) { //corner style
+function changeCorners(e, style) { // corner style
   storeSettings.cornerStyle = e ? e.target.id.charAt(0) : style;
   document.body.setAttribute('round', (storeSettings.cornerStyle === 'r'));
 }
 
-function closeAll() { //close everything
-  timepopup.matches('.inlineBlock') && (allthistime.comment = comment.value);
-
-  for (let i of popups) { i.classList.remove('inlineBlock'); } //close all popups
-  timepops.classList.add('none');
-  shadow.classList.remove('initial');
-  shadow.style.zIndex = '';
+function closeAll() { // close everything
+  timepopup.matches('.inlineBlock') && (allThisTime.comment = comment.value);
 
   if (setpopup.matches('.inlineBlock')) {
-    for (let i in settingsSettings) {
+    for (const i in settingsSettings) {
       storeSettings[i] = settingsSettings[i].checked;
     }
   }
 
+  // close all modals
+  for (const i of document.getElementsByClassName('popup')) { i.classList.remove('inlineBlock'); }
+
+  timepops.classList.add('none');
+  shadow.classList.remove('initial');
+  shadow.style.zIndex = '';
+
   centerpop.classList.add('none');
 
-  popup = false;
+  modalOpen = false;
 }
 
 function closeDrops(button) {
-  for (let i of document.getElementsByClassName('rdropcontent')) {
+  for (const i of document.getElementsByClassName('rdropcontent')) {
     i.parentElement.getElementsByClassName('rdropbtn')[0].id !== button && i.classList.remove('block');
   }
 }
 
-function checkSession(name, alertElement) { //check for duplicate names
-  for (let i of sessions) {
+function checkSession(name, alertElement) { // check for duplicate names
+  for (const i of sessions) {
     if (name === i.name) {
       alertElement.textContent = `You've already used that name.`;
       return false;
@@ -1027,63 +1042,63 @@ function checkSession(name, alertElement) { //check for duplicate names
   return true;
 }
 
-function newSession() { //create a new session
+function newSession() { // create a new session
   if (sesname.value !== '' && checkSession(sesname.value, sameAlert)) {
-    sessions.push({name: sesname.value, description: sescrip.value});
+    sessions.push({ name: sesname.value, description: sescrip.value });
     sameAlert.textContent = null;
     sesname.value = null;
     sescrip.value = null;
-    session = sessions[sessions.length-1].name;
+    session = sessions[sessions.length - 1].name;
     closeNdraw();
   }
 }
 
-//for csv export:
-function justAsession() { //get just the current session
+// for csv export:
+function saveCurrentSession() { // get just the current session
   const sesremoves = [];
-  for (let i of alltimes) {
+  for (const i of allTimes) {
     i.session === session && sesremoves.push(i);
-  };
-  for (let i of sesremoves) {
-    const rmvidx = alltimes.indexOf(i);
-    removed.push({time: alltimes.splice(rmvidx, 1)[0], index: rmvidx, session: session});
+  }
+  for (const i of sesremoves) {
+    const rmvidx = allTimes.indexOf(i);
+    removed.push({ time: allTimes.splice(rmvidx, 1)[0], index: rmvidx, session: session });
   }
 }
 
-function justAll() { //get everything
-  for (let [idx, el] of alltimes.entries()) {
-    removed.push({time: el, index: idx});
+function saveAllTimes() { // get everything
+  for (const [idx, el] of allTimes.entries()) {
+    removed.push({ time: el, index: idx });
   }
-  alltimes.length = 0;
+  allTimes.length = 0;
   sessions.length = 0;
   localStorage.removeItem('all');
   time.textContent = '0.00';
 }
 
-function createArray(array) { //create array of arrays from array of objects, with headers from keys
+function createArray(array) { // create array of arrays from array of objects, with headers from keys
   let returnarray = [];
   let columnNames = [];
-  for (let i in array[0]) { //capitalize the keys, for column titles - assume keys are the same for all elements
+  for (const i in array[0]) { // capitalize the keys, for column titles - assume keys are the same for all elements
     const titleCase = i.charAt(0).toUpperCase() + i.slice(1);
     columnNames.push(titleCase);
   }
   returnarray.push(columnNames);
-  for (let i of array) { //for each element in the array
-    let temparray = []; //initialize a temporary array (I'm not sure why it has to be initialized here, but it does)
-    //push the value from each key in the current element to the temporary array
-    for (let j in array[0]) { temparray.push(`"${i[j].toString()}"`) };
-    returnarray.push(temparray); //push the temporary array to the final array
+  for (const i of array) { // for each element in the array
+    let temparray = []; // initialize a temporary array (I'm not sure why it has to be initialized here, but it does)
+    // push the value from each key in the current element to the temporary array
+    for (const j in array[0]) { temparray.push(`"${i[j].toString()}"`) };
+    returnarray.push(temparray); // push the temporary array to the final array
   }
   return returnarray;
 }
 
-function createCsv(array, name) { //create csv file from 2d array
-  const makeIntoArray = createArray(array); //get 2d array from array of objects
+function createCsv(array, name) { // create csv file from 2d array
+  const makeIntoArray = createArray(array); // get 2d array from array of objects
   let csvFile = 'data:text/csv;charset=utf-8,';
-  //concatenate each smaller array onto the csv file, and add a newline after each
-  for (let i of makeIntoArray) { csvFile += i + '\n' };
+  // concatenate each smaller array onto the csv file, and add a newline after each
+  for (const i of makeIntoArray) { csvFile += i + '\n' };
   const encoded = encodeURI(csvFile);
-  const linkDownload = document.createElement('a'); //create a download link, and simulate a click on it
+  const linkDownload = document.createElement('a'); // create a download link, and simulate a click on it
   linkDownload.setAttribute('href', encoded);
   linkDownload.setAttribute('download', name + '.csv');
   document.body.appendChild(linkDownload);
